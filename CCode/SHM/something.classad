@@ -1,16 +1,12 @@
 #####################
-
-# My First Submission
-
+#
+# Condor submission script - Could maybe call this something better than something.classad?
+# 
 #####################
 
 Executable = main.sh
 
-#Arguments = I bring you tidings of joy
-
 Universe = vanilla
-
-#Requirements = OpSys == “LINUX” && Arch ==“X86_64”
 
 Error = hello_condor.err
 
