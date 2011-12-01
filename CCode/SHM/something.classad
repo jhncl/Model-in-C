@@ -1,0 +1,26 @@
+#####################
+
+# My First Submission
+
+#####################
+
+Executable = main.sh
+
+#Arguments = I bring you tidings of joy
+
+Universe = vanilla
+
+#Requirements = OpSys == “LINUX” && Arch ==“X86_64”
+
+Error = hello_condor.err
+
+Output = hello_condor.out
+
+Log = hello_condor.log
+
+transfer_input_files = main, Makefile, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt, main.c, data2.c, functions.c, print.c, struct.c, main.c
+
+transfer_files = ALWAYS
+
+Queue
+

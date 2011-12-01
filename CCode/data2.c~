@@ -1,0 +1,73 @@
+TEST=1;		/*testing*/
+burn=10000;	/*Burn in*/
+iter=10000;    /*iterations*/
+thin=100;	/*thining*/
+
+
+data.hK=0.1;	data.accept_K=0;
+data.hr=0.1;	data.accept_r=0;
+data.hnu=0.5;	data.accept_nu=0;
+data.hP=0.01;	data.accept_P=0;	/*h sd; accept=0*/
+
+data.L=4294;		/*Max number of ORF's*/				/*data change*/
+data.M=6;		/*Max number of ORF repeats*/			/*data change*/
+data.N=15;		/*Max number of ORF repeat timepoints*/		/*data change*/
+
+data.NoSUM[0]=0;
+for (l=1;l<(data.L);l++){
+data.NoSUM[l]=data.NoSUM[l-1]+data.NoORF[l-1];
+}
+
+
+/*initials*/
+/*K*/
+for (l=0;l<data.L;l++){for (m=0;m<data.NoORF[l];m++){
+mm=l*data.M+m;mmm=data.NoSUM[l]+m;
+data.K_lm[mm]=data.y[l*data.M*data.N + m*data.N + data.NoTIME[mmm]-1];
+if(data.K_lm[mm]>0){data.K_lm[mm]=gsl_sf_log(data.K_lm[mm]);}/*LMean*/
+}}
+
+for (l=0;l<data.L;l++)		{data.tau_K_l[l]=2.2;}			/*Precision*/ 
+
+for (l=0;l<data.L;l++)		{data.K_o_l[l]=gsl_sf_log(0.1);}	/*LMean*/
+data.sigma_K_o=1;		/*Precision*/	
+
+data.K_p=gsl_sf_log(0.1); 	/*LMean*/
+
+/*r*/
+for (l=0;l<data.L;l++){for (m=0;m<data.NoORF[l];m++){
+mm=l*data.M+m;data.r_lm[mm]=gsl_sf_log(2.5);}}				/*LMean*/
+for (l=0;l<data.L;l++)		{data.tau_r_l[l]=0.7;}			/*Precision*/ 
+
+for (l=0;l<data.L;l++)		{data.r_o_l[l]=gsl_sf_log(2.5);}	/*LMean*/
+data.sigma_r_o=1;		/*Precision*/	
+
+data.r_p=gsl_sf_log(2.5);	/*LMean*/
+
+/*nu*/
+for (l=0;l<data.L;l++)		{data.nu_l[l]=data.nu_p=18;}			/*LMean*/
+data.sigma_nu=0.0025;	/*Precision for lMean*/
+
+data.nu_p=18;	/*LMean*/
+
+/*P*/
+data.P=gsl_sf_log(0.0001);	/*LMean*/
+
+
+/*Priors*/
+/*K*/
+data.sigma_K=1;		data.phi_K=500;			/*Gamma  Shape; Scale */
+data.eta_K_p=1;		data.psi_K_o=500; 		/*Gamma  Shape; Scale */
+/*r*/
+data.sigma_r=1;		data.phi_r=500; 		/*Gamma  Shape; Scale */
+data.eta_r_p=1;		data.psi_r_o=500;		/*Gamma  Shape; Scale */
+/*nu*/
+data.eta_nu_p=1;	data.psi_nu=500;		/*Gamma  Shape; Scale */
+
+/*K*//*r*//*nu*//*P*/
+data.K_mu=gsl_sf_log(0.2192928);	data.eta_K_mu=1;	/*Normal  LMean; Precisions */
+data.r_mu=gsl_sf_log(2.5);		data.eta_r_mu=1;	/*Normal  LMean; Precisions */
+data.nu_mu=gsl_sf_log(31);		data.eta_nu_mu=1;	/*Normal  LMean; Precisions */
+data.P_mu=gsl_sf_log(0.0001);           data.eta_P_mu=1/25;	/*Normal  LMean; Precisions */
+
+

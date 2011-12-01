@@ -1,0 +1,152 @@
+double logistic_function(double t,double K, double r, double P){
+	double output;
+	output=(K*P*exp(r*t))/(K+P*(exp(r*t)-1));
+	return(output);
+}
+
+double logistic_function_E(double t,double K, double r, double P){
+	double output;
+	output=logistic_function(t,exp(K), exp(r), exp(P));
+	return(output);
+}
+
+double gauss_sample( struct_data *D ,int start, int N,double x[],double tau,double mu_0,double tau_0){
+	double vec,Ndouble,SUM=0;
+	int i;
+	Ndouble=N;
+	for (i=start-1;i<(start+N-1);i++){SUM=SUM+x[i];}
+	vec=(tau_0*mu_0+tau*SUM)/(tau_0+Ndouble*tau)+gsl_ran_gaussian(D->RNG,1/sqrt(tau_0+Ndouble*tau));
+	return(vec);
+}
+
+double gamma_sample( struct_data *D ,int start, int N, double x[], double mu,double alpha,double beta){
+	double vec,Ndouble,SUM=0;
+	int i;
+	Ndouble=N;
+	for (i=start-1;i<(start+N-1);i++){SUM=SUM+(x[i]-mu)*(x[i]-mu);}
+	vec=gsl_ran_gamma(D->RNG,alpha+Ndouble/2,1/(1/beta+SUM/2));
+	return(vec);
+}
+
+double MCMC_base( struct_data *D,double *accept,double *h,double para,double (*foo)(struct struct_data *D,double,int,int),int l, int m){
+	double logu,logaprob,can;
+	can=para+gsl_ran_gaussian(D->RNG,*h);
+	logaprob=(*foo)(D,can,l,m)-(*foo)(D,para,l,m);
+	
+	logu=gsl_sf_log(1-gsl_rng_uniform(D->RNG));
+	if (logaprob>logu){para=can;*accept=*accept+1;}
+	return(para); 
+	}
+
+double MCMC_P( struct_data *D,double para,int l, int m){
+	double density,F,SUM=0;
+	int n,mm,nn,mmm;
+	for (l=0;l<1;l++){
+		for (m=0;m<D->NoORF[l];m++){
+			mm=l*D->M + m;mmm=D->NoSUM[l]+m;
+			for (n=0;n<D->NoTIME[mmm];n++){
+				nn=l*D->M*D->N + m*D->N + n;
+				if (D->y[nn]<0){D->TEST=191;}
+				F=logistic_function_E(D->x[nn],D->K_lm[mm], D->r_lm[mm],para);
+				SUM=SUM+F*(F-2*D->y[nn])*exp(D->nu_l[l]);
+			}
+		}
+	}
+	density=para*( para -2*D->P_mu )*D->eta_P_mu+SUM;
+
+	return(-0.5*density); 
+
+}
+
+double MCMC_nu(struct_data *D,double para,int l, int m){
+	double density,F,SUM=0;
+	int n,mm,nn,mmm;
+	for (m=0;m<D->NoORF[l];m++){
+		mm=l*D->M + m;mmm=D->NoSUM[l]+m;
+		for (n=0;n<D->NoTIME[mmm];n++){
+			nn=l*D->M*D->N + m*D->N + n;
+			F=logistic_function_E(D->x[nn],D->K_lm[mm], D->r_lm[mm],D->P);
+			SUM=SUM+(D->y[nn]-F)*(D->y[nn]-F)*exp(para)-para;
+		}
+	}
+	density=para*( para -2*D->nu_p )*D->sigma_nu+SUM; 
+	return(-0.5*density); 
+}
+
+double MCMC_K_lm(struct_data *D,double para,int l, int m){
+	double density,F,SUM=0;
+	int n,mm,nn,mmm;
+	mm=l*D->M + m;mmm=D->NoSUM[l]+m;
+	for (n=0;n<D->NoTIME[mmm];n++){
+		nn=l*D->M*D->N + m*D->N + n;
+		F=logistic_function_E(D->x[nn],para, D->r_lm[mm],D->P);
+		SUM=SUM+F*(F-2*D->y[nn])*exp(D->nu_l[l]);
+	}	
+	density=para*(para-2*D->K_o_l[l])*D->tau_K_l[l]+SUM; 
+	return(-0.5*density);
+}
+
+double MCMC_r_lm(struct_data *D,double para,int l, int m){
+	double density,F,SUM=0;
+	int n,mm,nn,mmm;
+	mm=l*D->M + m;mmm=D->NoSUM[l]+m;
+	for (n=0;n<D->NoTIME[mmm];n++){
+		nn=l*D->M*D->N + m*D->N + n;
+		F=logistic_function_E(D->x[nn], D->K_lm[mm],para,D->P);	
+		SUM=SUM+F*(F-2*D->y[nn])*exp(D->nu_l[l]);
+	}	
+	density=para*(para-2*D->r_o_l[l])*D->tau_r_l[l]+SUM; 
+	return(-0.5*density); 
+}
+
+int datadouble(char filename[], double datavec[] )
+{
+  int i;
+  char number[20];
+  double data;
+  FILE *file = fopen(filename, "r");
+  i=0;
+  if ( file != NULL )
+    {
+     fscanf(file, "%s %lf",number,&data);
+      while ( fscanf(file, "%s %lf",number,&data)!=-1)
+        {
+          datavec[i]=data;
+	  i++;
+        }
+    }
+  else
+    {
+      perror(filename);
+    }
+  fclose(file);
+  return 0;
+}
+
+
+
+
+int dataint(char filename[], int datavec[] )
+{
+  int i;
+  char number[20];
+  double data;
+  FILE *file = fopen(filename, "r");
+  i=0;
+  if ( file != NULL )
+    {
+     fscanf(file, "%s %lf",number,&data);
+      while ( fscanf(file, "%s %lf",number,&data)!=-1)
+        {
+          datavec[i]=data;
+	  i++;
+        }
+    }
+  else
+    {
+      perror(filename);
+    }
+  fclose(file);
+  return 0;
+}
+
