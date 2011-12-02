@@ -1,4 +1,10 @@
- Set up git
+SHM
+JHM
+
+
+
+
+Set up git
   git config --global user.name "Your Name"
   git config --global user.email j.j.heydari@ncl.ac.uk
       
@@ -16,4 +22,5 @@ Existing Git Repo?
   cd existing_git_repo
   git remote add origin git@github.com:jhncl/Model-in-C.git
   git push -u origin master
-hi
+
+git pull
