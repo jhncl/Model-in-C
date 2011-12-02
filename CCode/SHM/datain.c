@@ -143,8 +143,8 @@ int fillMH(struct_MH *MH)
 {
 	MH->hK=0.1;	MH->accept_K=0;
 	MH->hr=0.1;	MH->accept_r=0;
-	MH->hnu=0.5;	MH->accept_nu=0;
-	MH->hP=0.01;	MH->accept_P=0;  /*h sd; accept=0*/
+	MH->hnu=0.1;	MH->accept_nu=0;
+	MH->hP=0.2;	MH->accept_P=0;  /*h sd; accept=0*/
 return 0;
 }
 
@@ -220,8 +220,8 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1;      /*Normal  LMean; Precisions */
 	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1;      /*Normal  LMean; Precisions */
 	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0001);         D_priors->eta_P_mu=1/25;   /*Normal  LMean; Precisions */
+	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.01;   /*Normal  LMean; Precisions */
 return 0;
 }
 
-/* 1eof */
+/* eof */
