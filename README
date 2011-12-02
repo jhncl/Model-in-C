@@ -16,4 +16,5 @@ Existing Git Repo?
   cd existing_git_repo
   git remote add origin git@github.com:jhncl/Model-in-C.git
   git push -u origin master
-hi
+
+git pull
