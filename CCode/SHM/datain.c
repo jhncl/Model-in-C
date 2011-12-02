@@ -224,4 +224,4 @@ int fillpriors(struct_priors *D_priors)
 return 0;
 }
 
-/* eof */
+/* eof  */
