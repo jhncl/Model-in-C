@@ -63,7 +63,6 @@ int dataLMN(char filename[], int *datavecL,int *datavecM,int *datavecN)
 	char number[20];
 	double data;
 	FILE *file = fopen(filename, "r");
-	i=0;
 	if ( file != NULL ){
 		fscanf(file, "%s %lf",number,&data);
 		fscanf(file, "%s %lf",number,&data);
