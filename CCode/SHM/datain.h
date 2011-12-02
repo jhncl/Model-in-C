@@ -1,5 +1,5 @@
-#ifndef _functions_h
-#define _functions_h
+#ifndef _datain_h
+#define _datain_h
 
 int testargc(int argc);
 
