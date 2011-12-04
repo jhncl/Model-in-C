@@ -93,7 +93,7 @@ double MCMC_K_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
 		F=logistic_function_E(D->x[nn],para, D_para->r_clm[mm],D_para->P);
 		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l])*exp(D_para->upsilon_c[c]);
 	}	
-	density=para*(para-2*D_para->K_o_l[l])*D_para->tau_K_cl[c*D->L+l]+SUM; 
+	density=para*(para-2*D_para->K_o_l[l])*exp(D_para->tau_K_cl[c*D->L+l])+SUM; 
 	return(-0.5*density);
 }
 
@@ -106,7 +106,7 @@ double MCMC_r_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
 		F=logistic_function_E(D->x[nn], D_para->K_clm[mm],para,D_para->P);	
 		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l])*exp(D_para->upsilon_c[c]);
 	}	
-	density=para*(para-2*D_para->r_o_l[l])*D_para->tau_r_cl[c*D->L+l]+SUM; 
+	density=para*(para-2*D_para->r_o_l[l])*exp(D_para->tau_r_cl[c*D->L+l])+SUM; 
 	return(-0.5*density); 
 }
 
@@ -312,7 +312,6 @@ double aug_delta(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *
 int gibbsandMHloop(int iter,int thin,gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors ,struct_MH *D_MH,int print){
 int i,j,l,m,mm,c,ll;
 	if (print==0){printheader(D);}
-	D->L=5;
 	for (i=0;i<iter;i++){
 		for (j=0;j<thin;j++){
 			D_para->P=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->P,MCMC_P,-999,-999,-999);
@@ -384,7 +383,7 @@ printf ("%g ",exp(D_para->K_clm[0]));
 	printf ("%g ",exp(D_para->K_clm[1]));
 	printf ("%g ",exp(D_para->K_clm[0+D->NoSUM[1*D->L]]));
 	printf ("%g ",exp(D_para->K_clm[1+D->NoSUM[1*D->L]]));
-	*/printf ("\n");
+	printf ("\n");*/
 		if (print==1){printdata(D,D_para,D_MH);}
 	}
 return 0;

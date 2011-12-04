@@ -242,7 +242,7 @@ int c,l,m,mm;
 
 	D_para->nu_p=18;   /*LMean*/
 	/*P*/
-	D_para->P=gsl_sf_log(0.0001);      /*LMean*/
+	D_para->P=gsl_sf_log(0.0002);      /*LMean*/
 	
 	for (l=0;l<D->L;l++)          {D_para->gamma[l]=0;} 
 
@@ -279,7 +279,7 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1/3^2;      /*Normal  LMean; Precisions */
 	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1/4^2;      /*Normal  LMean; Precisions */
 	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0001);         D_priors->eta_P_mu=1;   /*Normal  LMean; Precisions */
+	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.01;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
 
 	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
