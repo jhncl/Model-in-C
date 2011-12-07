@@ -10,7 +10,7 @@
 
 typedef struct struct_data {
   double *y, *x;
-  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,SHIFTmn;
+  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,SHIFTmn, maxy,maxTIMEa,maxTIMEb;
 } struct_data;
 
 

@@ -86,27 +86,27 @@ double MCMC_sigma_nu(struct_data *D,struct_para *D_para,struct_priors *D_priors,
 
 double MCMC_K_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,F,SUM=0;
-	int n,mm,nn;
-	mm=D->NoSUM[c*D->L+l]+m;
+	int n,mm,nn,ll=c*D->L+l;
+	mm=D->NoSUM[ll]+m;
 	for (n=0;n<D->NoTIME[mm];n++){
 		nn=c*D->SHIFTlmn+l*D->M*D->N + m*D->N+n;
 		F=logistic_function_E(D->x[nn],para, D_para->r_clm[mm],D_para->P);
 		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l])*exp(D_para->upsilon_c[c]);
 	}	
-	density=para*(para-2*D_para->K_o_l[l])*exp(D_para->tau_K_cl[c*D->L+l])+SUM; 
+	density=para*(para-2*D_para->K_o_l[l])*exp(D_para->tau_K_cl[ll])+SUM; 
 	return(-0.5*density);
 }
 
 double MCMC_r_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,F,SUM=0;
-	int n,mm,nn;
-	mm=D->NoSUM[l+c*D->L]+m;
+	int n,mm,nn,ll=c*D->L+l;
+	mm=D->NoSUM[ll]+m;
 	for (n=0;n<D->NoTIME[mm];n++){
 		nn=c*D->SHIFTlmn+l*D->M*D->N + m*D->N+n;
 		F=logistic_function_E(D->x[nn], D_para->K_clm[mm],para,D_para->P);	
 		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l])*exp(D_para->upsilon_c[c]);
 	}	
-	density=para*(para-2*D_para->r_o_l[l])*exp(D_para->tau_r_cl[c*D->L+l])+SUM; 
+	density=para*(para-2*D_para->r_o_l[l])*exp(D_para->tau_r_cl[ll])+SUM; 
 	return(-0.5*density); 
 }
 
@@ -115,8 +115,8 @@ double MCMC_K_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
 	int ll,mm;
 	for (c=0;c<2;c++){
 		ll=c*D->L+l;
-		for (m=0;m<D->NoORF[c*D->L+l];m++){
-			mm=D->NoSUM[c*D->L+l]+m;
+		for (m=0;m<D->NoORF[ll];m++){
+			mm=D->NoSUM[ll]+m;
 			F=exp(D_para->alpha[c])*(para+c*D_para->delta[l]*D_para->gamma[l]);
 			SUM=SUM+F*(F-2*D_para->K_clm[mm])*exp(D_para->tau_K_cl[ll]);
 		}
@@ -130,8 +130,8 @@ double MCMC_r_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
 	int ll,mm;
 	for (c=0;c<2;c++){
 		ll=c*D->L+l;
-		for (m=0;m<D->NoORF[c*D->L+l];m++){
-			mm=D->NoSUM[c*D->L+l]+m;
+		for (m=0;m<D->NoORF[ll];m++){
+			mm=D->NoSUM[ll]+m;
 			F=exp(D_para->beta[2])*(para+c*D_para->delta[l]*D_para->omega[l]);
 			SUM=SUM+F*(F-2*D_para->r_clm[mm])*exp(D_para->tau_r_cl[ll]);
 		}
@@ -215,10 +215,11 @@ double MCMC_sigma_omega(struct_data *D,struct_para *D_para,struct_priors *D_prio
 
 double MCMC_upsilon_c(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,F,SUM=0;
-	int n,mm,nn;
+	int n,mm,nn,ll;
 	for (l=0;l<D->L;l++){
-        	for (m=0;m<D->NoORF[l+D->L*c];m++){
-			mm=D->NoSUM[l+c*D->L]+m;
+	  ll=c*D->L+l;
+	  for (m=0;m<D->NoORF[ll];m++){
+			mm=D->NoSUM[ll]+m;
 			for (n=0;n<D->NoTIME[mm];n++){
 				nn=c*D->SHIFTlmn+l*D->M*D->N + m*D->N + n;
 				F=logistic_function_E(D->x[nn],D_para->K_clm[mm], D_para->r_clm[mm],D_para->P);
@@ -259,9 +260,9 @@ double MCMC_sigma_r_o(struct_data *D,struct_para *D_para,struct_priors *D_priors
 
 double MCMC_tau_K_cl(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,SUM=0;
-	int mm;
-	for (m=0;m<D->NoORF[l+D->L*c];m++){
-		mm=D->NoSUM[l+c*D->L]+m;
+	int mm,ll=c*D->L+l;
+	for (m=0;m<D->NoORF[ll];m++){
+		mm=D->NoSUM[ll]+m;
 		SUM=SUM-para+(D_para->K_clm[mm]-
 			exp(D_para->alpha[1])*(D_para->K_o_l[l]+c*D_para->delta[l]*D_para->gamma[l]))*(D_para->K_clm[mm]-
 			exp(D_para->alpha[1])*(D_para->K_o_l[l]+c*D_para->delta[l]*D_para->gamma[l]))*exp(para);
@@ -272,9 +273,9 @@ double MCMC_tau_K_cl(struct_data *D,struct_para *D_para,struct_priors *D_priors,
 
 double MCMC_tau_r_cl(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,SUM=0;
-	int mm;
-	for (m=0;m<D->NoORF[c*D->L+l];m++){
-		mm=D->NoSUM[c*D->L+l]+m;
+	int mm,ll=c*D->L+l;
+	for (m=0;m<D->NoORF[ll];m++){
+		mm=D->NoSUM[ll]+m;
 		SUM=SUM-para+(D_para->r_clm[mm]-
 			exp(D_para->beta[2])*(D_para->r_o_l[l]+c*D_para->delta[l]*D_para->omega[l]))*(D_para->r_clm[mm]-
 			exp(D_para->beta[2])*(D_para->r_o_l[l]+c*D_para->delta[l]*D_para->omega[l]))*exp(para);
@@ -290,18 +291,18 @@ double aug_delta(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *
 	int m,ll=D->L+l,mm;
         for (m=0;m<D->NoORF[l];m++){
 		mm=D->NoSUM[l]+m;
-		SUMa=SUMa+D_priors->p*(
+		SUMa=SUMa+(1-D_priors->p)*(
+			gsl_ran_gaussian_pdf(D_para->K_clm[mm]-exp(D_para->alpha[1])*(D_para->K_o_l[l]),1/sqrt(exp(D_para->tau_K_cl[l])))*
+			gsl_ran_gaussian_pdf(D_para->r_clm[mm]-exp(D_para->beta[2])*(D_para->r_o_l[l]),1/sqrt(exp(D_para->tau_r_cl[l]))));
+	}	
+        for (m=0;m<D->NoORF[ll];m++){
+		mm=D->NoSUM[ll]+m;
+		SUMb=SUMb+D_priors->p*(
 			gsl_ran_gaussian_pdf(D_para->K_clm[mm]-exp(D_para->alpha[1])*(D_para->K_o_l[l]+D_para->gamma[l]),1/sqrt(exp(D_para->tau_K_cl[ll])))*
 			gsl_ran_gaussian_pdf(D_para->r_clm[mm]-exp(D_para->beta[2])*(D_para->r_o_l[l]+D_para->omega[l]),1/sqrt(exp(D_para->tau_r_cl[ll]))));
 		}
-        for (m=0;m<D->NoORF[D->L+l];m++){
-		mm=D->NoSUM[D->L+l]+m;
-		SUMb=SUMb+(1-D_priors->p)*(
-			gsl_ran_gaussian_pdf(D_para->K_clm[mm]-exp(D_para->alpha[1])*(D_para->K_o_l[l]),1/sqrt(exp(D_para->tau_K_cl[ll])))*
-			gsl_ran_gaussian_pdf(D_para->r_clm[mm]-exp(D_para->beta[2])*(D_para->r_o_l[l]),1/sqrt(exp(D_para->tau_r_cl[ll]))));
-	}	
 	u=gsl_rng_uniform(RNG);
-	if (u<(SUMa/(SUMa+SUMb))){para=1;}
+	if (u<(SUMb/(SUMa+SUMb))){para=1;}
 	else para=0;
 	return(para); 
 }
@@ -311,7 +312,9 @@ double aug_delta(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *
 
 int gibbsandMHloop(int iter,int thin,gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors ,struct_MH *D_MH,int print){
 int i,j,l,m,mm,c,ll;
-	if (print==0){printheader(D);}
+	if (print==0){
+		printheader(D);
+	}
 	for (i=0;i<iter;i++){
 		for (j=0;j<thin;j++){
 			D_para->P=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->P,MCMC_P,-999,-999,-999);
@@ -326,9 +329,9 @@ int i,j,l,m,mm,c,ll;
 				RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_upsilon,MCMC_sigma_upsilon,-999,-999,-999);
 			D_para->sigma_nu=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_nu,MCMC_sigma_nu,-999,-999,-999);
 	
-			D_para->sigma_K_o=gsl_min(200,
+			D_para->sigma_K_o=gsl_min(5.3,
 				MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_K_o,MCMC_sigma_K_o,-999,-999,-999));
-			D_para->sigma_r_o=gsl_min(200,
+			D_para->sigma_r_o=gsl_min(-1,
 				MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_r_o,MCMC_sigma_r_o,-999,-999,-999));	
 		
 			D_para->K_p=gauss_sample(RNG,D,0,D->L,D_para->K_o_l,exp(D_para->sigma_K_o),D_priors->K_mu,D_priors->eta_K_mu);
@@ -347,13 +350,13 @@ int i,j,l,m,mm,c,ll;
 
 				D_para->gamma[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->gamma[l],MCMC_gamma,-999,l,-999);
 				D_para->omega[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->omega[l],MCMC_omega,-999,l,-999);
-				D_para->delta[l]=aug_delta(RNG,D,D_para,D_priors,l);
+				D_para->delta[l]=1/*aug_delta(RNG,D,D_para,D_priors,l)*/;
 				
 				for (c=0;c<2;c++){
 					ll=c*D->L+l;
-					D_para->tau_K_cl[ll]=gsl_min(2000,
+					D_para->tau_K_cl[ll]=gsl_min(7.6,
 						MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_K_cl[ll],MCMC_tau_K_cl,c,l,-999));
-					D_para->tau_r_cl[ll]=gsl_min(5000,
+					D_para->tau_r_cl[ll]=gsl_min(8.5,
 						MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_K_cl[ll],MCMC_tau_K_cl,c,l,-999));
 
 					for (m=0;m<D->NoORF[l];m++){ 
@@ -366,25 +369,9 @@ int i,j,l,m,mm,c,ll;
 				}
 			}
 		}	
-	/*printf ("%g ",D_para->alpha[1]);
-	printf ("%g ",D_para->beta[1]);
-	printf ("%g ",D_para->delta[1]);
-	printf ("%g ",D_para->gamma[1]);
-	printf ("%g ",exp(D_para->K_p));
-	printf ("%g ",exp(D_para->K_o_l[0]));
-	printf ("%g ",exp(D_para->K_o_l[1]));
-	printf ("%g ",exp(D_para->K_o_l[2]));
-	printf ("%g ",exp(D_para->K_o_l[3]));
-	printf ("%g ",exp(D_para->K_o_l[4]));
-	printf ("%g ",D_para->sigma_K_o);
-	printf ("%g ",D_priors->K_mu);
-	printf ("%g ",D_priors->eta_K_mu);
-printf ("%g ",exp(D_para->K_clm[0]));
-	printf ("%g ",exp(D_para->K_clm[1]));
-	printf ("%g ",exp(D_para->K_clm[0+D->NoSUM[1*D->L]]));
-	printf ("%g ",exp(D_para->K_clm[1+D->NoSUM[1*D->L]]));
-	printf ("\n");*/
-		if (print==1){printdata(D,D_para,D_MH);}
+		if (print==1){
+			printdata(D,D_para,D_MH);
+		}
 	}
 return 0;
 }

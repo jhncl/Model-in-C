@@ -1,11 +1,13 @@
-#ifndef _functions_h
-#define _functions_h
+#ifndef _datain_h
+#define _datain_h
 
 int testargc(int argc);
+int testsame(int a,int b);
 
-int datadouble(char filename[],char filename2[], double datavec[] );
-int dataint(char filename[],char filename2[], int datavec[] );
-int dataLMN(char filename[], int *datavecL, int *datavecM,int *datavecN );
+int datadouble(char filename[], char filename2[], double datavec[],int length);
+int dataint(char filename[],char filename2[], int datavec[] ,int lengtha,int lengthb );
+int dataLMN(char filename[],char filename2[], 
+	int *datavecL,int *datavecM,int *datavecN,int *datavecmaxy,int *datavecmaxTIMEa,int *datavecmaxTIMEb);
 
 int inzstruct_MH(struct_MH *MH);
 int inzstruct_priors(struct_priors *priors);

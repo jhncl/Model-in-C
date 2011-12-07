@@ -13,11 +13,19 @@ int testargc(int argc)
 return 0;
 }
 
+int testsame(int a,int b)
+{
+ 	if (a!=b) {
+    		perror("data int failed");
+    		exit(EXIT_FAILURE);
+  	}
+return 0;
+}
 
 /*READ IN*/
 
 
-int datadouble(char filename[], char filename2[], double datavec[] )
+int datadouble(char filename[], char filename2[], double datavec[],int length)
 {
 	int i;
 	char number[20];
@@ -32,6 +40,7 @@ int datadouble(char filename[], char filename2[], double datavec[] )
 			datavec[i]=data;   
 			i++;
 		}
+	testsame(length,i);
 	}
 	else{perror(filename);}
 	fclose(file);
@@ -44,27 +53,28 @@ int datadouble(char filename[], char filename2[], double datavec[] )
 			datavec[i]=data;
 			i++;
 		}
+	testsame(2*length,i);
 	}
 	else{perror(filename2);}
 	fclose(file2);
 return 0;
 }
 
-int dataint(char filename[],char filename2[], int datavec[] )
+int dataint(char filename[],char filename2[], int datavec[] ,int lengtha,int lengthb )
 {
-	int i;
+	int i=0;
 	char number[20];
 	double data;
 	FILE *file;
 	FILE *file2;
 	file = fopen(filename, "r");
-	i=0;
 	if ( file != NULL ){
 		fscanf(file, "%s %lf",number,&data);
 		while (fscanf(file, "%s %lf",number,&data)!=-1){
 			datavec[i]=data;
 			i++;
         	}
+	testsame(lengtha,i);
     	}
 	else{perror(filename);}
 	fclose(file);
@@ -76,19 +86,21 @@ int dataint(char filename[],char filename2[], int datavec[] )
 			datavec[i]=data;
 			i++;
 	        }
+	testsame(lengtha+lengthb,i);
 	}
 	else{perror(filename2);}
 	fclose(file2);
+
 return 0;
 }
 
-int dataLMN(char filename[], int *datavecL,int *datavecM,int *datavecN)
+int dataLMN(char filename[],char filename2[], int *datavecL,int *datavecM,int *datavecN,int *datavecmaxy,int *datavecmaxTIMEa,int *datavecmaxTIMEb)
 {
-	int i;
 	char number[20];
 	double data;
-	FILE *file = fopen(filename, "r");
-	i=0;
+	FILE *file;
+	FILE *file2;
+	file = fopen(filename, "r");
 	if ( file != NULL ){
 		fscanf(file, "%s %lf",number,&data);
 		fscanf(file, "%s %lf",number,&data);
@@ -97,9 +109,36 @@ int dataLMN(char filename[], int *datavecL,int *datavecM,int *datavecN)
 		*datavecM=data;
 		fscanf(file, "%s %lf",number,&data);
 		*datavecN=data;
+		fscanf(file, "%s %lf",number,&data);
+		*datavecmaxy=data;
+		fscanf(file, "%s %lf",number,&data);
+		*datavecmaxTIMEa=data;
 	}
 	else{perror(filename);}
 	fclose(file);
+	file2 = fopen(filename2, "r");
+	if ( file2 != NULL ){
+		fscanf(file2, "%s %lf",number,&data);
+		fscanf(file2, "%s %lf",number,&data);
+		testsame(*datavecL,data); /*TEST L*/		
+		*datavecL=data;     
+
+		fscanf(file2, "%s %lf",number,&data);
+		*datavecM=gsl_max(*datavecM,data);
+
+		fscanf(file2, "%s %lf",number,&data);
+		*datavecN=gsl_max(*datavecN,data);
+
+		fscanf(file2, "%s %lf",number,&data);
+		testsame(*datavecmaxy,data); /*TEST y length*/		
+		*datavecmaxy=data;
+		testsame(*datavecmaxy,(*datavecL)*(*datavecM)*(*datavecN)); /*TEST ylength to SHIFTlmn */		
+
+		fscanf(file2, "%s %lf",number,&data);
+		*datavecmaxTIMEb=data;
+	}
+	else{perror(filename2);}
+	fclose(file2);
 return 0;
 }
 
@@ -120,26 +159,28 @@ return 0;
 int inzstruct_data(struct_data *data)
 {
 	long size;
-	dataLMN("LMNmaxdata.txt",&data->L,&data->M,&data->N);  
-	size=data->L*data->M*data->N*2; /*input from file*/
-	data->SHIFTlmn=data->L*data->M*data->N; /*input from file*/
+	dataLMN("LMNmaxdataA1.txt","LMNmaxdataB1.txt",
+		&data->L,&data->M,&data->N,&data->maxy,&data->maxTIMEa,&data->maxTIMEb);      /*swap*/  
+
+	data->SHIFTlmn=data->maxy; /*input from file*/
+	size=data->maxy*2; /*input from file*/
   	data->y=malloc(size*sizeof(double));        /*Cycle with SHIFTlmn*/
         data->x=malloc(size*sizeof(double));        /*Cycle with SHIFTlmn*/
 	size=data->L*2;
 	data->NoORF=malloc(size*sizeof(double));    /*Cycle with data->L*/
 	data->NoSUM=malloc(size*sizeof(double));    /*Cycle with data->L*/
-	size=17308*2;/*inputfromfile*/
-	data->NoTIME=malloc(size*sizeof(double));   /*Cycle with SHIFTlm*/
+	size=data->maxTIMEa+data->maxTIMEb;/*inputfromfile*/
+	data->NoTIME=malloc(size*sizeof(double));   /*Cycle with NoSUM*/
 	
 	if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
     		exit(EXIT_FAILURE);
   	}
 
-	datadouble("ydata.txt","ydata2.txt",data->y);
-        datadouble("xdata.txt","xdata2.txt",data->x);
-        dataint("NoORFdata.txt","NoORFdata2.txt",data->NoORF);
-        dataint("NoTIMEdata.txt","NoTIMEdata2.txt",data->NoTIME);
+	datadouble("ydataA1.txt","ydataB1.txt",data->y,data->maxy);
+        datadouble("xdataA1.txt","xdataB1.txt",data->x,data->maxy);/*ymax=xmax*/
+        dataint("NoORFdataA1.txt","NoORFdataB1.txt",data->NoORF,data->L,data->L);
+        dataint("NoTIMEdataA1.txt","NoTIMEdataB1.txt",data->NoTIME,data->maxTIMEa,data->maxTIMEb);
 
 	filldata(data);
 return 0;
@@ -151,7 +192,7 @@ int inzstruct_para(struct_para *para,struct_data *data)
 	size=data->L*2;
 	para->tau_K_cl=malloc(size*sizeof(double));
 	para->tau_r_cl=malloc(size*sizeof(double));
-	size=17308*2;/*inputfromfile*/
+	size=data->maxTIMEa+data->maxTIMEb;/*inputfromfile*/
 	para->K_clm=malloc(size*sizeof(double));
 	para->r_clm=malloc(size*sizeof(double));
 	size=data->L;
@@ -174,8 +215,8 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->hK=0.1;	MH->accept_K=0;
-	MH->hr=0.1;	MH->accept_r=0;
+	MH->hK=0.0001;	MH->accept_K=0;
+	MH->hr=0.0001;	MH->accept_r=0;
 	MH->hnu=0.5;	MH->accept_nu=0;
 	MH->hP=0.01;	MH->accept_P=0;  /*h sd; accept=0*/
 return 0;
@@ -184,19 +225,18 @@ return 0;
 int filldata(struct_data *D)
 {
 	int l;
-	l=1;
-
 	D->NoSUM[0]=0;
 	for (l=1;l<(D->L);l++){
 		D->NoSUM[l]=D->NoSUM[l-1]+D->NoORF[l-1];
 	}
 
-	D->NoSUM[D->L]=0;
+	D->NoSUM[D->L]=D->SHIFTmn=D->NoSUM[D->L-1]+D->NoORF[D->L-1];/*create mnSHIFT*/
+
 	for (l=(1+D->L);l<(2*D->L);l++){
 		D->NoSUM[l]=D->NoSUM[l-1]+D->NoORF[l-1];
 	}
 
-	D->SHIFTmn=D->NoSUM[D->L];/*create mnSHIFT*/
+
 return 0;
 }
 
@@ -267,17 +307,17 @@ int fillpriors(struct_priors *D_priors)
 {
 	/*Priors*/
 	/*K*/
-	D_priors->sigma_K=1;               D_priors->phi_K=1/4^2;               /*Gamma  Shape; Scale */
-	D_priors->eta_K_p=1;               D_priors->psi_K_o=1;             /*Gamma  Shape; Scale */
+	D_priors->sigma_K=13;               D_priors->phi_K=3;               /*Gamma  Shape; Scale */
+	D_priors->eta_K_p=13;               D_priors->psi_K_o=3;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=1;               D_priors->phi_r=1/4^2;               /*Gamma  Shape; Scale */
-	D_priors->eta_r_p=1;               D_priors->psi_r_o=1;             /*Gamma  Shape; Scale */
+	D_priors->sigma_r=13;               D_priors->phi_r=3;               /*Gamma  Shape; Scale */
+	D_priors->eta_r_p=13;               D_priors->psi_r_o=3;             /*Gamma  Shape; Scale */
 	/*nu*/
-	D_priors->eta_nu_p=1;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
+	D_priors->eta_nu_p=15;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
 
 	/*K*//*r*//*nu*//*P*/
-	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1/3^2;      /*Normal  LMean; Precisions */
-	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1/4^2;      /*Normal  LMean; Precisions */
+	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1;      /*Normal  LMean; Precisions */
+	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1;      /*Normal  LMean; Precisions */
 	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
 	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.01;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
