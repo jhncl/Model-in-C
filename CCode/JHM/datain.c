@@ -355,7 +355,7 @@ int fillpriors(struct_priors *D_priors)
 
 	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
 	D_priors->beta_mu=gsl_sf_log(1);           D_priors->eta_beta=1/4^2;
-	D_priors->p=0.1;    
+	D_priors->p=0.01;    
 	D_priors->eta_gamma=1;           	   D_priors->psi_gamma=1;
 	D_priors->eta_omega=1;           	   D_priors->psi_omega=1;
 	D_priors->eta_upsilon=1;	 	   D_priors->phi_upsilon=1;	    
