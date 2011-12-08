@@ -78,7 +78,7 @@ int dataint(char filename[],char filename2[], int datavec[] ,int lengtha,int len
     	}
 	else{perror(filename);}
 	fclose(file);
-	file2 = fopen(filename, "r");
+	file2 = fopen(filename2, "r");
   	if ( file2 != NULL ){
 		fscanf(file2, "%s %lf",number,&data);
 		while ( fscanf(file2, "%s %lf",number,&data)!=-1)
@@ -216,7 +216,7 @@ return 0;
 int fillMH(struct_MH *MH)
 {
 	MH->hK=0.0001;	MH->accept_K=0;
-	MH->hr=0.0001;	MH->accept_r=0;
+	MH->hr=0.01;	MH->accept_r=0;
 	MH->hnu=0.5;	MH->accept_nu=0;
 	MH->hP=0.01;	MH->accept_P=0;  /*h sd; accept=0*/
 return 0;
@@ -242,19 +242,26 @@ return 0;
 
 int fillpara(struct_para *D_para, struct_data *D)
 {
-int c,l,m,mm;
+int c,l,m,ll,mm;
 	/*initials*/
+	/*P*/
+	D_para->P=gsl_sf_log(0.0002);      /*LMean*/
+
 	/*K*/
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
-			for (m=0;m<D->NoORF[c*D->L+l];m++){
-				mm=D->NoSUM[c*D->L+l]+m;
+			ll=c*D->L+l;
+			for (m=0;m<D->NoORF[ll];m++){
+				mm=D->NoSUM[ll]+m;
 				D_para->K_clm[mm]=D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
-				if(D_para->K_clm[mm]>0){D_para->K_clm[mm]=gsl_sf_log(D_para->K_clm[mm]);}
+				if(D_para->K_clm[mm]>0){
+					D_para->K_clm[mm]=gsl_sf_log(D_para->K_clm[mm]);
+				}
 			}
 		}
 	}
 
+				
 	for (l=0;l<(2*D->L);l++)          {D_para->tau_K_cl[l]=1/(0.4*0.4);}                  /*Precision*/
 
 	for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=gsl_sf_log(0.25);}        /*LMean*/
@@ -262,16 +269,41 @@ int c,l,m,mm;
 	D_para->K_p=gsl_sf_log(0.1);       /*LMean*/
 
 	/*r*/
-	for (l=0;l<D->L;l++){
-		for (m=0;m<D->NoORF[l];m++){
-			mm=D->NoSUM[c*D->L+l]+m;
-			D_para->r_clm[mm]=gsl_sf_log(2.5);
+	for (c=0;c<2;c++){
+		for (l=0;l<D->L;l++){
+			ll=c*D->L+l;
+			for (m=0;m<D->NoORF[l];m++){
+				mm=D->NoSUM[ll]+m;
+				D_para->r_clm[mm]=gsl_sf_log(2.5);   
+			} 
+		}  
+	}
+/*
+	for (c=0;c<2;c++){
+		for (l=0;l<D->L;l++){
+			ll=c*D->L+l;
+			for (m=0;m<D->NoORF[ll];m++){
+				mm=D->NoSUM[ll]+m;
+				nn=c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]/2-1;
+				if(exp(D_para->K_clm[mm])>D->y[nn]){
+					D_para->r_clm[mm]=((D->y[nn]*(exp(D_para->K_clm[mm])-exp(D_para->P)))/(exp(D_para->P)*
+						(exp(D_para->K_clm[mm])-D->y[nn]) ) )/D->x[nn];
+				}
+				else{
+					D_para->r_clm[mm]=0.2;
+				}
+				if(D_para->r_clm[mm]!=0){
+					D_para->r_clm[mm]=gsl_sf_log(D_para->r_clm[mm]);
+				}
+			}
 		}
-	}                          /*LMean*/
+	} */  
+
+               
 
 	for (l=0;l<2*D->L;l++)          {D_para->tau_r_cl[l]=15;}                  /*Precision*/
 
-	for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=gsl_sf_log(2.5);}        /*LMean*/
+	for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=gsl_sf_log(1);}     	   /*LMean*/
 	D_para->sigma_r_o=16;               /*Precision*/
 
 	D_para->r_p=gsl_sf_log(2.5);       /*LMean*/
@@ -281,8 +313,7 @@ int c,l,m,mm;
 	D_para->sigma_nu=0.0025;   /*Precision for lMean*/
 
 	D_para->nu_p=18;   /*LMean*/
-	/*P*/
-	D_para->P=gsl_sf_log(0.0002);      /*LMean*/
+
 	
 	for (l=0;l<D->L;l++)          {D_para->gamma[l]=0;} 
 
@@ -293,8 +324,8 @@ int c,l,m,mm;
 	D_para->beta[0]=gsl_sf_log(1);
 	D_para->alpha[1]=gsl_sf_log(1);
 	D_para->beta[1]=gsl_sf_log(1);  
-	D_para->sigma_gamma=1;
-	D_para->sigma_omega=1;
+	D_para->sigma_gamma=1/4;
+	D_para->sigma_omega=1/3;
 	D_para->upsilon_c[0]=1; 
 	D_para->upsilon_c[1]=1;       D_para->sigma_upsilon=1;
 	D_para->upsilon_p=1;
@@ -310,7 +341,7 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->sigma_K=13;               D_priors->phi_K=3;               /*Gamma  Shape; Scale */
 	D_priors->eta_K_p=13;               D_priors->psi_K_o=3;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=13;               D_priors->phi_r=3;               /*Gamma  Shape; Scale */
+	D_priors->sigma_r=-1;               D_priors->phi_r=3;               /*Gamma  Shape; Scale */
 	D_priors->eta_r_p=13;               D_priors->psi_r_o=3;             /*Gamma  Shape; Scale */
 	/*nu*/
 	D_priors->eta_nu_p=15;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
@@ -319,7 +350,7 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1;      /*Normal  LMean; Precisions */
 	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1;      /*Normal  LMean; Precisions */
 	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.01;   /*Normal  LMean; Precisions */
+	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.00001;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
 
 	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
