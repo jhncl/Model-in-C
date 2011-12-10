@@ -313,8 +313,8 @@ double aug_delta(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *
 		F=D_para->K_clm[mm]-exp(D_para->alpha[1])*(D_para->K_o_l[l]);
 		F1=D_para->r_clm[mm]-exp(D_para->alpha[1])*(D_para->r_o_l[l]);
 		SUMa=SUMa*(
-			sqrt(exp(D_para->tau_K_cl[ll]) *  exp(-0.5*exp(D_para->tau_K_cl[ll])*F*F  ) )*
-			sqrt(exp(D_para->tau_r_cl[ll]) *  exp(-0.5*exp(D_para->tau_r_cl[ll])*F1*F1  ) ) );
+			sqrt(exp(D_para->tau_K_cl[ll])) *  exp(-0.5*exp(D_para->tau_K_cl[ll])*F*F)*
+			sqrt(exp(D_para->tau_r_cl[ll])) *  exp(-0.5*exp(D_para->tau_r_cl[ll])*F1*F1) );
 	}	
 
 SUMa=(1-D_priors->p)*SUMa;
@@ -324,8 +324,8 @@ SUMa=(1-D_priors->p)*SUMa;
 		F=D_para->K_clm[mm]-exp(D_para->alpha[1])*(D_para->K_o_l[l]+D_para->gamma[l]);
 		F1=D_para->r_clm[mm]-exp(D_para->beta[1])*(D_para->r_o_l[l]+D_para->omega[l]);
 		SUMb=SUMb*(
-			 sqrt(exp(D_para->tau_K_cl[ll]) *  exp(-0.5*exp(D_para->tau_K_cl[ll])*F*F  ) )*
-			 sqrt(exp(D_para->tau_r_cl[ll]) *  exp(-0.5*exp(D_para->tau_r_cl[ll])*F1*F1  ) ) );
+			 sqrt(exp(D_para->tau_K_cl[ll])) *  exp(-0.5*exp(D_para->tau_K_cl[ll])*F*F)*
+			 sqrt(exp(D_para->tau_r_cl[ll])) *  exp(-0.5*exp(D_para->tau_r_cl[ll])*F1*F1) );
 		}
 
 SUMb=D_priors->p*SUMb;
