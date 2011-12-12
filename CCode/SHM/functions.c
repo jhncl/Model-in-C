@@ -111,7 +111,7 @@ double MCMC_r_lm(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 
 int gibbsandMHloop(int iter,int thin,gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors ,struct_MH *D_MH,int print){
 int i,j,l,m,mm;
-	if (print==0){printheader(D);}	
+	if (print==0){/*printheader(D);*/}	
 	for (i=0;i<iter;i++){
 	for (j=0;j<thin;j++){
 		D_para->P=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->P,MCMC_P,-999,-999);
@@ -131,11 +131,11 @@ int i,j,l,m,mm;
 			for (m=0;m<D->NoORF[l];m++){ 
 				mm=D->NoSUM[l]+m;
 				D_para->K_lm[mm]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->K_lm[mm],MCMC_K_lm,l,m);
-				D_para->r_lm[mm]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_r,&D_MH->hr,D_para->r_lm[mm],MCMC_r_lm,l,m);
+				D_para->r_lm[mm]=gsl_min(3.5,MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_r,&D_MH->hr,D_para->r_lm[mm],MCMC_r_lm,l,m));
 			}
 		}
 	}
-	if (print==1){printdata(D,D_para,D_MH);}
+	if (print==1){/*printdata(D,D_para,D_MH);*/}
 	}
 return 0;
 }
