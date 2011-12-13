@@ -10,7 +10,7 @@
 	struct_priors *priors= malloc(sizeof(struct_priors));
 	struct_MH *MH = malloc(sizeof(struct_MH));
 
-	int burn,iters,thin;
+	int burn,iters,thin, CAPL;
 	long seed;
 	const gsl_rng_type * T;
 	gsl_rng * RNG;
@@ -27,14 +27,16 @@
 	iters=atoi(argv[2]);    /*iterations*/
 	thin=atoi(argv[3]);        /*thining*/
 
+	CAPL=atoi(argv[4]);        /*CAP D->L*/
+
         inzstruct_data(data);
 	inzstruct_para(para,data);
 
 	inzstruct_priors(priors);
 	inzstruct_MH(MH);
 
-	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,0);
-	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,1);
+	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,CAPL,0);
+	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,CAPL,1);
 
        	gsl_rng_free(RNG);
 	return 0;

@@ -39,7 +39,7 @@ typedef struct struct_priors {
 
     eta_K_p,                psi_K_o,
     eta_r_p,                psi_r_o,
-    eta_nu_p,               psi_nu,
+    eta_nu,               psi_nu,
 
     K_mu,                   eta_K_mu,
     r_mu,                   eta_r_mu,

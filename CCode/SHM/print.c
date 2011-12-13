@@ -60,8 +60,13 @@ printf ("\n");
 }
 
 void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH *D_MH){
-  int l,m,mm;
-  for (l=0;l<D->L;l++){for (m=0;m<D->NoORF[l];m++){mm=D->NoSUM[l]+m;printf ("%g ",D_para->K_lm[mm]);}}
+	int l,m,mm;
+	for (l=0;l<D->L;l++){
+		for (m=0;m<D->NoORF[l];m++){
+			mm=D->NoSUM[l]+m;
+			printf ("%g ",D_para->K_lm[mm]);
+		}
+	}
 
   for (l=0;l<D->L;l++)            {printf ("%g ",D_para->tau_K_l[l]);}
 

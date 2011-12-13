@@ -6,7 +6,7 @@
 
 int testargc(int argc)
 {
- 	if (argc!=4) {
+ 	if (argc!=5) {
     		perror("argc failed");
     		exit(EXIT_FAILURE);
   	}
@@ -193,10 +193,10 @@ int l,m,mm;
 		}
 	}
 
-	for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=1/(0.4*0.4);}                  /*Precision*/
+	for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=7;}                  /*Precision*/
 
 	for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=gsl_sf_log(0.25);}        /*LMean*/
-	D_para->sigma_K_o=1/(0.6*0.6);               /*Precision*/
+	D_para->sigma_K_o=6;               /*Precision*/
 	D_para->K_p=gsl_sf_log(0.1);       /*LMean*/
 
 	/*r*/
@@ -207,16 +207,16 @@ int l,m,mm;
 		}
 	}                          /*LMean*/
 
-	for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=15;}                  /*Precision*/
+	for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=-1;}                  /*Precision*/
 
 	for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=gsl_sf_log(2.5);}        /*LMean*/
-	D_para->sigma_r_o=16;               /*Precision*/
+	D_para->sigma_r_o=0;               /*Precision*/
 
 	D_para->r_p=gsl_sf_log(2.5);       /*LMean*/
 
 	/*nu*/
 	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=18;}                      /*LMean*/
-	D_para->sigma_nu=0.0025;   /*Precision for lMean*/
+	D_para->sigma_nu=-2.5;   /*Precision for lMean*/
 
 	D_para->nu_p=18;   /*LMean*/
 	/*P*/
@@ -228,13 +228,13 @@ int fillpriors(struct_priors *D_priors)
 {
 	/*Priors*/
 	/*K*/
-	D_priors->sigma_K=1;               D_priors->phi_K=200000;               /*Gamma  Shape; Scale */
-	D_priors->eta_K_p=1;               D_priors->psi_K_o=200000;             /*Gamma  Shape; Scale */
+	D_priors->sigma_K=7;               D_priors->phi_K=1.3;               /*Gamma  Shape; Scale */
+	D_priors->eta_K_p=8;               D_priors->psi_K_o=1;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=1;               D_priors->phi_r=200000;               /*Gamma  Shape; Scale */
-	D_priors->eta_r_p=1;               D_priors->psi_r_o=200000;             /*Gamma  Shape; Scale */
+	D_priors->sigma_r=-1;               D_priors->phi_r=1.2;               /*Gamma  Shape; Scale */
+	D_priors->eta_r_p=1;               D_priors->psi_r_o=1;             /*Gamma  Shape; Scale */
 	/*nu*/
-	D_priors->eta_nu_p=2;              D_priors->psi_nu=200000;              /*Gamma  Shape; Scale */
+	D_priors->eta_nu=-1;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
 
 	/*K*//*r*//*nu*//*P*/
 	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1;      /*Normal  LMean; Precisions */

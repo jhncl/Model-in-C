@@ -1,5 +1,5 @@
 # Makefile for building C stuff with GSL
-
+CAPL=5
 BURN=1
 ITERS=1000
 THIN=1
@@ -12,7 +12,7 @@ CC=gcc
 EXEC=main
 
 test.tab:main
-	./main 1 1 1 > test.tab
+	./main 1 1 1 CAPL> test.tab
 	echo "Done.G^"
 
 main:main.o headers.h datain.o datain.h functions.o functions.h print.o print.h 
