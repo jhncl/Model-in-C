@@ -27,6 +27,8 @@
 	iters=atoi(argv[2]);    /*iterations*/
 	thin=atoi(argv[3]);        /*thining*/
 
+	data->CAPiter=atoi(argv[4]);        /*thining*/
+
         inzstruct_data(data);
 	inzstruct_para(para,data);
 	inzstruct_priors(priors);

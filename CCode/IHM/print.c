@@ -7,7 +7,7 @@ void printheader(struct struct_data *D){
 	for (l=0;l<D->L;l++){
 		printf ("Z_l[%i] ",l);
 	}
-	printf ("sigma_z ");
+	printf ("sigma_Z ");
 	printf ("Z_p ");
 
 
@@ -21,8 +21,6 @@ void printheader(struct struct_data *D){
 
 	printf("alpha ");
 
-	printf("beta ");
-
 	for (l=0;l<D->L;l++){
 		printf ("delta[%i] ",l);
 	}
@@ -33,18 +31,16 @@ void printheader(struct struct_data *D){
 
 	printf("sigma_gamma ");
 
-	for (l=0;l<D->L;l++){
-		printf ("omega[%i] ",l);
-	}
-
-	printf("sigma_omega ");
-
 	printf("upsilon_c[0] ");
 	printf("upsilon_c[1] ");
 
 	printf("sigma_upsilon ");
-
 	printf("upsilon_p ");
+
+	printf("accept_Z ");
+	printf("accept_up ");
+	printf("accept_nu ");
+
 	printf ("\n");
 }
 
@@ -67,8 +63,6 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 
 	printf ("%g ",D_para->alpha[1]);
 
-	printf ("%g ",D_para->beta[1]);
-
 	for (l=0;l<D->L;l++){
 		printf ("%g ",D_para->delta[l]);
 	}
@@ -78,12 +72,6 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	}
 
 	printf ("%g ",D_para->sigma_gamma);
-
-	for (l=0;l<D->L;l++){
-		printf ("%g ",D_para->omega[l]);
-	}
-
-	printf ("%g ",D_para->sigma_omega);
 
 	printf ("%g ",D_para->upsilon_c[0]);
 	printf ("%g ",D_para->upsilon_c[1]);
@@ -96,7 +84,6 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	printf ("%g ",D_MH->accept_up);
 	printf ("%g ",D_MH->accept_nu);
 	printf ("\n");
-  printf ("\n");
 }
 
 

@@ -4,6 +4,8 @@ BURN=1
 ITERS=1000
 THIN=1
 
+CAPiter=1
+
 CFLAGS=-g -ansi -Wall -pedantic -I /usr/include/gsl
 LDFLAGS=-lgsl -lgslcblas
 CC=gcc 
@@ -12,7 +14,7 @@ CC=gcc
 EXEC=main
 
 test.tab:main
-	./main 1 1 1 > test.tab
+	./main 1 1 1 $(CAPiter) > test.tab
 	echo "Done.G^"
 
 main:main.o headers.h datain.o datain.h functions.o functions.h print.o print.h 

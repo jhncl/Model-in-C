@@ -6,7 +6,7 @@
 
 int testargc(int argc)
 {
- 	if (argc!=4) {
+ 	if (argc!=5) {
     		perror("argc failed");
     		exit(EXIT_FAILURE);
   	}
@@ -82,7 +82,7 @@ gsl_matrix *getParticleMatrix(char *filename)
 
 double meanParticleMatrix(gsl_matrix* matrix,int col,int start,int end){
 	int i;
-	double mean;
+	double mean=0;
 	for (i=start;i<=end;i++){
 		mean=mean+gsl_matrix_get(matrix,i,col);
 	}
@@ -97,17 +97,18 @@ double P,K,r;
 gsl_matrix* matrixA=getParticleMatrix(filename);
 gsl_matrix* matrixB=getParticleMatrix(filename2);
 i=D->SHIFTmn+2*D->L+3-1;
-P=exp(meanParticleMatrix(matrixA,i,1,2));
+P=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
+
 for (i=0;i<D->SHIFTmn;i++){
-K=exp(meanParticleMatrix(matrixA,i,1,2));
-r=exp(meanParticleMatrix(matrixA,i+D->SHIFTmn+2*D->L+4-1,1,2));
+K=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
+r=exp(meanParticleMatrix(matrixA,i+D->SHIFTmn+2*D->L+4-1,1,D->CAPiter));
 D->y[i]=(r/log(2*(K-P)/(K-2*P)))*(log(K/P)/log(2));
 }
 i=D->SHIFTmn+2*D->L+3-1;
-P=exp(meanParticleMatrix(matrixB,i,1,2));
+P=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
 for (i=0;i<(D->MAXmn-D->SHIFTmn);i++){
-K=exp(meanParticleMatrix(matrixB,i,1,2));
-r=exp(meanParticleMatrix(matrixB,i+(D->MAXmn-D->SHIFTmn)+2*D->L+4-1,1,2));
+K=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
+r=exp(meanParticleMatrix(matrixB,i+(D->MAXmn-D->SHIFTmn)+2*D->L+4-1,1,D->CAPiter));
 D->y[D->SHIFTmn+i]=(r/log(2*(K-P)/(K-2*P)))*(log(K/P)/log(2));
 }
 return 0;
@@ -229,8 +230,8 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->hZ=0.1;	MH->accept_Z=0;
-	MH->hup=0.1;	MH->accept_up=0;
+	MH->hZ=0.01;	MH->accept_Z=0;
+	MH->hup=0.01;	MH->accept_up=0;
 	MH->hnu=0.1;	MH->accept_nu=0; /*h sd; accept=0*/
 return 0;
 }
@@ -260,13 +261,13 @@ int fillpara(struct_para *D_para, struct_data *D)
 
 	/*initials*/
 	for (l=0;l<D->L;l++){D_para->Z_l[l]=gsl_sf_log(50);}
-	D_para->sigma_Z=1/100;     
-	D_para->Z_p=1;  
+	D_para->sigma_Z=gsl_sf_log(0.0025);     
+	D_para->Z_p=gsl_sf_log(50);  
 
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=18;}          
-	D_para->sigma_nu=0.0025;   
+	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=gsl_sf_log(0.1);}          
+	D_para->sigma_nu=gsl_sf_log(0.01);   
   
-	D_para->nu_p=18;    
+	D_para->nu_p=gsl_sf_log(0.1);    
 
 	for (l=0;l<D->L;l++)          {D_para->gamma[l]=0;} 
 
@@ -274,10 +275,11 @@ int fillpara(struct_para *D_para, struct_data *D)
 
 	D_para->alpha[0]=gsl_sf_log(1);
 	D_para->alpha[1]=gsl_sf_log(1);
-	D_para->sigma_gamma=1/4;
-	D_para->upsilon_c[0]=1; 
-	D_para->upsilon_c[1]=1;       D_para->sigma_upsilon=1;
-	D_para->upsilon_p=1;
+	D_para->sigma_gamma=gsl_sf_log(0.0025);
+	D_para->upsilon_c[0]=gsl_sf_log(1); 
+	D_para->upsilon_c[1]=gsl_sf_log(1);	
+	D_para->sigma_upsilon=gsl_sf_log(0.01);
+	D_para->upsilon_p=gsl_sf_log(1);
 
 return 0;
 }
@@ -288,17 +290,17 @@ int fillpriors(struct_priors *D_priors)
 	/*K*/
 
 
-	D_priors->Z_mu=gsl_sf_log(50);   	   D_priors->eta_Z_mu=1;      /*Normal  LMean; Precisions */
-	D_priors->eta_K=1;           		   D_priors->psi_Z=200000;               /*Gamma  Shape; Scale */
+	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(25*25);      /*Normal  LMean; Precisions */
+	D_priors->eta_Z=gsl_sf_log(0.0025);	D_priors->psi_Z=1/(25*25);               /*Gamma  Shape; Scale */
 
 	/*nu*/
-	D_priors->eta_nu_p=2;			   D_priors->psi_nu=200000;              /*Gamma  Shape; Scale */
-	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
-	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
+	D_priors->eta_nu=1/(25*25);		D_priors->psi_nu=1/(25*25);              /*Gamma  Shape; Scale */
+	D_priors->nu_mu=gsl_sf_log(0.0025);     D_priors->eta_nu_p=1/(25*25);     /*Normal  LMean; Precisions */
+	D_priors->alpha_mu=gsl_sf_log(1);       D_priors->eta_alpha=1/(5*5);
 	D_priors->p=0.01;    
-	D_priors->eta_gamma=1;           	   D_priors->psi_gamma=1;
-	D_priors->eta_upsilon=1;	 	   D_priors->phi_upsilon=1;	    
-	D_priors->upsilon_mu=1;			   D_priors->eta_upsilon_mu=1;
+	D_priors->eta_gamma=1/(25*25);          D_priors->psi_gamma=1/(25*25);
+	D_priors->eta_upsilon=1/(25*25);	D_priors->phi_upsilon=1/(25*25);	    
+	D_priors->upsilon_mu=gsl_sf_log(1);	D_priors->eta_upsilon_p=1/(25*25);
 return 0;
 }
 

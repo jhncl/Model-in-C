@@ -12,7 +12,7 @@
 
 typedef struct struct_data {
   double *y;
-  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTmn,MAXmn;
+  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTmn,MAXmn,CAPiter;
 } struct_data;
 
 typedef struct struct_MH {
@@ -36,16 +36,16 @@ typedef struct struct_para {
 
 typedef struct struct_priors {
   double
-	Z_mu,			eta_Z_mu,
-	eta_K,			psi_Z,
+	Z_mu,			eta_Z_p,
+	eta_Z,			psi_Z,
 
-	eta_nu_p,		psi_nu,
-	nu_mu,			eta_nu_mu,
+	eta_nu,			psi_nu,
+	nu_mu,			eta_nu_p,
 	alpha_mu,		eta_alpha,
 	p,   
 	eta_gamma,		psi_gamma,
 	eta_upsilon,		phi_upsilon,	    
-	upsilon_mu,		eta_upsilon_mu;
+	upsilon_mu,		eta_upsilon_p;
 } struct_priors;
 
 
