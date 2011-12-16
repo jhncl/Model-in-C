@@ -177,7 +177,7 @@ int i,j,l;
 	for (i=0;i<iter;i++){
 		for (j=0;j<thin;j++){
 			D_para->alpha_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hup,D_para->alpha_c[1],MCMC_alpha_c,-999,-999,-999);
-			D_para->sigma_gamma=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hZ,D_para->sigma_gamma,MCMC_sigma_gamma,-999,-999,-999);
+			 D_para->sigma_gamma=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hZ,D_para->sigma_gamma,MCMC_sigma_gamma,-999,-999,-999);
 			D_para->upsilon_c[0]=0;/*MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_up,&D_MH->hup,D_para->upsilon_c[0],MCMC_upsilon_c,0,-999,-999);*/
 			D_para->upsilon_c[1]=0;/*MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_up,&D_MH->hup,D_para->upsilon_c[1],MCMC_upsilon_c,1,-999,-999);*/
 			D_para->sigma_upsilon=0;/*MCMC_base(
