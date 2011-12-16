@@ -21,9 +21,9 @@ typedef struct struct_MH {
 
 typedef struct struct_para {
   double
-    *alpha,
-    *delta,
-    *gamma,	        sigma_gamma,
+    *alpha_c,
+    *delta_l,
+    *gamma_cl,	        sigma_gamma,
     *upsilon_c,       sigma_upsilon,
     upsilon_p,
 
@@ -44,7 +44,7 @@ typedef struct struct_priors {
 	alpha_mu,		eta_alpha,
 	p,   
 	eta_gamma,		psi_gamma,
-	eta_upsilon,		phi_upsilon,	    
+	eta_upsilon,		psi_upsilon,	    
 	upsilon_mu,		eta_upsilon_p;
 } struct_priors;
 

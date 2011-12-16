@@ -109,7 +109,7 @@ return 0;
 int inzstruct_data(struct_data *data)
 {
 	long size;
-	dataLMN("LMNmaxdata.txt",&data->L,&data->M,&data->N,&data->maxy,&data->maxNoTIME);  
+	dataLMN("LMNmaxdataAdam.txt",&data->L,&data->M,&data->N,&data->maxy,&data->maxNoTIME);  
 	testsame(data->L*data->M*data->N,data->maxy);
 
 	size=data->L*data->M*data->N; /*input from file*/ 
@@ -124,16 +124,16 @@ int inzstruct_data(struct_data *data)
     		exit(EXIT_FAILURE);
   	}*/
 
-	datadouble("ydata.txt",data->y,data->L*data->M*data->N);
-        datadouble("xdata.txt",data->x,data->L*data->M*data->N);
-        dataint("NoORFdata.txt",data->NoORF,data->L);
+	datadouble("ydataAdam.txt",data->y,data->L*data->M*data->N);
+        datadouble("xdataAdam.txt",data->x,data->L*data->M*data->N);
+        dataint("NoORFdataAdam.txt",data->NoORF,data->L);
 
 	filldata(data);
 	testsame(data->maxNoTIME,data->SHIFTlmn);
 
 	size=data->SHIFTlmn;/*inputfromfile*/
 	data->NoTIME=malloc(size*sizeof(double));   /*Cycle with SHIFTlm*/
-        dataint("NoTIMEdata.txt",data->NoTIME,data->SHIFTlmn);
+        dataint("NoTIMEdataAdam.txt",data->NoTIME,data->SHIFTlmn);
 
 
 return 0;

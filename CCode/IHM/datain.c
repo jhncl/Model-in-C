@@ -102,14 +102,14 @@ P=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
 for (i=0;i<D->SHIFTmn;i++){
 K=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
 r=exp(meanParticleMatrix(matrixA,i+D->SHIFTmn+2*D->L+4-1,1,D->CAPiter));
-D->y[i]=(r/log(2*(K-P)/(K-2*P)))*(log(K/P)/log(2));
+D->y[i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
 }
 i=D->SHIFTmn+2*D->L+3-1;
 P=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
 for (i=0;i<(D->MAXmn-D->SHIFTmn);i++){
 K=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
 r=exp(meanParticleMatrix(matrixB,i+(D->MAXmn-D->SHIFTmn)+2*D->L+4-1,1,D->CAPiter));
-D->y[D->SHIFTmn+i]=(r/log(2*(K-P)/(K-2*P)))*(log(K/P)/log(2));
+D->y[D->SHIFTmn+i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
 }
 return 0;
 }
@@ -203,7 +203,7 @@ int inzstruct_data(struct_data *data)
 
 	size=data->MAXmn;
 	data->y=malloc(size*sizeof(double));  
-	datadouble("dd.txt","ee.txt",data->y,size,data);
+	datadouble("CCode100Adam.txt","CCode100C.txt",data->y,size,data);
 	/*if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
     		exit(EXIT_FAILURE);
@@ -215,12 +215,12 @@ int inzstruct_para(struct_para *para,struct_data *data)
 {
 	long size;
 	size=data->L;
-	para->delta=malloc(size*sizeof(double));
-	para->gamma=malloc(size*sizeof(double));
+	para->delta_l=malloc(size*sizeof(double));
+	para->gamma_cl=malloc(size*sizeof(double));
 	para->Z_l=malloc(size*sizeof(double));
 	para->nu_l=malloc(size*sizeof(double));
 	size=2;
-	para->alpha=malloc(size*sizeof(double));
+	para->alpha_c=malloc(size*sizeof(double));
 	para->upsilon_c=malloc(size*sizeof(double));
 	fillpara(para,data);
 return 0;
@@ -230,9 +230,9 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->hZ=0.01;	MH->accept_Z=0;
-	MH->hup=0.01;	MH->accept_up=0;
-	MH->hnu=0.1;	MH->accept_nu=0; /*h sd; accept=0*/
+	MH->hZ=0.5;	MH->accept_Z=0;
+	MH->hup=0.1;	MH->accept_up=0;
+	MH->hnu=0.5;	MH->accept_nu=0; /*h sd; accept=0*/
 return 0;
 }
 
@@ -269,16 +269,16 @@ int fillpara(struct_para *D_para, struct_data *D)
   
 	D_para->nu_p=gsl_sf_log(0.1);    
 
-	for (l=0;l<D->L;l++)          {D_para->gamma[l]=0;} 
+	for (l=0;l<D->L;l++)          {D_para->gamma_cl[l]=0;} 
 
-	for (l=0;l<D->L;l++)          {D_para->delta[l]=1;}  
+	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}  
 
-	D_para->alpha[0]=gsl_sf_log(1);
-	D_para->alpha[1]=gsl_sf_log(1);
+	D_para->alpha_c[0]=gsl_sf_log(1);
+	D_para->alpha_c[1]=gsl_sf_log(1);
 	D_para->sigma_gamma=gsl_sf_log(0.0025);
-	D_para->upsilon_c[0]=gsl_sf_log(1); 
-	D_para->upsilon_c[1]=gsl_sf_log(1);	
-	D_para->sigma_upsilon=gsl_sf_log(0.01);
+	D_para->upsilon_c[0]=gsl_sf_log(0.1); 
+	D_para->upsilon_c[1]=gsl_sf_log(0.1);	
+	D_para->sigma_upsilon=2;
 	D_para->upsilon_p=gsl_sf_log(1);
 
 return 0;
@@ -291,16 +291,16 @@ int fillpriors(struct_priors *D_priors)
 
 
 	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(25*25);      /*Normal  LMean; Precisions */
-	D_priors->eta_Z=gsl_sf_log(0.0025);	D_priors->psi_Z=1/(25*25);               /*Gamma  Shape; Scale */
+	D_priors->eta_Z=gsl_sf_log(0.0025);	D_priors->psi_Z=1;               /*Gamma  Shape; Scale */
 
 	/*nu*/
 	D_priors->eta_nu=1/(25*25);		D_priors->psi_nu=1/(25*25);              /*Gamma  Shape; Scale */
 	D_priors->nu_mu=gsl_sf_log(0.0025);     D_priors->eta_nu_p=1/(25*25);     /*Normal  LMean; Precisions */
-	D_priors->alpha_mu=gsl_sf_log(1);       D_priors->eta_alpha=1/(5*5);
-	D_priors->p=0.01;    
+	D_priors->alpha_mu=gsl_sf_log(1);       D_priors->eta_alpha=1;
+	D_priors->p=0.05;    
 	D_priors->eta_gamma=1/(25*25);          D_priors->psi_gamma=1/(25*25);
-	D_priors->eta_upsilon=1/(25*25);	D_priors->phi_upsilon=1/(25*25);	    
-	D_priors->upsilon_mu=gsl_sf_log(1);	D_priors->eta_upsilon_p=1/(25*25);
+	D_priors->eta_upsilon=1/(25*25);	D_priors->psi_upsilon=1;	    
+	D_priors->upsilon_mu=2;			D_priors->eta_upsilon_p=1/(25*25);
 return 0;
 }
 
