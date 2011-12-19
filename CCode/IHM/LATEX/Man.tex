@@ -1,0 +1,62 @@
+\documentclass[11pt,a4paper]{article}
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{times,natbib}
+\usepackage{amsmath,amsfonts,graphicx}
+\usepackage{color}
+
+\begin{document}
+
+\begin{align*}
+c&=1,2 \qquad & \text{(Condition)}\\
+l&=1,...,L_{c} \qquad & \text{(ORF)}\\
+m&=1,...,M_{cl} \qquad & \text{(Repeat)}\\
+\\
+y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{ \upsilon_{c}+\nu_{l}  })^{-1})\\
+\\
+Z_{l} &\sim \operatorname{N}(Z^{p},{(e^{\sigma^{Z}})}^{-1}) &\sigma^{Z} &\sim \operatorname{N}(\eta^{Z},\psi^{Z})\\
+\nu_{l} &\sim \operatorname{N}(\nu^p,{ (e^{{\sigma}^{\nu}} )}^{-1} ) &\sigma^{\nu} &\sim \operatorname{N}(\eta^{\nu}, \psi^{\nu} )\\
+\delta_{l} &\sim Bern(p)\\
+\\
+\gamma_{cl}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(0,{(e^{\sigma^{\gamma}})}^{-1}) & \text{if } c=1.
+\end{cases}
+&\sigma^{\gamma}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\eta^{\gamma},{(\psi^{\gamma})}^{-1}) & \text{if } c=1.
+\end{cases}\\
+\\
+\alpha_{c}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\alpha^\mu,\eta^{\alpha}) & \text{if } c=1.
+\end{cases}\\
+\upsilon_{c}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\upsilon^p,({e^{\sigma^{\upsilon}}})^{-1}) & \text{if } c=1.
+\end{cases}
+&\sigma^{\upsilon} &\sim \operatorname{N}(\eta^{\upsilon}, (\psi^{\upsilon})^{-1} )\\
+\\
+Z^{p} &\sim N(Z^{\mu},{(\eta^{Z,p})}^{-1}) \\
+\nu^p &\sim \operatorname{N}(\nu^{\mu}, (\eta^{\nu,p})^{-1} )\\
+\upsilon^p &\sim \operatorname{N}(\upsilon^{\mu},({\eta^{\upsilon,p}})^{-1})\\
+\end{align*}
+
+\include{Z_l}
+
+\include{lc}
+
+\include{p}
+
+\end{document}
+
+
+\sqrt{\frac{}{2\pi}} e^{-\frac{1}{2}()^{2} }
+
+\prod_{l=1}^{L}\prod_{m=1}^{m_{l}}
+
+\sum_{l=1}^{L}\sum_{m=1}^{M_{l}}

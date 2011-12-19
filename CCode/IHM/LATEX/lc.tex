@@ -1,0 +1,91 @@
+\begin{align*}
+y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{ \upsilon_{c}+\nu_{l}  })^{-1})\\
+\gamma_{cl}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(0,{(e^{\sigma^{\gamma}})}^{-1}) & \text{if } c=1.
+\end{cases}\\
+\\
+\pi(\gamma_{2l}|\theta)&=\sqrt{\frac{e^{\sigma^{\gamma}}}{2\pi}} e^{-\frac{1}{2}(\gamma_{2l})^{2}e^{\sigma^{\gamma}} }
+\prod_{m=1}^{m_{l}}\sqrt{\frac{e^{ \upsilon_{2}+\nu_{l} }}{2\pi}} e^{-\frac{1}{2}(y_{2lm}-e^{\alpha_{2}+(Z_{l}+\delta_{l}\gamma_{2l})})^{2}e^{ \upsilon_{2}+\nu_{l} } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(\gamma_{2l}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\gamma_{2l})^{2}e^{\sigma^{\gamma}}
+-
+\sum_{m=1}^{m_{l}}\frac{1}{2}(y_{2lm}-e^{\alpha_{2}+(Z_{l}+\delta_{l}\gamma_{2l})})^{2}e^{\upsilon_{2}+\nu_{l}}
++C
+}
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+\text{$\sigma^{\gamma}$ is similar to both $\sigma^{Z}$ and $\sigma^{\nu}$}\\
+\color{red}{l\pi(\sigma^{\gamma}|\theta)}
+\color{red}{
+=-\frac{1}{2}(\sigma^{\gamma}-\eta^{\gamma})^{2}\psi^{\gamma}
++
+\sum_{m=1}^{m_{l}}\frac{1}{2}(\sigma^{\gamma} -(\gamma_{l})^{2}e^{\sigma^{\gamma}})
++C}
+\end{align*}
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{ \upsilon_{c}+\nu_{l}  })^{-1})\\
+\alpha_{c}&=\begin{cases}
+1  & \text{if } c=0;\\
+\operatorname{N}(\alpha^\mu,\eta^{\alpha}) & \text{if } c=1.
+\end{cases}\\
+\\
+\pi(\alpha_{2}|\theta)&=\sqrt{\frac{\eta^{\alpha}}{2\pi}} e^{-\frac{1}{2}(\alpha_{2}-\alpha^\mu)^{2}\eta^{\alpha} }
+\prod_{l=1}^{L}\prod_{m=1}^{m_{2l}}\sqrt{\frac{e^{ \upsilon_{2}+\nu_{l} }}{2\pi}} e^{-\frac{1}{2}(y_{2lm}-e^{\alpha_{2}+(Z_{l}+\delta_{l}\gamma_{2l})})^{2}e^{ \upsilon_{2}+\nu_{l} } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(\alpha_{2}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\alpha_{2}-\alpha^\mu)^{2}\eta^{\alpha}
+-
+\sum_{l=1}^{L}\sum_{m=1}^{m_{2l}}\frac{1}{2}(y_{2lm}-e^{\alpha_{2}+(Z_{l}+\delta_{l}\gamma_{2l})})^{2}e^{\upsilon_{2}+\nu_{l}}
++C
+}
+\end{align*}
+
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{ \upsilon_{c}+\nu_{l} })^{-1})\\
+\upsilon_{c} &\sim \operatorname{N}(\upsilon^p,({e^{\sigma^{\upsilon}}})^{-1})\\
+\\
+\pi(\upsilon_{c}|\theta)&=\sqrt{\frac{e^{{\sigma}^{\upsilon}}}{2\pi}} e^{-\frac{1}{2}(\upsilon_{c}-\nu^{p})^{2}e^{{\sigma}^{\upsilon}} }
+\prod_{l=1}^{L}\prod_{m=1}^{m_{cl}}\sqrt{\frac{e^{ \upsilon_{c}+\nu_{l} }}{2\pi}} e^{-\frac{1}{2}(y_{clm}-e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})})^{2}e^{ \upsilon_{c}+\nu_{l} } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(\upsilon_{c}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\upsilon_{c}-\upsilon^{p})^{2}e^{\sigma^{\upsilon}}
++
+\sum_{l=1}^{L}\sum_{m=1}^{m_{cl}}\frac{1}{2}(\upsilon_{l} -(y_{clm}-e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})})^{2}e^{\upsilon_{c}+\nu_{l}})
++C
+}
+\end{align*}
+
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+
+\begin{align*}
+\text{$\sigma^{\upsilon}$ is similar to both $\sigma^{Z}$ and $\sigma^{\nu}$}\\
+\color{red}{l\pi(\sigma^{\upsilon}|\theta)}
+\color{red}{
+=-\frac{1}{2}(\sigma^{\upsilon}-\eta^{\upsilon})^{2}\psi^{\upsilon}
++
+\sum_{c=1}^{2}\frac{1}{2}(\sigma^{\upsilon} -(\upsilon_{c}-\upsilon_p)^{2}e^{\sigma^{\upsilon}})
++C}
+\end{align*}

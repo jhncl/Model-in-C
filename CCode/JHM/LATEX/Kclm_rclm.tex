@@ -1,0 +1,66 @@
+\begin{align*}
+y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \upsilon_{l}+\nu_{c}  })^{-1} )\\ 
+K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})},(e^{ \tau_{cl}^K })^{-1})\\
+\\
+\pi(K_{clm}|\theta)&=\sqrt{\frac{e^{ \tau_{cl}^K }}{2\pi}} e^{-\frac{1}{2}(K_{clm}-e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})})^{2}e^{ \tau_{cl}^K } }
+\prod_{n=1}^{N_{clm}}
+\sqrt{\frac{
+e^{ \upsilon_{l}+\nu_{c}}
+}{2\pi}} e^{-\frac{1}{2}(
+y_{clmn}-\hat{y}_{clmn}
+)^{2} 
+e^{ \upsilon_{l}+\nu_{c}}
+}\\
+\text{Taking logs}\\
+\color{red}{l\pi(K_{clm}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(K_{clm}-e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})})^{2}e^{\tau_{cl}^K}
+-
+\sum_{n=1}^{N_{clm}}\frac{1}{2}(y_{clmn}-\hat{y}_{clmn})^{2}e^{\nu_{l}+\upsilon_{c}}
++C
+}
+\\
+\text{Similarly for $r_{clm}$}\\
+\color{red}{l\pi(r_{clm}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(r_{clm}-e^{\beta_{c}+(r_{l}^o+\delta_{l}\omega_{cl})})^{2}e^{\tau_{cl}^r}
+-
+\sum_{n=1}^{N_{clm}}\frac{1}{2}(y_{clmn}-\hat{y}_{clmn})^{2}e^{\nu_{l}+\upsilon_{c}}
++C
+}
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})},(e^{ \tau_{cl}^K })^{-1})\\
+\tau_{cl}^K &\sim \operatorname{N}(\sigma^{K}, (\phi^{K})^{-1} )\\
+\\
+\pi(\tau_{cl}^K |\theta)&=
+\sqrt{\frac{\phi^{K}}{2\pi}} e^{-\frac{1}{2}(\tau_{cl}^K-\sigma^{K})^{2}\phi^{K} }
+\prod_{m=1}^{M_{cl}}
+\sqrt{\frac{
+e^{ \tau_{cl}^K}
+}{2\pi}} e^{-\frac{1}{2}(
+K_{clm}-e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})}
+)^{2} 
+e^{ \tau_{cl}^K}
+}\\
+\text{Taking logs}\\
+\color{red}{l\pi(\tau_{cl}^K|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\tau_{cl}^K-\sigma^{K})^{2}\phi^{K}
++
+\sum_{m=1}^{M_{cl}}\frac{1}{2}(\tau_{cl}^K-(K_{clm}-e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})^{2}}e^{\tau_{cl}^K})
++C}
+\\
+\text{Similarly for $\tau_{cl}^r$}\\
+\color{red}{l\pi(\tau_{cl}^r|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\tau_{cl}^r-\sigma^{r})^{2}\phi^{r}
++
+\sum_{m=1}^{M_{cl}}\frac{1}{2}(\tau_{cl}^r-(r_{clm}-e^{\beta_{c}+(r_{l}^o+\delta_{l}\omega_{cl})^{2}}e^{\tau_{cl}^r})
++C}
+\end{align*}

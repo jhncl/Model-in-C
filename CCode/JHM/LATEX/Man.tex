@@ -1,0 +1,95 @@
+\documentclass[11pt,a4paper]{article}
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{times,natbib}
+\usepackage{amsmath,amsfonts,graphicx}
+\usepackage{color}
+
+\begin{document}
+
+\begin{align*}
+c&=1,2 \qquad & \text{(Condition)}\\
+l&=1,...,L_{c}  \qquad & \text{(ORF)}\\
+m&=1,...,M_{cl}      \qquad & \text{(Repeat)}\\
+n&=1,...,N_{clm}     \qquad & \text{(Time Point)}\\
+\\
+y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \upsilon_{l}+\nu_{c}  })^{-1} ) \\
+\hat{y}_{clmn} &= f(x_{clmn};e^{ K_{clm} } ,e^{ r_{clm} } , e^{ P })\\
+\end{align*}
+
+\begin{align*}
+K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})},(e^{ \tau_{cl}^K })^{-1})\qquad &\tau_{cl}^K &\sim \operatorname{N}(\sigma^{K}, (\phi^{K})^{-1} )\\
+r_{clm} &\sim \operatorname{N}(e^{\beta_{c}+(r_{l}^o+\delta_{l}\omega_{cl})},(e^{ \tau_{cl}^r })^{-1})\qquad &\tau_{cl}^r &\sim \operatorname{N}(\sigma^{r}, (\phi^{r})^{-1} )\\
+\\
+K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )\qquad &\sigma^{K,o} &\sim \operatorname{N}(\eta^{K,o}, (\psi^{K,o})^{-1} )\\
+r_{l}^o &\sim \operatorname{N}(r^p, (e^{ \sigma^{r,o} })^{-1} )\qquad &\sigma^{r,o} &\sim \operatorname{N}(\eta^{r,o}, (\psi^{r,o})^{-1} )\\
+\nu_{l} &\sim \operatorname{N}(\nu_{\mu},(e^{ \sigma^{\nu} })^{-1})\qquad&\sigma^{\nu} &\sim \operatorname{N}(\eta^{\nu}, (\psi^{\nu})^{-1} )\\
+\delta_{l} &\sim Bern(p)\\
+\\
+\gamma_{cl}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(0,{(e^{\sigma^{\gamma}})}^{-1}) & \text{if } c=1.
+\end{cases}
+\qquad
+&\sigma^{\gamma}&=\begin{cases}
+1  & \text{if } c=0;\\
+\operatorname{N}(\eta^{\gamma},\psi^{\gamma})  & \text{if } c=1.
+\end{cases}
+\\
+\omega_{cl}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(0,({e^{\sigma^{\omega}})}^{-1}) & \text{if } c=1.
+\end{cases}
+\qquad
+&\sigma^{\omega}&=\begin{cases}
+1  & \text{if } c=0;\\
+\operatorname{N}(\eta^{\omega},\psi^{\omega}) & \text{if } c=1.
+\end{cases}
+\end{align*}
+
+
+\begin{align*}
+\alpha_{c}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\alpha^{\mu},\eta^{\alpha})  & \text{if } c=1.
+\end{cases}
+\\
+\beta_{c}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\beta^{\mu},\eta^{\beta}) & \text{if } c=1.
+\end{cases}
+\\
+\upsilon_{c}&=\begin{cases}
+0  & \text{if } c=0;\\
+\operatorname{N}(\upsilon^p,({e^{\sigma^{\upsilon}}})^{-1}) & \text{if } c=1.
+\end{cases}
+&\sigma^{\upsilon} &\sim \operatorname{N}(\eta^{\upsilon}, (\psi^{\upsilon})^{-1} )\\
+\end{align*}
+
+\begin{align*}
+K^p &\sim \operatorname{N}(K^\mu, ({\eta^{K,p}})^{-1} )\\
+r^p &\sim \operatorname{N}(r^\mu, ({\eta^{r,p}})^{-1} )\\
+\nu^p &\sim \operatorname{N}(\nu^\mu, ({\eta}^{\nu,p})^{-1} )\\
+\upsilon^p &\sim \operatorname{N}(\upsilon^\mu, (\eta^{\upsilon,p})^{-1} )\\
+P &\sim \operatorname{N}(P^\mu, ({\eta^{P}})^{-1} )\\
+\end{align*}
+
+\newpage
+
+\include{Kclm_rclm}
+\include{K_l_r_l}
+\include{cl}
+\include{K_p_r_p}
+\end{document}
+
+
+\sqrt{\frac{}{2\pi}} e^{-\frac{1}{2}()^{2} }
+
+\prod_{l=1}^{L}\prod_{m=1}^{m_{l}}\prod_{n=1}^{n_{lm}}
+
+\sum_{l=1}^{L}\sum_{m=1}^{M_{l}}\sum_{n=1}^{N_{lm}}
+
