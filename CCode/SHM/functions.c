@@ -49,7 +49,7 @@ double MCMC_K_lm(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 		SUM=F*F*exp(D_para->nu_l[l])+SUM;
 	}	
 	F=para-D_para->K_o_l[l];
-	density=para*para*exp(D_para->tau_K_l[l])+SUM; 
+	density=F*F*exp(D_para->tau_K_l[l])+SUM; 
 	return(-0.5*density);
 }
 
