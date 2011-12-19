@@ -61,7 +61,7 @@ model {
 	sigma_Z~dnorm(eta_Z,psi_Z)
 	sigma_nu~dnorm(eta_nu,psi_nu)
 	sigma_gamma~dnorm(eta_gamma,psi_gamma)
-	sigma_upsilon<-log(1/10000)#dnorm(eta_upsilon,psi_upsilon)
+	sigma_upsilon<-dnorm(eta_upsilon,psi_upsilon)
 }
 ","model1.bug")
 #############################################

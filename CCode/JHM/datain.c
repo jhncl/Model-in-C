@@ -339,18 +339,18 @@ int fillpriors(struct_priors *D_priors)
 	/*Priors*/
 	/*K*/
 	D_priors->sigma_K=13;               D_priors->phi_K=3;               /*Gamma  Shape; Scale */
-	D_priors->eta_K_p=13;               D_priors->psi_K_o=3;             /*Gamma  Shape; Scale */
+	D_priors->eta_K_o=13;               D_priors->psi_K_o=3;             /*Gamma  Shape; Scale */
 	/*r*/
 	D_priors->sigma_r=-1;               D_priors->phi_r=3;               /*Gamma  Shape; Scale */
-	D_priors->eta_r_p=13;               D_priors->psi_r_o=3;             /*Gamma  Shape; Scale */
+	D_priors->eta_r_o=13;               D_priors->psi_r_o=3;             /*Gamma  Shape; Scale */
 	/*nu*/
-	D_priors->eta_nu_p=15;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
+	D_priors->eta_nu=15;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
 
 	/*K*//*r*//*nu*//*P*/
-	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_mu=1;      /*Normal  LMean; Precisions */
-	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_mu=1;      /*Normal  LMean; Precisions */
-	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_mu=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P_mu=1/0.00001;   /*Normal  LMean; Precisions */
+	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_p=1;      /*Normal  LMean; Precisions */
+	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_p=1;      /*Normal  LMean; Precisions */
+	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_p=1;     /*Normal  LMean; Precisions */
+	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P=1/0.00001;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
 
 	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
@@ -358,8 +358,8 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->p=0.05;    
 	D_priors->eta_gamma=1;           	   D_priors->psi_gamma=1;
 	D_priors->eta_omega=1;           	   D_priors->psi_omega=1;
-	D_priors->eta_upsilon=1;	 	   D_priors->phi_upsilon=1;	    
-	D_priors->upsilon_mu=1;			   D_priors->eta_upsilon_mu=1;
+	D_priors->eta_upsilon=1;	 	   D_priors->psi_upsilon=1;	    
+	D_priors->upsilon_mu=1;			   D_priors->eta_upsilon=1;
 
 
 return 0;

@@ -276,8 +276,8 @@ int fillpara(struct_para *D_para, struct_data *D)
 	D_para->alpha_c[0]=gsl_sf_log(1);
 	D_para->alpha_c[1]=gsl_sf_log(1);
 	D_para->sigma_gamma=gsl_sf_log(0.0025);
-	D_para->upsilon_c[0]=gsl_sf_log(0.1); 
-	D_para->upsilon_c[1]=gsl_sf_log(0.1);	
+	D_para->upsilon_c[0]=0; 
+	D_para->upsilon_c[1]=0;	
 	D_para->sigma_upsilon=2;
 	D_para->upsilon_p=gsl_sf_log(1);
 

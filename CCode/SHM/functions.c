@@ -45,10 +45,11 @@ double MCMC_K_lm(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 	mm=D->NoSUM[l]+m;
 	for (n=0;n<D->NoTIME[mm];n++){
 		nn=l*D->M*D->N + m*D->N + n;
-		F=logistic_function_E(D->x[nn],para, D_para->r_lm[mm],D_para->P);
-		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l]);
+		F=D->y[nn]-logistic_function_E(D->x[nn],para, D_para->r_lm[mm],D_para->P);
+		SUM=F*F*exp(D_para->nu_l[l])+SUM;
 	}	
-	density=para*(para-2*D_para->K_o_l[l])*exp(D_para->tau_K_l[l])+SUM; 
+	F=para-D_para->K_o_l[l];
+	density=para*para*exp(D_para->tau_K_l[l])+SUM; 
 	return(-0.5*density);
 }
 
@@ -58,10 +59,11 @@ double MCMC_r_lm(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 	mm=D->NoSUM[l]+m;
 	for (n=0;n<D->NoTIME[mm];n++){
 		nn=l*D->M*D->N + m*D->N + n;
-		F=logistic_function_E(D->x[nn], D_para->K_lm[mm],para,D_para->P);	
-		SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l]);
+		F=D->y[nn]-logistic_function_E(D->x[nn], D_para->K_lm[mm],para,D_para->P);	
+		SUM=F*F*exp(D_para->nu_l[l])+SUM;
 	}	
-	density=para*(para-2*D_para->r_o_l[l])*exp(D_para->tau_r_l[l])+SUM; 
+	F=para-D_para->r_o_l[l];
+	density=F*F*exp(D_para->tau_r_l[l])+SUM; 
 	return(-0.5*density); 
 }
 
@@ -72,9 +74,10 @@ double MCMC_tau_K_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,d
 	for (m=0;m<D->NoORF[l];m++){
 		mm=D->NoSUM[l]+m;
 		F=D_para->K_lm[mm]-D_para->K_o_l[l];
-		SUM=SUM-para+F*F*exp(para);
+		SUM=-para+F*F*exp(para)+SUM;
 	}	
-	density=para*(para-2*D_priors->sigma_K)*D_priors->phi_K+SUM; 
+	F=para-D_priors->sigma_K;
+	density=F*F*D_priors->phi_K+SUM; 
 	return(-0.5*density); 
 }
 
@@ -84,9 +87,10 @@ double MCMC_tau_r_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,d
 	for (m=0;m<D->NoORF[l];m++){
 		mm=D->NoSUM[l]+m;
 		F=D_para->r_lm[mm]-D_para->r_o_l[l];
-		SUM=SUM-para+F*F*exp(para);
+		SUM=-para+F*F*exp(para)+SUM;
 	}	
-	density=para*(para-2*D_priors->sigma_r)*D_priors->phi_r+SUM; 
+	F=para-D_priors->sigma_r;
+	density=F*F*D_priors->phi_r+SUM; 
 	return(-0.5*density); 
 }
 
@@ -98,10 +102,11 @@ double MCMC_nu_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 		for (n=0;n<D->NoTIME[mm];n++){
 			nn=l*D->M*D->N + m*D->N + n;
 			F=D->y[nn]-logistic_function_E(D->x[nn],D_para->K_lm[mm],D_para->r_lm[mm],D_para->P);
-			SUM=SUM+F*F*exp(para)-para;
+			SUM=-para+F*F*exp(para)+SUM;
 		}
 	}
-	density=para*( para -2*D_para->nu_p )*exp(D_para->sigma_nu)+SUM; 
+	F=para-D_para->nu_p;
+	density=F*F*exp(D_para->sigma_nu)+SUM; 
 	return(-0.5*density); 
 }
 
@@ -109,10 +114,11 @@ double MCMC_nu_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,doub
 double MCMC_sigma_K_o(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int l, int m){
 	double density,SUM=0,F;
 	for (l=0;l<D->L;l++){
-		F=(D_para->K_o_l[l]-D_para->K_p);
-		SUM=SUM-para+F*F*exp(para);
+		F=D_para->K_o_l[l]-D_para->K_p;
+		SUM=-para+F*F*exp(para)+SUM;
 	}	
-	density=para*(para-2*D_priors->eta_K_o)*D_priors->psi_K_o+SUM; 
+	F=para-D_priors->eta_K_o;
+	density=F*F*D_priors->psi_K_o+SUM; 
 	return(-0.5*density); 
 }
 
@@ -120,10 +126,11 @@ double MCMC_sigma_K_o(struct_data *D,struct_para *D_para,struct_priors *D_priors
 double MCMC_sigma_r_o(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int l, int m){
 	double density,SUM=0,F;
 	for (l=0;l<D->L;l++){
-		F=(D_para->r_o_l[l]-D_para->r_p);
-		SUM=SUM-para+F*F*exp(para);
+		F=D_para->r_o_l[l]-D_para->r_p;
+		SUM=-para+F*F*exp(para)+SUM;
 	}	
-	density=para*(para-2*D_priors->eta_r_o)*D_priors->psi_r_o+SUM; 
+	F=para-D_priors->eta_r_o;
+	density=F*F*D_priors->psi_r_o+SUM; 
 	return(-0.5*density); 
 }
 
@@ -132,9 +139,10 @@ double MCMC_sigma_nu(struct_data *D,struct_para *D_para,struct_priors *D_priors,
 	double density,SUM=0,F;
 	for (l=0;l<D->L;l++){
 		F=D_para->nu_l[l]-D_para->nu_p;
-		SUM=SUM-para+F*F*exp(para);
+		SUM=-para+F*F*exp(para)+SUM;
 	}	
-	density=para*(para-2*D_priors->eta_nu)*D_priors->psi_nu+SUM; 
+	F=para-D_priors->eta_nu;
+	density=F*F*D_priors->psi_nu+SUM; 
 	return(-0.5*density); 
 }
 
@@ -146,12 +154,13 @@ double MCMC_P(struct_data *D,struct_para *D_para,struct_priors *D_priors,double 
 			mm=D->NoSUM[l]+m;
 			for (n=0;n<D->NoTIME[mm];n++){
 				nn=l*D->M*D->N + m*D->N + n;
-				F=logistic_function_E(D->x[nn],D_para->K_lm[mm],D_para->r_lm[mm],para);
-				SUM=SUM+F*(F-2*D->y[nn])*exp(D_para->nu_l[l]);
+				F=D->y[nn]-logistic_function_E(D->x[nn],D_para->K_lm[mm],D_para->r_lm[mm],para);
+				SUM=F*F*exp(D_para->nu_l[l])+SUM;
 			}
 		}
 	}
-	density=para*( para -2*D_priors->P_mu )*D_priors->eta_P+SUM;
+	F=para-D_priors->P_mu;
+	density=F*F*D_priors->eta_P+SUM;
 
 	return(-0.5*density); 
 
