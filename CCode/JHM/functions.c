@@ -302,7 +302,7 @@ double MCMC_upsilon_c(struct_data *D,struct_para *D_para,struct_priors *D_priors
 		}
 	}
 	}
-	F=para-D_para->upsilon_p;
+	F=para-D_priors->upsilon_mu;
 	density=F*F*D_para->sigma_upsilon+SUM; 
 	return(-0.5*density); 
 }
@@ -310,7 +310,7 @@ double MCMC_upsilon_c(struct_data *D,struct_para *D_para,struct_priors *D_priors
 double MCMC_sigma_upsilon(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m){
 	double density,F,SUM=0;
 	for (c=0;c<2;c++){
-		F=D_para->upsilon_c[c]-D_para->upsilon_p;
+		F=D_para->upsilon_c[c]-D_priors->upsilon_mu;
 		SUM=-para+F*F*exp(para)+SUM;
 	}	
 	F=para-D_priors->eta_upsilon;
@@ -384,9 +384,6 @@ D_MH->hK=0.0001;
 			D_para->r_p=gauss_sample(RNG,D,0,D->L,D_para->r_o_l,exp(D_para->sigma_r_o),D_priors->r_mu,D_priors->eta_r_p);
 			D_para->nu_p=gauss_sample(RNG,D,0,D->L,D_para->nu_l,exp(D_para->sigma_nu),D_priors->nu_mu,D_priors->eta_nu);
 	
-			D_para->upsilon_p=gauss_sample(RNG,D,0,2,D_para->upsilon_c,D_para->sigma_upsilon,D_priors->upsilon_mu,D_priors->eta_upsilon);
-
-			D_para->upsilon_c[0]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->upsilon_c[0],MCMC_upsilon_c,0,-999,-999);
 			D_para->upsilon_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->upsilon_c[1],MCMC_upsilon_c,1,-999,-999);
 	
 			for (l=0;l<D->L;l++){

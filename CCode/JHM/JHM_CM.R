@@ -108,23 +108,23 @@ QFA.D<-list(x=x,y=y)
 
 
 Priors<-list(
-sigma_K=13,		phi_K=3,
-eta_K_o=13,		psi_K_o=3,
-sigma_r=-1,		phi_r=3,
-eta_r_o=13,		psi_r_o=3,
-eta_nu=15,		psi_nu=1,
+sigma_K=7,		phi_K=1.3,
+eta_K_o=8,		psi_K_o=1,
+sigma_r=-1,		phi_r=1.2,
+eta_r_o=1,		psi_r_o=1,
+eta_nu=-1,		psi_nu=1,
 K_mu=log(0.2192928),	eta_K_p=1,
 r_mu=log(2.5),		eta_r_p=1,
 nu_mu=log(31),		eta_nu_p=1,
-P_mu=log(0.0002),	eta_P_p=1/0.00001,
+P_mu=log(0.0002),	eta_P_p=1/0.01,
 
-alpha_mu=log(1),	eta_alpha=1/3^2,
-beta_mu=log(1),		eta_beta=1/4^2,
+alpha_mu=0,		eta_alpha=1/(1.5*1.5),
+beta_mu=0,		eta_beta=1/(1.5*1.5),
 p=0.05,   
-eta_gamma=1,	psi_gamma=1,
-eta_omega=1,	psi_omega=1,
-eta_upsilon=1,	psi_upsilon=1,	    
-upsilon_mu=1,	eta_upsilon_p=1)
+eta_gamma=-3.583519,	psi_gamma=1/(4*4),
+eta_omega=-3.583519,	psi_omega=1/(4*4),
+eta_upsilon=-3.218,	psi_upsilon=1,	    
+upsilon_mu=0)
 
 write("
 model {
@@ -154,18 +154,17 @@ model {
 		omega_cl[i,1]<-0
 		omega_cl[i,2]~dnorm(0,exp(sigma_omega))
 	}
-	alpha_c[1]<-1
+	alpha_c[1]<-0
 	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
-	beta_c[1]<-1
+	beta_c[1]<-0
 	beta_c[2]~dnorm(beta_mu,eta_beta)
-	upsilon_c[1]~dnorm(upsilon_p,exp(sigma_upsilon))
-	upsilon_c[2]~dnorm(upsilon_p,exp(sigma_upsilon))
+	upsilon_c[1]<-0
+	upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
 
 	
 	K_p ~ dnorm(K_mu,eta_K_p)
 	r_p ~ dnorm(r_mu,eta_r_p)
 	nu_p~dnorm(nu_mu,eta_nu_p)
-	upsilon_p~dnorm(upsilon_mu,eta_upsilon_p)
 	P <- exp(P_L)
 	P_L ~ dnorm(P_mu,eta_P)
 	sigma_K_o~dnorm(eta_K_o,psi_K_o)
@@ -201,7 +200,7 @@ jags <- jags.model('model1.bug',
 'eta_gamma'=QFA.P$eta_gamma,	'psi_gamma'=QFA.P$psi_gamma,
 'eta_omega'=QFA.P$eta_omega,	'psi_omega'=QFA.P$psi_omega,
 'eta_upsilon'=QFA.P$eta_upsilon,	'psi_upsilon'=QFA.P$psi_upsilon,	    
-'upsilon_mu'=QFA.P$upsilon_mu,	'eta_upsilon_p'=QFA.P$eta_upsilon_p
+'upsilon_mu'=QFA.P$upsilon_mu
 ),n.chains = 1,n.adapt = 100)
 date()
 samp<-coda.samples(jags,
@@ -228,8 +227,7 @@ samp<-coda.samples(jags,
 'omega_cl',
 'sigma_omega',
 'upsilon_c',
-'sigma_upsilon',
-'upsilon_p'
+'sigma_upsilon'
 ),
               1000,thin=1)
 
@@ -255,7 +253,6 @@ samp<-coda.samples(jags,
 'K_p',
 'r_p',
 'upsilon_l',
-'upsilon_p',
 'sigma_Ko',
 'sigma_ro',
 'sigma_nu',

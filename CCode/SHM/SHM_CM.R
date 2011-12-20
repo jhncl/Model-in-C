@@ -188,4 +188,110 @@ samp<-coda.samples(jags,
 
 save(samp,file="S_CM1000out3.R")
 
+stop()
+
+M=4042
+pdf(file="testplot2.pdf")
+#K_lm[%i]
+for (i in 1:M){
+j=i
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+}
+
+
+#tau_K_l[%i]
+j=M+1
+for (i in (2*M+3*N+8):(2*M+4*N+7)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);j=j+1
+}
+
+#"K_o_l[%i] 
+j=M+N+1
+for (i in (M+1):(M+N)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);j=j+1
+}
+
+#sigma_K_o ");
+i=2*M+3*N+5
+j=M+2*N+1
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#K_p ");
+i=M+1+N
+j=M+2*N+2
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#"P_l ");
+i=(M+N+2)
+j=M+2*N+3
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#r_lm[%i] 
+j=M+2*N+4
+for (i in (M+2*N+4):(2*M+2*N+3)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#tau_r_l[%i] ",l);
+j=2*M+2*N+4
+for (i in (2*M+4*N+8):(2*M+5*N+7)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#r_o_l[%i] ",l);
+j=2*M+3*N+4
+for (i in (2*M+2*N+4):(2*M+3*N+3)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_r_o ");
+i=2*M+3*N+7
+j=2*M+4*N+4
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#r_p ");
+i=2*M+3*N+4
+j=2*M+4*N+5
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#"nu_l[%i] ",l);
+j=2*M+4*N+6
+for (i in (M+N+3):(M+2*N+2)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_nu ");
+i=2*M+3*N+6
+j=2*M+5*N+6
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#nu_p ");
+i=M+2*N+3
+j=2*M+5*N+7
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+dev.off()
+
+i=M+N+3;j=i+N+1;
+colnames(samp)[i];names(aa)[j]
+
+
 

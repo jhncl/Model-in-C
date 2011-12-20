@@ -60,14 +60,14 @@ y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{
 
 \begin{align*}
 y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{ \upsilon_{c}+\nu_{l} })^{-1})\\
-\upsilon_{c} &\sim \operatorname{N}(\upsilon^p,({e^{\sigma^{\upsilon}}})^{-1})\\
+\upsilon_{c} &\sim \operatorname{N}(\upsilon^{\mu},({e^{\sigma^{\upsilon}}})^{-1})\\
 \\
-\pi(\upsilon_{c}|\theta)&=\sqrt{\frac{e^{{\sigma}^{\upsilon}}}{2\pi}} e^{-\frac{1}{2}(\upsilon_{c}-\nu^{p})^{2}e^{{\sigma}^{\upsilon}} }
+\pi(\upsilon_{c}|\theta)&=\sqrt{\frac{e^{{\sigma}^{\upsilon}}}{2\pi}} e^{-\frac{1}{2}(\upsilon_{c}-\upsilon^{\mu})^{2}e^{{\sigma}^{\upsilon}} }
 \prod_{l=1}^{L}\prod_{m=1}^{m_{cl}}\sqrt{\frac{e^{ \upsilon_{c}+\nu_{l} }}{2\pi}} e^{-\frac{1}{2}(y_{clm}-e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})})^{2}e^{ \upsilon_{c}+\nu_{l} } }\\
 \text{Taking logs}\\
 \color{red}{l\pi(\upsilon_{c}|\theta)}&
 \color{red}{
-=-\frac{1}{2}(\upsilon_{c}-\upsilon^{p})^{2}e^{\sigma^{\upsilon}}
+=-\frac{1}{2}(\upsilon_{c}-\upsilon^{\mu})^{2}e^{\sigma^{\upsilon}}
 +
 \sum_{l=1}^{L}\sum_{m=1}^{m_{cl}}\frac{1}{2}(\upsilon_{l} -(y_{clm}-e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})})^{2}e^{\upsilon_{c}+\nu_{l}})
 +C
@@ -86,6 +86,6 @@ y_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(Z_{l}+\delta_{l}\gamma_{cl})},(e^{
 \color{red}{
 =-\frac{1}{2}(\sigma^{\upsilon}-\eta^{\upsilon})^{2}\psi^{\upsilon}
 +
-\sum_{c=1}^{2}\frac{1}{2}(\sigma^{\upsilon} -(\upsilon_{c}-\upsilon_p)^{2}e^{\sigma^{\upsilon}})
+\frac{1}{2}(\sigma^{\upsilon} -(\upsilon_{2}-\upsilon^{\mu})^{2}e^{\sigma^{\upsilon}})
 +C}
 \end{align*}

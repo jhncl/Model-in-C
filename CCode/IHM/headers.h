@@ -25,7 +25,6 @@ typedef struct struct_para {
     *delta_l,
     *gamma_cl,	        sigma_gamma,
     *upsilon_c,       sigma_upsilon,
-    upsilon_p,
 
     *Z_l,              sigma_Z,         
     *nu_l,             sigma_nu,
@@ -45,7 +44,7 @@ typedef struct struct_priors {
 	p,   
 	eta_gamma,		psi_gamma,
 	eta_upsilon,		psi_upsilon,	    
-	upsilon_mu,		eta_upsilon_p;
+	upsilon_mu;
 } struct_priors;
 
 

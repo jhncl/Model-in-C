@@ -91,15 +91,25 @@ K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}+(K_{l}^o+\delta_{l}\gamma_{cl})},(e
 
 \begin{align*}
 y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \upsilon_{l}+\nu_{c}  })^{-1} ) \\
-\upsilon_{c} &\sim \operatorname{N}(\upsilon_{\mu},(e^{ \sigma^{\upsilon} })^{-1})\\
+\upsilon_{c} &\sim \operatorname{N}(\upsilon^{\mu},(e^{ \sigma^{\upsilon} })^{-1})\\
 \\
 \pi(\upsilon_{2}|\theta)&=\sqrt{\frac{e^{ \sigma^{\upsilon} }}{2\pi}} e^{-\frac{1}{2}(\upsilon_{2}-\upsilon_{\mu})^{2}e^{ \sigma^{\upsilon} } }
 \prod_{l=1}^{L}\prod_{m=1}^{M_{2l}}\sqrt{\frac{e^{ \upsilon_{2} }}{2\pi}} e^{-\frac{1}{2}(y_{clmn}-\hat{y}_{clmn})^{2}e^{ \nu_{l} +\upsilon_{2} } }\\
 \text{Taking logs}\\
 \color{red}{l\pi(\upsilon_{2}|\theta)}&
 \color{red}{
-=-\frac{1}{2}(\upsilon_{2}-\upsilon_{\mu})^{2}e^{ \sigma^{\upsilon} } 
+=-\frac{1}{2}(\upsilon_{2}-\upsilon^{\mu})^{2}e^{ \sigma^{\upsilon} } 
 +
 \sum_{l=1}^{L}\sum_{m=1}^{M_{2l}}\frac{1}{2}(\upsilon_{c}-(y_{clmn}-\hat{y}_{clmn})^{2}e^{\nu_{l}+\upsilon_{c} })
++C}
+\end{align*}
+
+\begin{align*}
+\text{$\sigma^{\upsilon}$ is similar to both $\sigma^{Z}$ and $\sigma^{\nu}$}\\
+\color{red}{l\pi(\sigma^{\upsilon}|\theta)}
+\color{red}{
+=-\frac{1}{2}(\sigma^{\upsilon}-\eta^{\upsilon})^{2}\psi^{\upsilon}
++
+\frac{1}{2}(\sigma^{\upsilon} -(\upsilon_{2}-\upsilon^{\mu})^{2}e^{\sigma^{\upsilon}})
 +C}
 \end{align*}

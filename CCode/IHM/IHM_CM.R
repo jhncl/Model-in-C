@@ -27,43 +27,6 @@ print("P")
 #################################
 p=0.10
 
-################################################
-print("Model")
-################################################
-
-write("
-
-model {
-	for (i in 1:N){
-		for (j in 1:2){
-			for (k in 1:NoORF[i,j]){
-				y[k,j,i]~ dnorm(exp(alpha_c[j]+Z_l[i]+delta_l[i,j]*gamma_cl[i,j]),exp(nu_l[i]+upsilon_c[j]))
-			}
-		}
-		Z_l[i]~dnorm(Z_p,exp(sigma_Z))
-		nu_l[i]~dnorm(nu_p,exp(sigma_nu))
-		delta_l[i,1]<-0
-		delta_l[i,2]~dbern(p)
-
-		gamma_cl[i,1]<-0
-		gamma_cl[i,2]~dnorm(0,exp(sigma_gamma))
-	}
-
-	alpha_c[1]<-0
-	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
-	upsilon_c[1]<-0
-	upsilon_c[2]~dnorm(upsilon_p,exp(sigma_upsilon))
-
-	Z_p~dnorm(Z_mu,eta_Z_p)
-	nu_p~dnorm(nu_mu,eta_nu_p)
-	upsilon_p~dnorm(upsilon_mu,eta_upsilon_p)
-
-	sigma_Z~dnorm(eta_Z,psi_Z)
-	sigma_nu~dnorm(eta_nu,psi_nu)
-	sigma_gamma~dnorm(eta_gamma,psi_gamma)
-	sigma_upsilon<-dnorm(eta_upsilon,psi_upsilon)
-}
-","model1.bug")
 #############################################
 print("Functions")
 ##############################################
@@ -333,6 +296,44 @@ print("TESTING")
 #y<-y[,,1:sample]
 #N=sample
 
+
+################################################
+print("Model")
+################################################
+
+write("
+
+model {
+	for (i in 1:N){
+		for (j in 1:2){
+			for (k in 1:NoORF[i,j]){
+				y[k,j,i]~ dnorm(exp(alpha_c[j]+Z_l[i]+delta_l[i,j]*gamma_cl[i,j]),exp(nu_l[i]+upsilon_c[j]))
+			}
+		}
+		Z_l[i]~dnorm(Z_p,exp(sigma_Z))
+		nu_l[i]~dnorm(nu_p,exp(sigma_nu))
+		delta_l[i,1]<-0
+		delta_l[i,2]~dbern(p)
+
+		gamma_cl[i,1]<-0
+		gamma_cl[i,2]~dnorm(0,exp(sigma_gamma))
+	}
+
+	alpha_c[1]<-0
+	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
+	upsilon_c[1]<-0
+	upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
+
+	Z_p~dnorm(Z_mu,eta_Z_p)
+	nu_p~dnorm(nu_mu,eta_nu_p)
+
+	sigma_Z~dnorm(eta_Z,psi_Z)
+	sigma_nu~dnorm(eta_nu,psi_nu)
+	sigma_gamma~dnorm(eta_gamma,psi_gamma)
+	sigma_upsilon~dnorm(eta_upsilon,psi_upsilon)
+}
+","model1.bug")
+
 ###################################
 print("Fit Model")
 ###################################
@@ -341,15 +342,15 @@ jags <- jags.model('model1.bug',
 data = list('y'=y,
 'NoORF'=NoORF,
 'N'=N,
-'Z_mu'=log(50),	'eta_Z_p'=1/(25*25),  
-'eta_Z'=log(0.0025),	'psi_Z'=1,  
-'eta_nu'=1/(25*25),	'psi_nu'=1/(25*25),
-'nu_mu'=log(0.0025),	'eta_nu_p'=1/(25*25), 
-'alpha_mu'=log(1),	'eta_alpha'=1,
+'Z_mu'=log(50),		'eta_Z_p'=1/(6*6),  
+'eta_Z'=-2.772589,	'psi_Z'=1/(7*7),  
+'eta_nu'=-2.77,		'psi_nu'=1/(3*3),
+'nu_mu'=10.59663,	'eta_nu_p'=1/(5*5), 
+'alpha_mu'=0,		'eta_alpha'=1/(1.5*1.5),
 'p'=0.05,
-'eta_gamma'=1/(25*25),          'psi_gamma'=1/(25*25),
-'eta_upsilon'=1/(25*25),	'psi_upsilon'=1,   
-'upsilon_mu'=2,			'eta_upsilon_p'=1/(25*25)
+'eta_gamma'=-3.583519,          'psi_gamma'=1/(4*4),
+'eta_upsilon'=-3.218,		'psi_upsilon'=1,   
+'upsilon_mu'=0
 ),
 n.chains = 1,n.adapt = 100)
 
@@ -370,8 +371,7 @@ samp<-coda.samples(jags,
 	'alpha_c',
 	'sigma_gamma',
 	'upsilon_c', 
-	'sigma_upsilon',
-	'upsilon_p'
+	'sigma_upsilon'
 ),
             10000,thin=10)
 samp<-samp[[1]]
@@ -424,3 +424,99 @@ print(paste("Plots_Indiv_",work,".pdf",sep=""))
 print(paste("Table_",work,".pdf",sep=""))
 #Table<-read.table("Table_terminal1_full.txt",skip=1)
 stop()########################################################
+
+
+
+
+stop()
+
+L=100
+pdf(file="testplot2.pdf")
+
+#Z_l
+for (i in 1:L){
+j=i
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+}
+
+#sigma_Z
+i=6*L+5
+j=L+1
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#Z_p
+i=L+1
+j=L+2
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#nu_l
+j=L+3
+for (i in (5*L+4):(6*L+3)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_nu
+i=6*L+7
+j=2*L+3
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#nu_p
+i=6*L+4
+j=2*L+4
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#alpha_c[2]
+i=L+3
+j=2*L+5
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#delta_l
+j=2*L+6
+for (i in (2*L+4):(3*L+3)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#gamma_cl
+j=3*L+6
+for (i in (4*L+4):(5*L+3)){
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_gamma
+i=6*L+6
+j=4*L+6
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#upsilon_c
+i=6*L+10
+j=4*L+7
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+
+#sigma_upsilon
+i=6*L+8
+j=4*L+8
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+dev.off()
+
+i=M+N+3;j=i+N+1;
+colnames(samp)[i];names(aa)[j]
+
+
+

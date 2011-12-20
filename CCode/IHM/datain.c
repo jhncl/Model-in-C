@@ -273,34 +273,33 @@ int fillpara(struct_para *D_para, struct_data *D)
 
 	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}  
 
-	D_para->alpha_c[0]=gsl_sf_log(1);
+	D_para->alpha_c[0]=gsl_sf_log(1);/**/
 	D_para->alpha_c[1]=gsl_sf_log(1);
-	D_para->sigma_gamma=gsl_sf_log(0.0025);
-	D_para->upsilon_c[0]=0; 
-	D_para->upsilon_c[1]=0;	
+	D_para->sigma_gamma=gsl_sf_log(1);
+	D_para->upsilon_c[0]=gsl_sf_log(1); /**/
+	D_para->upsilon_c[1]=gsl_sf_log(1);	
 	D_para->sigma_upsilon=2;
-	D_para->upsilon_p=gsl_sf_log(1);
 
 return 0;
 }
 
 int fillpriors(struct_priors *D_priors)
 {
-	/*Priors*/
-	/*K*/
 
-
-	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(25*25);      /*Normal  LMean; Precisions */
-	D_priors->eta_Z=gsl_sf_log(0.0025);	D_priors->psi_Z=1;               /*Gamma  Shape; Scale */
-
-	/*nu*/
-	D_priors->eta_nu=1/(25*25);		D_priors->psi_nu=1/(25*25);              /*Gamma  Shape; Scale */
-	D_priors->nu_mu=gsl_sf_log(0.0025);     D_priors->eta_nu_p=1/(25*25);     /*Normal  LMean; Precisions */
-	D_priors->alpha_mu=gsl_sf_log(1);       D_priors->eta_alpha=1;
+	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(6*6);      
+	D_priors->eta_Z=-2.772589;		D_priors->psi_Z=1/(7*7);  
+/*gsl_sf_log(1/(4*4))*/             
+	D_priors->eta_nu=-2.77;		D_priors->psi_nu=1/(3*3);  
+/*log(1/(4*4))*/
+	D_priors->nu_mu=10.59663;    		D_priors->eta_nu_p=1/(5*5); 
+/*gsl_sf_log(1/(0.005*0.005))*/
+	D_priors->alpha_mu=0;      		D_priors->eta_alpha=1/(1.5*1.5);
 	D_priors->p=0.05;    
-	D_priors->eta_gamma=1/(25*25);          D_priors->psi_gamma=1/(25*25);
-	D_priors->eta_upsilon=1/(25*25);	D_priors->psi_upsilon=1;	    
-	D_priors->upsilon_mu=2;			D_priors->eta_upsilon_p=1/(25*25);
+	D_priors->eta_gamma=-3.583519;		D_priors->psi_gamma=1/(4*4);
+/*log(1/(6*6))*/
+	D_priors->eta_upsilon=-3.218;		D_priors->psi_upsilon=1;
+/*log(1/(5*5))*/	    
+	D_priors->upsilon_mu=0;			
 return 0;
 }
 

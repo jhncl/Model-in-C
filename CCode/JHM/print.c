@@ -78,14 +78,9 @@ void printheader(struct struct_data *D){
 
 	printf("sigma_omega ");
 
-	printf("upsilon_c[0] ");
-	printf("upsilon_c[1] ");
+	printf("upsilon_c ");
 
 	printf("sigma_upsilon ");
-
-	printf("upsilon_p ");
-  
-
 
 	printf ("accept_K ");
 	printf ("accept_r ");
@@ -172,12 +167,10 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 
 	printf ("%g ",D_para->sigma_omega);
 
-	printf ("%g ",D_para->upsilon_c[0]);
 	printf ("%g ",D_para->upsilon_c[1]);
 
 	printf ("%g ",D_para->sigma_upsilon);
-
-	printf ("%g ",D_para->upsilon_p);  
+ 
 
 	printf ("%g ",D_MH->accept_K);
 	printf ("%g ",D_MH->accept_r);

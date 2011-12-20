@@ -326,9 +326,8 @@ int c,l,m,ll,mm;
 	D_para->beta[1]=gsl_sf_log(1);  
 	D_para->sigma_gamma=1/4;
 	D_para->sigma_omega=1/3;
-	D_para->upsilon_c[0]=1; 
-	D_para->upsilon_c[1]=1;       D_para->sigma_upsilon=1;
-	D_para->upsilon_p=1;
+	D_para->upsilon_c[0]=0; 
+	D_para->upsilon_c[1]=0;       D_para->sigma_upsilon=1;
 
 
 return 0;
@@ -338,28 +337,28 @@ int fillpriors(struct_priors *D_priors)
 {
 	/*Priors*/
 	/*K*/
-	D_priors->sigma_K=13;               D_priors->phi_K=3;               /*Gamma  Shape; Scale */
-	D_priors->eta_K_o=13;               D_priors->psi_K_o=3;             /*Gamma  Shape; Scale */
+	D_priors->sigma_K=7;               D_priors->phi_K=1.3;               /*Gamma  Shape; Scale */
+	D_priors->eta_K_o=8;               D_priors->psi_K_o=1;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=-1;               D_priors->phi_r=3;               /*Gamma  Shape; Scale */
-	D_priors->eta_r_o=13;               D_priors->psi_r_o=3;             /*Gamma  Shape; Scale */
+	D_priors->sigma_r=-1;               D_priors->phi_r=1.2;               /*Gamma  Shape; Scale */
+	D_priors->eta_r_o=1;               D_priors->psi_r_o=1;             /*Gamma  Shape; Scale */
 	/*nu*/
-	D_priors->eta_nu=15;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
+	D_priors->eta_nu=-1;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
 
 	/*K*//*r*//*nu*//*P*/
 	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_p=1;      /*Normal  LMean; Precisions */
 	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_p=1;      /*Normal  LMean; Precisions */
 	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_p=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P=1/0.00001;   /*Normal  LMean; Precisions */
+	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P=1/0.01;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
 
-	D_priors->alpha_mu=gsl_sf_log(1);          D_priors->eta_alpha=1/3^2;
-	D_priors->beta_mu=gsl_sf_log(1);           D_priors->eta_beta=1/4^2;
+	D_priors->alpha_mu=0;          D_priors->eta_alpha=1/(1.5*1.5);
+	D_priors->beta_mu=0;           D_priors->eta_beta=1/(1.5*1.5);
 	D_priors->p=0.05;    
-	D_priors->eta_gamma=1;           	   D_priors->psi_gamma=1;
-	D_priors->eta_omega=1;           	   D_priors->psi_omega=1;
-	D_priors->eta_upsilon=1;	 	   D_priors->psi_upsilon=1;	    
-	D_priors->upsilon_mu=1;			   D_priors->eta_upsilon=1;
+	D_priors->eta_gamma=-3.583519;	D_priors->psi_gamma=1/(4*4);
+	D_priors->eta_omega=-3.583519;	D_priors->psi_omega=1/(4*4);
+	D_priors->eta_upsilon=-3.218;	 	   D_priors->psi_upsilon=1;	    
+	D_priors->upsilon_mu=0;	
 
 
 return 0;

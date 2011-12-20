@@ -22,7 +22,6 @@ typedef struct struct_para {
     *gamma,	        sigma_gamma,
     *omega,            sigma_omega,
     *upsilon_c,       sigma_upsilon,
-    upsilon_p,
  
     *K_clm,            *tau_K_cl,
     *r_clm,            *tau_r_cl,
@@ -46,7 +45,7 @@ typedef struct struct_priors {
     eta_gamma,              psi_gamma,
     eta_omega,              psi_omega,
     eta_upsilon,	    psi_upsilon,	    
-    upsilon_mu,		    eta_upsilon_p,
+    upsilon_mu,		   
 
     sigma_K,                phi_K,
     sigma_r,                phi_r,
