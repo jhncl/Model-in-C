@@ -77,10 +77,10 @@ QFA.I$N=1000
 
  QFA.P<-list(
 
- sigma_K=7,               phi_K=1.3,
+ sigma_K=7,               phi_K=0.1,
  eta_K_o=8,               psi_K_o=1,
 
- sigma_r=-1,               phi_r=1.2,
+ sigma_r=-1,               phi_r=0.1,
  eta_r_o=1,               psi_r_o=1,
 
  eta_nu=-1,              psi_nu=1,

@@ -228,10 +228,10 @@ int fillpriors(struct_priors *D_priors)
 {
 	/*Priors*/
 	/*K*/
-	D_priors->sigma_K=7;               D_priors->phi_K=1.3;               /*Gamma  Shape; Scale */
+	D_priors->sigma_K=7;               D_priors->phi_K=0.1;               /*Gamma  Shape; Scale */
 	D_priors->eta_K_o=8;               D_priors->psi_K_o=1;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=-1;               D_priors->phi_r=1.2;               /*Gamma  Shape; Scale */
+	D_priors->sigma_r=-1;               D_priors->phi_r=0.1;               /*Gamma  Shape; Scale */
 	D_priors->eta_r_o=1;               D_priors->psi_r_o=1;             /*Gamma  Shape; Scale */
 	/*nu*/
 	D_priors->eta_nu=-1;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */

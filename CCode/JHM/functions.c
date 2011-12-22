@@ -377,7 +377,7 @@ D_MH->hK=0.0001;
 			D_para->upsilon_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->upsilon_c[1],MCMC_upsilon_c,-999,-999,-999);
 	
 			for (l=0;l<D->L;l++){
-D_MH->hK=1;
+D_MH->hK=0.3;
 				D_para->K_o_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hK,D_para->K_o_l[l],MCMC_K_o_l,-999,l,-999);
 D_MH->hK=0.9;
 				D_para->r_o_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hK,D_para->r_o_l[l],MCMC_r_o_l,-999,l,-999);

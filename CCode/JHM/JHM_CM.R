@@ -140,9 +140,9 @@ write.table(file="LMNmaxdataB1.txt",c(N,max(NoORF_b),max(NoTime_b),length(y)/2,l
 
 
 Priors<-list(
-sigma_K=7,		phi_K=1.3,#
+sigma_K=7,		phi_K=0.1,
 eta_K_o=8,		psi_K_o=1,
-sigma_r=-1,		phi_r=1.2,#
+sigma_r=-1,		phi_r=0.1,
 eta_r_o=1,		psi_r_o=1,
 eta_nu=-1,		psi_nu=1,
 K_mu=log(0.2192928),	eta_K_p=1,
@@ -168,9 +168,9 @@ model {
 				y.hat[m,n,l,c] <- (K_clm[(SHIFT[c]+NoSum[l,c]+m)]*P*exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c]))/(K_clm[(SHIFT[c]+NoSum[l,c]+m)]+P*(exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c])-1))
 				}
 			K_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(K_clm_L[(SHIFT[c]+NoSum[l,c]+m)])
-			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(alpha_c[c]+(K_o_l[l]+delta_l[l,c]*gamma_cl[l,c])),exp(min(1,tau_K_cl[l+(c-1)*N])))
+			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(alpha_c[c]+(K_o_l[l]+delta_l[l,c]*gamma_cl[l,c])),exp(tau_K_cl[l+(c-1)*N]))
          		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[l,c]+m)]))				           
-    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(min(1,tau_r_cl[l+(c-1)*N])))
+    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(tau_r_cl[l+(c-1)*N]))
 			}
 			tau_K_cl[l+(c-1)*N]~dnorm(sigma_K,phi_K)
 			tau_r_cl[l+(c-1)*N]~dnorm(sigma_r,phi_r)
@@ -292,7 +292,7 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              10000,thin=10)
+              100,thin=1)
 
 
 'K_o_l'=init_K_i,
