@@ -10,16 +10,16 @@ double gauss_sample(gsl_rng *RNG, struct_data *D ,int start, int N,double x[],do
 double MCMC_base(gsl_rng *RNG, struct_data *D,struct_para *D_para,struct_priors *D_priors,double *accept,double *h,double para,double (*foo)(struct struct_data *D,struct struct_para *D_para,struct struct_priors *D_priors,double,int,int,int),int c,int l, int m);
 
 double MCMC_P(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
-double MCMC_nu(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
+double MCMC_nu_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_K_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_r_clm(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_K_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_r_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
-double MCMC_alpha(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
-double MCMC_beta(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
-double aug_delta(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors,int l);
-double MCMC_gamma(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
-double MCMC_omega(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
+double MCMC_alpha_c(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
+double MCMC_beta_c(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
+double aug_delta_l(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors,int l);
+double MCMC_gamma_cl(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
+double MCMC_omega_cl(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_sigma_gamma(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_sigma_omega(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);
 double MCMC_upsilon_c(struct_data *D,struct_para *D_para,struct_priors *D_priors,double para,int c,int l, int m);

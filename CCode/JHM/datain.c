@@ -196,15 +196,15 @@ int inzstruct_para(struct_para *para,struct_data *data)
 	para->K_clm=malloc(size*sizeof(double));
 	para->r_clm=malloc(size*sizeof(double));
 	size=data->L;
-	para->delta=malloc(size*sizeof(double));
-	para->gamma=malloc(size*sizeof(double));
-	para->omega=malloc(size*sizeof(double));
+	para->delta_l=malloc(size*sizeof(double));
+	para->gamma_cl=malloc(size*sizeof(double));
+	para->omega_cl=malloc(size*sizeof(double));
 	para->K_o_l=malloc(size*sizeof(double));
 	para->r_o_l=malloc(size*sizeof(double));
 	para->nu_l=malloc(size*sizeof(double));
 	size=2;
-	para->alpha=malloc(size*sizeof(double));
-	para->beta=malloc(size*sizeof(double));
+	para->alpha_c=malloc(size*sizeof(double));
+	para->beta_c=malloc(size*sizeof(double));
 	para->upsilon_c=malloc(size*sizeof(double));
 
 	fillpara(para,data);
@@ -217,7 +217,7 @@ int fillMH(struct_MH *MH)
 {
 	MH->hK=0.0001;	MH->accept_K=0;
 	MH->hr=0.01;	MH->accept_r=0;
-	MH->hnu=0.5;	MH->accept_nu=0;
+	MH->hnu=1.5;	MH->accept_nu=0;
 	MH->hP=0.01;	MH->accept_P=0;  /*h sd; accept=0*/
 return 0;
 }
@@ -315,15 +315,15 @@ int c,l,m,ll,mm;
 	D_para->nu_p=18;   /*LMean*/
 
 	
-	for (l=0;l<D->L;l++)          {D_para->gamma[l]=0;} 
+	for (l=0;l<D->L;l++)          {D_para->gamma_cl[l]=0;} 
 
-	for (l=0;l<D->L;l++)          {D_para->omega[l]=0;}
-	for (l=0;l<D->L;l++)          {D_para->delta[l]=1;}/*!*/  
+	for (l=0;l<D->L;l++)          {D_para->omega_cl[l]=0;}
+	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}/*!*/  
  
-	D_para->alpha[0]=gsl_sf_log(1);
-	D_para->beta[0]=gsl_sf_log(1);
-	D_para->alpha[1]=gsl_sf_log(1);
-	D_para->beta[1]=gsl_sf_log(1);  
+	D_para->alpha_c[0]=gsl_sf_log(1);
+	D_para->beta_c[0]=gsl_sf_log(1);
+	D_para->alpha_c[1]=gsl_sf_log(1);
+	D_para->beta_c[1]=gsl_sf_log(1);  
 	D_para->sigma_gamma=1/4;
 	D_para->sigma_omega=1/3;
 	D_para->upsilon_c[0]=0; 

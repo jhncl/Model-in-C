@@ -16,11 +16,11 @@ typedef struct struct_data {
 
 typedef struct struct_para {
   double
-    *alpha,
-    *beta,
-    *delta,
-    *gamma,	        sigma_gamma,
-    *omega,            sigma_omega,
+    *alpha_c,
+    *beta_c,
+    *delta_l,
+    *gamma_cl,	        sigma_gamma,
+    *omega_cl,            sigma_omega,
     *upsilon_c,       sigma_upsilon,
  
     *K_clm,            *tau_K_cl,

@@ -31,6 +31,8 @@ IDstrip=unlist(IDstrip)
 IDstrip=na.omit(IDstrip)
 a<-a[a$ID%in%IDstrip,]
 #########
+#######################a<-a[a$ORF%in%unique(a$ORF)[1:5],]
+
 
 a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
 
@@ -71,8 +73,9 @@ IDstrip=unlist(IDstrip)
 IDstrip=na.omit(IDstrip)
 b<-b[b$ID%in%IDstrip,]
 #########
-
+######################################b<-b[b$ORF%in%unique(a$ORF)[1:5],]
 b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
+###########################################ORFuni<-unique(a$ORF)[1:5]
 
 #a<-funcIDORDER(a)
 IDuni<-unique(a$ID)
@@ -107,10 +110,39 @@ if (Scaling==TRUE){y<-funcSCALING(rbind(a,b),y)}
 QFA.D<-list(x=x,y=y)
 
 
+x[is.na(x)]=-999
+y[is.na(y)]=-999
+xx<-aperm(x[,,,1],c(2,1,3))
+yy<-aperm(y[,,,1],c(2,1,3))
+write.table(file="xdataA1.txt",c(xx))
+write.table(file="ydataA1.txt",c(yy))
+
+write.table(file="NoORFdataA1.txt",c(NoORF_a))
+write.table(file="NoTIMEdataA1.txt",c(NoTime_a)[-1])
+write.table(file="LMNmaxdataA1.txt",c(N,max(NoORF_a),max(NoTime_a),length(y)/2,length(NoTime_a[-1])))
+
+xx<-aperm(x[,,,2],c(2,1,3))
+yy<-aperm(y[,,,2],c(2,1,3))
+write.table(file="xdataB1.txt",c(xx))
+write.table(file="ydataB1.txt",c(yy))
+
+write.table(file="NoORFdataB1.txt",c(NoORF_b))
+write.table(file="NoTIMEdataB1.txt",c(NoTime_b)[-1])
+write.table(file="LMNmaxdataB1.txt",c(N,max(NoORF_b),max(NoTime_b),length(y)/2,length(NoTime_b[-1])))
+
+
+
+
+
+
+
+
+
+
 Priors<-list(
-sigma_K=7,		phi_K=1.3,
+sigma_K=7,		phi_K=1.3,#
 eta_K_o=8,		psi_K_o=1,
-sigma_r=-1,		phi_r=1.2,
+sigma_r=-1,		phi_r=1.2,#
 eta_r_o=1,		psi_r_o=1,
 eta_nu=-1,		psi_nu=1,
 K_mu=log(0.2192928),	eta_K_p=1,
@@ -128,31 +160,31 @@ upsilon_mu=0)
 
 write("
 model {
-	for (i in 1:N){
+	for (l in 1:N){
 		for (c in 1:2){
-   		 	for (j in 1:NoORF[i,c]){
-	 		        for (l in 1:NoTime[NoSum[i,c]+j,c]){
-				y[j,l,i,c] ~ dnorm(y.hat[j,l,i,c],exp(upsilon_c[c]+nu_l[l]))
-				y.hat[j,l,i,c] <- (K_clm[(SHIFT[c]+NoSum[i,c]+j)]*P*exp(r_clm[(SHIFT[c]+NoSum[i,c]+j)]*x[j,l,i,c]))/(K_clm[(SHIFT[c]+NoSum[i,c]+j)]+P*(exp(r_clm[(SHIFT[c]+NoSum[i,c]+j)]*x[j,l,i,c])-1))
+   		 	for (m in 1:NoORF[l,c]){
+	 		        for (n in 1:NoTime[NoSum[l,c]+m,c]){
+				y[m,n,l,c] ~ dnorm(y.hat[m,n,l,c],exp(nu_l[l]+upsilon_c[c]))
+				y.hat[m,n,l,c] <- (K_clm[(SHIFT[c]+NoSum[l,c]+m)]*P*exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c]))/(K_clm[(SHIFT[c]+NoSum[l,c]+m)]+P*(exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c])-1))
 				}
-			K_clm[(SHIFT[c]+NoSum[i,c]+j)]<-exp(K_clm_L[(SHIFT[c]+NoSum[i,c]+j)])
-			K_clm_L[(SHIFT[c]+NoSum[i,c]+j)] ~ dnorm(alpha_c[c]+(K_o_l[i]+delta_l[i,c]*gamma_cl[i,c]),exp(tau_K_cl[i+(c-1)*N]))
-         		r_clm[(SHIFT[c]+NoSum[i,c]+j)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[i,c]+j)]))				           
-    			r_clm_L[(SHIFT[c]+NoSum[i,c]+j)] ~ dnorm(beta_c[c]+(r_o_l[i]+delta_l[i,c]*omega_cl[i,c]),exp(tau_r_cl[i+(c-1)*N]))
+			K_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(K_clm_L[(SHIFT[c]+NoSum[l,c]+m)])
+			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(alpha_c[c]+(K_o_l[l]+delta_l[l,c]*gamma_cl[l,c])),exp(min(1,tau_K_cl[l+(c-1)*N])))
+         		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[l,c]+m)]))				           
+    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(min(1,tau_r_cl[l+(c-1)*N])))
 			}
-			tau_K_cl[i+(c-1)*N]~dnorm(sigma_K,phi_K)
-			tau_r_cl[i+(c-1)*N]~dnorm(sigma_r,phi_r)
+			tau_K_cl[l+(c-1)*N]~dnorm(sigma_K,phi_K)
+			tau_r_cl[l+(c-1)*N]~dnorm(sigma_r,phi_r)
 		}
 
-		K_o_l[i] ~ dnorm(K_p,exp(sigma_K_o))
-		r_o_l[i] ~ dnorm(r_p,exp(sigma_r_o))
-		delta_l[i,1]<-0
-                delta_l[i,2]~dbern(p)
-		nu_l[i]~ dnorm(nu_p,exp(sigma_nu))
-		gamma_cl[i,1]<-0
-		gamma_cl[i,2]~dnorm(0,exp(sigma_gamma))
-		omega_cl[i,1]<-0
-		omega_cl[i,2]~dnorm(0,exp(sigma_omega))
+		K_o_l[l]~dnorm(K_p,exp(sigma_K_o))
+		r_o_l[l]~dnorm(r_p,exp(sigma_r_o))
+		nu_l[l]~dnorm(nu_p,exp(sigma_nu))
+		delta_l[l,1]<-0
+                delta_l[l,2]~dbern(p)
+		gamma_cl[l,1]<-0
+		gamma_cl[l,2]~dnorm(0,exp(sigma_gamma))
+		omega_cl[l,1]<-0
+		omega_cl[l,2]~dnorm(0,exp(sigma_omega))
 	}
 	alpha_c[1]<-0
 	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
@@ -162,11 +194,11 @@ model {
 	upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
 
 	
-	K_p ~ dnorm(K_mu,eta_K_p)
-	r_p ~ dnorm(r_mu,eta_r_p)
+	K_p~dnorm(K_mu,eta_K_p)
+	r_p~dnorm(r_mu,eta_r_p)
 	nu_p~dnorm(nu_mu,eta_nu_p)
 	P <- exp(P_L)
-	P_L ~ dnorm(P_mu,eta_P)
+	P_L ~dnorm(P_mu,eta_P)
 	sigma_K_o~dnorm(eta_K_o,psi_K_o)
 	sigma_r_o~dnorm(eta_r_o,psi_r_o)
 	sigma_nu~dnorm(eta_nu,psi_nu)
@@ -176,12 +208,38 @@ model {
 
 }","model1.bug")
 
-
-
-
-
- QFA.P<-Priors
+QFA.P<-Priors
 library("rjags")
+
+vec_Kij<-array(dim=c(max(QFA.I$NoORF),QFA.I$N,2))
+for (c in 1:2){
+for (i in 1:QFA.I$N){
+for (j in 1:QFA.I$NoORF[i,c]){
+vec_Kij[j,i,c]<-na.omit(c(QFA.D$y[j,,i,c]))[length(na.omit(c(QFA.D$y[j,,i,c])))]
+}}}
+init_K_ij<-c(vec_Kij)[!is.na(c(vec_Kij))]
+init_K_ij[init_K_ij<0.0001]=0.0001
+init_K_ij<-log(init_K_ij)
+init_K_i<-colMeans(vec_Kij,na.rm=TRUE)
+init_K_i[init_K_i<0.0001]=0.0001
+init_K_i<-log(init_K_i)[,1]
+#####
+PO<-0.0002706728
+vec_rij<-array(dim=c(max(QFA.I$NoORF),QFA.I$N,2))
+for (c in 1:2){
+for (i in 1:QFA.I$N){
+for (j in 1:QFA.I$NoORF[i]){
+vec<-log(y[j,,i,c]*(vec_Kij[j,i,c]-PO)/(PO*(vec_Kij[j,i,c]-y[j,,i,c])))/x[j,,i,c]
+vec_rij[j,i,c]<-median( vec[is.finite(vec)] )
+}}}
+init_r_ij<-c(vec_rij)[!is.na(c(vec_rij))]
+init_r_ij[init_r_ij<=0]=0.1
+init_r_ij<-log(init_r_ij)
+init_r_i<-colMeans(vec_rij,na.rm=TRUE)
+init_r_i[init_r_i<=0]=0.1
+init_r_i<-log(init_r_i)[,1]
+
+
 jags <- jags.model('model1.bug',
                    data = list('x' = QFA.D$x,'y' = QFA.D$y,'SHIFT'=QFA.I$SHIFT,
 'N' = QFA.I$N,'NoTime' = QFA.I$NoTime,'NoORF' = QFA.I$NoORF,'NoSum' = QFA.I$NoSum, 
@@ -201,7 +259,12 @@ jags <- jags.model('model1.bug',
 'eta_omega'=QFA.P$eta_omega,	'psi_omega'=QFA.P$psi_omega,
 'eta_upsilon'=QFA.P$eta_upsilon,	'psi_upsilon'=QFA.P$psi_upsilon,	    
 'upsilon_mu'=QFA.P$upsilon_mu
-),n.chains = 1,n.adapt = 100)
+),inits=list(
+'K_clm_L'=init_K_ij,
+'r_clm_L'=init_r_ij
+),
+n.chains = 1,n.adapt = 100)
+update(jags,1000)
 date()
 samp<-coda.samples(jags,
  c(
@@ -229,8 +292,11 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              1000,thin=1)
+              10000,thin=10)
 
+
+'K_o_l'=init_K_i,
+	'r_o_l'=init_r_i
 save(samp,file="MTEST2_0.R")
 
 samp<-coda.samples(jags,
@@ -239,7 +305,8 @@ samp<-coda.samples(jags,
 'lnr_ij',
 'K_ij',
 'r_ij',
-'tau_K_l',                                                                      'tau_r_l',                                           
+'tau_K_l',
+'tau_r_l',                                           
 'gamma',  
 'omega',  
 'delta',
@@ -263,3 +330,184 @@ samp<-coda.samples(jags,
               100000,thin=100)
 
 save(samp,file="MTEST2_1.R")
+
+L=50
+M=600
+pdf(file="testplot2.pdf")
+#K_clm
+for (i in 1:M)
+{
+j=i
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+}
+
+#tau_K_cl
+j=M+1
+for (i in (2*M+9*L+15):(2*M+11*L+14))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#K_o_l
+j=M+2*L+1
+for (i in (M+1):(M+L))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_K_o
+i=2*M+9*L+9
+j=M+3*L+1
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#K_p
+i=M+L+1
+j=M+3*L+2
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#P
+i=M+L+2
+j=M+3*L+3
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#r_clm
+j=M+3*L+4
+for (i in (M+8*L+8):(2*M+8*L+7))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#tau_r_cl
+j=2*M+3*L+4
+for (i in (2*M+11*L+15):(2*M+13*L+14))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#r_o_l
+j=2*M+5*L+4
+for (i in (2*M+8*L+8):(2*M+9*L+7))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_r_o
+i=2*M+9*L+13
+j=2*M+6*L+4
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#r_p
+i=2*M+9*L+8
+j=2*M+6*L+5
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+
+
+#nu_l
+j=2*M+6*L+6
+for (i in (M+5*L+7):(M+6*L+6))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_nu
+i=2*M+9*L+11
+j=2*M+7*L+6
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#nu_p
+i=M+6*L+7
+j=2*M+7*L+7
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+
+#alpha_c
+i=M+L+4
+j=2*M+7*L+8
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#beta_c
+i=M+L+6
+j=2*M+7*L+9
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#delta_l
+j=2*M+7*L+10
+for (i in (M+2*L+7):(M+3*L+6))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#gamma_cl
+j=2*M+8*L+10
+for (i in (M+4*L+7):(M+5*L+6))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_gamma
+i=2*M+9*L+10
+j=2*M+9*L+10
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+
+#omega_cl
+j=2*M+9*L+11
+for (i in (M+7*L+8):(M+8*L+7))
+{
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+j=j+1
+}
+
+#sigma_omega
+i=2*M+9*L+12
+j=2*M+10*L+11
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#upsilon_c
+i=2*M+14*L+11
+j=2*M+10*L+12
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+#sigma_upsilon
+i=2*M+9*L+14
+j=2*M+10*L+13
+plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+
+dev.off()
+
+###
+ aa<-read.table("test.txt",header=T)
+
+
