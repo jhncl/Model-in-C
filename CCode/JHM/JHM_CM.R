@@ -3,11 +3,11 @@ library(qfaBayes,lib="~/R")
  Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
 
 DescripControl<-"ExptDescriptionCDC13.txt"
-a<-rod.read(files=Control[1],inoctimes=DescripControl)
+a<-rod.read(files=Control,inoctimes=DescripControl)
 qfa.variables(a)
 Screen<-as.character(unique(a$Screen.Name))
 Treat<-27
-MPlate<-15#as.character(unique(a$MasterPlate.Number))
+MPlate<-as.character(unique(a$MasterPlate.Number))
 a<-funcREMOVE(a,Screen,Treat,MPlate)
 
 Row<-a$Row
@@ -39,12 +39,12 @@ a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
 
 Control<-c("cdc13-1_rad9D_SDLv2_Rpt1.txt","cdc13-1_rad9D_SDLv2_Rpt2.txt","cdc13-1_rad9D_SDLv2_Rpt3.txt","cdc13-1_rad9D_SDLv2_Rpt4.txt")
 DescripControl<-"ExptDescriptionCDC13RAD9.txt"
-b<-rod.read(files=Control[1],inoctimes=DescripControl)
+b<-rod.read(files=Control,inoctimes=DescripControl)
 
 qfa.variables(b)
 Screen<-as.character(unique(b$Screen.Name))
 Treat<-27
-MPlate<-15#as.character(unique(b$MasterPlate.Number))
+MPlate<-as.character(unique(b$MasterPlate.Number))
 b<-funcREMOVE(b,Screen,Treat,MPlate)
 
 
