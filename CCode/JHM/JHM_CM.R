@@ -1,5 +1,8 @@
+filename="M_JHM_100"
+
 library(qfaBayes,lib="~/R")
  library(qfa,lib="~/R")
+library(rjags,lib="~/R")
  Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
 
 DescripControl<-"ExptDescriptionCDC13.txt"
@@ -31,10 +34,13 @@ IDstrip=unlist(IDstrip)
 IDstrip=na.omit(IDstrip)
 a<-a[a$ID%in%IDstrip,]
 #########
-#######################a<-a[a$ORF%in%unique(a$ORF)[1:5],]
-
 
 a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
+
+a<-a[a$ORF%in%unique(a$ORF)[1:100],]#############################################################
+ORFuni=unique(a$ORF)########
+
+
 
 
 Control<-c("cdc13-1_rad9D_SDLv2_Rpt1.txt","cdc13-1_rad9D_SDLv2_Rpt2.txt","cdc13-1_rad9D_SDLv2_Rpt3.txt","cdc13-1_rad9D_SDLv2_Rpt4.txt")
@@ -56,10 +62,7 @@ if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
 }
 
 b$ID<-paste(b$Barcode,b$MasterPlate.Number,Row,Col,sep="")
-ORFuni_b<-unique(b$ORF)
-####
-sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
-####
+
 
 ########
 funcIDlist<-function(x){
@@ -73,9 +76,17 @@ IDstrip=unlist(IDstrip)
 IDstrip=na.omit(IDstrip)
 b<-b[b$ID%in%IDstrip,]
 #########
-######################################b<-b[b$ORF%in%unique(a$ORF)[1:5],]
 b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
-###########################################ORFuni<-unique(a$ORF)[1:5]
+
+b<-b[b$ORF%in%unique(a$ORF)[1:100],]######################################################
+
+ORFuni_b<-unique(b$ORF)[1:100]
+
+####
+sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
+####
+
+ORFuni<-unique(a$ORF)[1:100] ###############################################################
 
 #a<-funcIDORDER(a)
 IDuni<-unique(a$ID)
@@ -259,12 +270,9 @@ jags <- jags.model('model1.bug',
 'eta_omega'=QFA.P$eta_omega,	'psi_omega'=QFA.P$psi_omega,
 'eta_upsilon'=QFA.P$eta_upsilon,	'psi_upsilon'=QFA.P$psi_upsilon,	    
 'upsilon_mu'=QFA.P$upsilon_mu
-),inits=list(
-'K_clm_L'=init_K_ij,
-'r_clm_L'=init_r_ij
 ),
 n.chains = 1,n.adapt = 100)
-update(jags,1000)
+
 date()
 samp<-coda.samples(jags,
  c(
@@ -292,45 +300,76 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              100,thin=1)
+              1000,thin=1)
 
+save(samp,file=paste(filename,"_F0.R",sep=""))
 
-'K_o_l'=init_K_i,
-	'r_o_l'=init_r_i
-save(samp,file="MTEST2_0.R")
+update(jags,10000)
 
 samp<-coda.samples(jags,
  c(
-'lnK_ij',
-'lnr_ij',
-'K_ij',
-'r_ij',
-'tau_K_l',
-'tau_r_l',                                           
-'gamma',  
-'omega',  
-'delta',
+'K_clm_L',
+'tau_K_cl',
 'K_o_l',
-'r_o_l',
-'alpha',
-'beta',
-'nu_c',
-'nu',
-'lnP',
+'sigma_K_o',
 'K_p',
+'P_L',
+'r_clm_L',
+'tau_r_cl',
+'r_o_l',
+'sigma_r_o',
 'r_p',
-'upsilon_l',
-'sigma_Ko',
-'sigma_ro',
+'nu_l',
 'sigma_nu',
-'sigma_upsilon',
+'nu_p',
+'alpha_c',
+'beta_c',
+'delta_l',
+'gamma_cl',
 'sigma_gamma',
-'sigma_omega'
+'omega_cl',
+'sigma_omega',
+'upsilon_c',
+'sigma_upsilon'
+
 ),
-              100000,thin=100)
+              20000,thin=20)
 
-save(samp,file="MTEST2_1.R")
+save(samp,file=paste(filename,"_F1.R",sep=""))
 
+
+samp<-coda.samples(jags,
+ c(
+'K_clm_L',
+'tau_K_cl',
+'K_o_l',
+'sigma_K_o',
+'K_p',
+'P_L',
+'r_clm_L',
+'tau_r_cl',
+'r_o_l',
+'sigma_r_o',
+'r_p',
+'nu_l',
+'sigma_nu',
+'nu_p',
+'alpha_c',
+'beta_c',
+'delta_l',
+'gamma_cl',
+'sigma_gamma',
+'omega_cl',
+'sigma_omega',
+'upsilon_c',
+'sigma_upsilon'
+),
+              1000000,thin=10)
+
+save(samp,file=paste(filename,"_F2.R",sep=""))
+
+
+stop()
 L=50
 M=600
 pdf(file="testplot2.pdf")

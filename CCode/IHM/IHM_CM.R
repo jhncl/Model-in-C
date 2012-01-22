@@ -1,4 +1,11 @@
-#memory.size(4000)#Windows
+filename="M_IHM_100"
+CAPORF=100
+library(qfaBayes,lib="~/R")
+ library(qfa,lib="~/R")
+library(rjags,lib="~/R")
+
+
+
 control<-"CCode100Adam.txt"
 query<-"CCode100C.txt"
 
@@ -25,7 +32,7 @@ CUT=1000
 #################################
 print("P")
 #################################
-p=0.10
+p=0.05
 
 #############################################
 print("Functions")
@@ -217,10 +224,11 @@ print("Preprocessing")
 #####################################################################
 a<-read.table(control,header=TRUE)
 b<-read.table(query,header=TRUE)
-NoORFa<-c(read.table("NoORFdataA1.txt",header=TRUE))$x
-NoORFb<-c(read.table("NoORFdataB1.txt",header=TRUE))$x
 LMN<-read.table("LMNmaxdata.txt",header=TRUE)
-N<-LMN[1,1]
+
+N<-min(LMN[1,1],CAPORF)
+NoORFa<-c(read.table("NoORFdataA1.txt",header=TRUE))$x[1:N]
+NoORFb<-c(read.table("NoORFdataB1.txt",header=TRUE))$x[1:N]
 M<-sum(NoORFa)
 
 P=exp(mean(a[,M+2*N+3]))
@@ -233,6 +241,8 @@ vecMDR[i]<-r[i]/log(2*max(K[i]-P,0)/max(0,K[i]-2*P)) #MDR
 vecMDP[i]<-log(K[i]/P)/log(2) #MDP
 }
 defa<-vecMDR*vecMDP
+M<-sum(NoORFb)
+
 P=exp(mean(b[,M+2*N+3]))
 K<-exp(colMeans(b[1:M]))
 r<-exp(colMeans(b[M+2*N+4-1+c(1:M)]))
@@ -326,8 +336,8 @@ model {
 
 	Z_p~dnorm(Z_mu,eta_Z_p)
 	nu_p~dnorm(nu_mu,eta_nu_p)
-
-	sigma_Z~dnorm(eta_Z,psi_Z)
+sigma_Z<-min(10,sigma_Z_UT)
+	sigma_Z_UT~dnorm(eta_Z,psi_Z)
 	sigma_nu~dnorm(eta_nu,psi_nu)
 	sigma_gamma~dnorm(eta_gamma,psi_gamma)
 	sigma_upsilon~dnorm(eta_upsilon,psi_upsilon)
@@ -357,7 +367,29 @@ n.chains = 1,n.adapt = 100)
 ###################################
 print("Fit Model/UPDATE")
 ###################################
+samp<-coda.samples(jags,
+          c(
+        'Z_l',
+        'sigma_Z',
+        'Z_p',
+        'nu_l',
+        'sigma_nu',
+        'nu_p',
+        'gamma_cl',
+        'delta_l',
+        'alpha_c',
+        'sigma_gamma',
+        'upsilon_c',
+        'sigma_upsilon'
+),
+            1000,thin=1)
+print("1")
+save(samp,file=paste(filename,"_F0.R",sep=""))
+
+print("2")
+
 update(jags, 10000)
+print("3")
 samp<-coda.samples(jags,
           c(
 	'Z_l',
@@ -373,9 +405,33 @@ samp<-coda.samples(jags,
 	'upsilon_c', 
 	'sigma_upsilon'
 ),
-            10000,thin=10)
-samp<-samp[[1]]
-save(samp,file="samp1000.R")
+            1000000,thin=10)
+
+save(samp,file=paste(filename,"_F1.R",sep=""))
+
+
+samp<-coda.samples(jags,
+          c(
+        'Z_l',
+        'sigma_Z',
+        'Z_p',
+        'nu_l',
+        'sigma_nu',
+        'nu_p',
+        'gamma_cl',
+        'delta_l',
+        'alpha_c',
+        'sigma_gamma',
+        'upsilon_c',
+        'sigma_upsilon'
+),
+            1000000,thin=10)
+
+save(samp,file=paste(filename,"_F2.R",sep=""))
+
+
+
+stop()
 
 plot(samp[,colnames(samp)=="upsilon_c[2]"])
 

@@ -1,8 +1,13 @@
-library(rjags)
-library(qfaBayes)
+filename="M_SHM_A_FULL"
 
-Control<-c("cdc13-1_rad9D_SDLv2_Rpt1.txt","cdc13-1_rad9D_SDLv2_Rpt2.txt","cdc13-1_rad9D_SDLv2_Rpt3.txt","cdc13-1_rad9D_SDLv2_Rpt4.txt")
-DescripControl<-"ExptDescriptionCDC13RAD9.txt"
+library(rjags)
+library(qfa,lib="~/R")
+library(qfaBayes,lib="~/R") 
+
+
+Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
+DescripControl<-"ExptDescriptionCDC13.txt"
+
 a<-rod.read(files=Control,inoctimes=DescripControl)
 
 
@@ -72,7 +77,6 @@ write.table(file="LMNmaxdata.txt",c(N,max(NoORF_a),max(NoTime_a),length(y),lengt
 
 
 #################################################
-QFA.I$N=1000
 #################################################
 
  QFA.P<-list(
@@ -155,10 +159,25 @@ samp<-coda.samples(jags,
     'nu_l',             'sigma_nu',
     'nu_p'),
               1000,thin=1)
- update(jags,100000)
+save(samp,file=paste(filename,"_F0.R",sep=""))
+
+
+ update(jags,10000)
 date()
+samp<-coda.samples(jags,
+ c('K_lm_L',            'tau_K_l',
+    'K_o_l',            'sigma_K_o',  
+    'K_p',
+    'P_L',
+    'r_lm_L',            'tau_r_l',
+    'r_o_l',            'sigma_r_o',
+    'r_p',
+    'nu_l',             'sigma_nu',
+    'nu_p'),
+              20000,thin=20)
 
-save(samp,file="S_CM1000out1.R")
+save(samp,file=paste(filename,"_F1.R",sep=""))
+
 
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
@@ -170,23 +189,10 @@ samp<-coda.samples(jags,
     'r_p',
     'nu_l',             'sigma_nu',
     'nu_p'),
-              1000000,thin=10)
+              100000,thin=10)
 
-save(samp,file="S_CM1000out2.R")
+save(samp,file=paste(filename,"_F2.R",sep=""))
 
-samp<-coda.samples(jags,
- c('K_lm_L',            'tau_K_l',
-    'K_o_l',            'sigma_K_o',  
-    'K_p',
-    'P_L',
-    'r_lm_L',            'tau_r_l',
-    'r_o_l',            'sigma_r_o',
-    'r_p',
-    'nu_l',             'sigma_nu',
-    'nu_p'),
-              1000000,thin=10)
-
-save(samp,file="S_CM1000out3.R")
 
 stop()
 
