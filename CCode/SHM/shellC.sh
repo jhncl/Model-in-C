@@ -1,4 +1,13 @@
-#!/bin/bash                                                                                                                                                  
+#!/bin/bash            
+data="AdamCdc13-1" 
+model="SHM"                                                                                                                                     
+ORF="100"
+name="CC_${model}_${data}_${ORF}"
+burn="500000"
+iter="100000"
+thin="10"
+
+cp ~/Model-in-C/CCode/Data/${model}/${data}/* ~/Model-in-C/CCode/${model}/
 
 echo "#!/bin/sh                                                                                                                                              
 hostname                                                                                                                                                     
@@ -6,9 +15,9 @@ make
 sleep 10                                                                                                                                                     
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
-./main 1000 1000 100 >Nov21_1k.R                                                                                                                             
+./main $burn $iter $thin $ORF >${name}.R                                                                                                                             
 date                                                                                                                                                         
-die" > main.sh
+die" > ${name}.sh
 
 echo "#####################                                                                                                                                  
                                                                                                                                                              
@@ -16,7 +25,7 @@ echo "#####################
                                                                                                                                                              
 #####################                                                                                                                                        
                                                                                                                                                              
-Executable = main.sh                                                                                                                                         
+Executable = ${name}.sh                                                                                                                              
                                                                                                                                                              
 #Arguments = I bring you tidings of joy                                                                                                                      
                                                                                                                                                              
@@ -37,7 +46,7 @@ transfer_files = ALWAYS
 Queue                                                                                                                                                        
 " > something.classad
 
-chmod 755 main.sh
+chmod 755 ${name}.sh
 condor_submit something.classad
 sleep 1
 

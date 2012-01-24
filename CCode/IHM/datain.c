@@ -22,95 +22,69 @@ int testsame(int a,int b)
 return 0;
 }
 
-/*READ IN*/
 
-gsl_matrix *getParticleMatrix(char *filename)
+int datadouble(char filename[],char filename2[],struct_data *D)
 {
-    int line_length = 10000000;    
-    int nrows, ncols;
-       
-    FILE* f;  
-    char *pch;
-    char line[10000000];
-    gsl_matrix *particles;
-    
-    
-    f=fopen(filename, "r");
-    if(NULL==f)
-    {
-        fprintf(stderr, "Cannot open file %s\n", filename);
-        exit(1);
-    }
-
-    nrows = 0, ncols = 0;
-    /*Scan once to get the dimensions
-        there doesn't seem to be a realloc matrix function
-    */
-
-    while(fgets(line, line_length, f) != NULL){
-        pch = strtok(line," ");
-        while(nrows == 0 && pch != NULL )
-        {
-            ncols++;
-            pch = strtok(NULL," ");
-        }
-        nrows++;
-    }
-    
-    fclose(f);
-        
-    /*Create matrix and fill up*/
-    particles = gsl_matrix_alloc(nrows, ncols);
-    nrows = 0; ncols = 0;
-    f=fopen(filename, "r");
-      
-    while(fgets(line, line_length, f) != NULL){
-        pch = strtok(line," ");
-        while(pch != NULL )
-        {
-            gsl_matrix_set(particles, nrows, ncols, atof(pch));
-            ncols++;
-            pch = strtok(NULL," ");
-        }
-        ncols = 0;
-        nrows++;
-    }
-    fclose(f);
-    
-    return(particles);    
-}    
-
-double meanParticleMatrix(gsl_matrix* matrix,int col,int start,int end){
 	int i;
-	double mean=0;
-	for (i=start;i<=end;i++){
-		mean=mean+gsl_matrix_get(matrix,i,col);
+	char number[20];
+	double data,*K_lm,*r_lm,P,size;
+	FILE *file;
+	FILE *file2;
+	size=D->SHIFTmn;
+	K_lm=malloc(size*sizeof(double)); 
+	r_lm=malloc(size*sizeof(double)); 
+
+	file=fopen(filename, "r");
+	i=0;
+	if ( file != NULL ){
+		for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
+			fscanf(file, "%c %s",number,number);
+		}
+		for (i=0;i<D->SHIFTmn;i++){
+			fscanf(file, "%c %lf",number,&data);
+			K_lm[i]=data;   
+		}
+		for (i=0;i<2*D->L+3;i++){
+			fscanf(file, "%c %lf",number,&data);
+		}
+		P=data;  
+		for (i=0;i<D->SHIFTmn;i++){
+			fscanf(file, "%c %lf",number,&data);
+			r_lm[i]=data;   
+		}
 	}
-	mean=mean/(end-start+1);
-	return(mean);
-}
+	else{perror(filename);}
+	fclose(file);
 
-int datadouble(char filename[], char filename2[], double datavec[],int length,struct_data *D)
-{
-int i;
-double P,K,r;
-gsl_matrix* matrixA=getParticleMatrix(filename);
-gsl_matrix* matrixB=getParticleMatrix(filename2);
-i=D->SHIFTmn+2*D->L+3-1;
-P=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
+	for (i=0;i<D->SHIFTmn;i++){
+		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P)/gsl_max(0,K_lm[i]-2*P)))*(log(K_lm[i]/P)/log(2));
+	}
 
-for (i=0;i<D->SHIFTmn;i++){
-K=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
-r=exp(meanParticleMatrix(matrixA,i+D->SHIFTmn+2*D->L+4-1,1,D->CAPiter));
-D->y[i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
-}
-i=D->SHIFTmn+2*D->L+3-1;
-P=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
-for (i=0;i<(D->MAXmn-D->SHIFTmn);i++){
-K=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
-r=exp(meanParticleMatrix(matrixB,i+(D->MAXmn-D->SHIFTmn)+2*D->L+4-1,1,D->CAPiter));
-D->y[D->SHIFTmn+i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
-}
+	file2=fopen(filename2, "r");
+	i=0;
+	if ( file != NULL ){
+		for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
+			fscanf(file, "%c %s",number,number);
+		}
+		for (i=0;i<D->SHIFTmn;i++){
+			fscanf(file, "%c %lf",number,&data);
+			K_lm[i]=data;   
+		}
+		for (i=0;i<2*D->L+3;i++){
+			fscanf(file, "%c %lf",number,&data);
+		}
+		P=data;  
+		for (i=0;i<D->SHIFTmn;i++){
+			fscanf(file, "%c %lf",number,&data);
+			r_lm[i]=data;   
+		}
+	}
+	else{perror(filename2);}
+	fclose(file2);
+
+	for (i=0;i<D->SHIFTmn;i++){
+		D->y[D->SHIFTmn+i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P)/gsl_max(0,K_lm[i]-2*P)))*(log(K_lm[i]/P)/log(2));
+	}
 return 0;
 }
 
@@ -203,7 +177,7 @@ int inzstruct_data(struct_data *data)
 
 	size=data->MAXmn;
 	data->y=malloc(size*sizeof(double));  
-	datadouble("CCode100Adam.txt","CCode100C.txt",data->y,size,data);
+	datadouble("CCode100Adam.txt","CCode100C.txt",data);
 	/*if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
     		exit(EXIT_FAILURE);
@@ -230,9 +204,19 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->hZ=0.5;	MH->accept_Z=0;
-	MH->hup=0.1;	MH->accept_up=0;
-	MH->hnu=0.5;	MH->accept_nu=0; /*h sd; accept=0*/
+	MH->halpha_c=0.5;
+	MH->hsigma_gamma=0.5;
+	MH->hupsilon_c=0.5;
+	MH->hsigma_upsilon=0.5;
+	MH->hsigma_nu=0.5;
+	MH->hsigma_Z=0.5;
+	MH->hnu_p=0.5;
+	MH->hgamma_cl=0.5;
+	MH->hZ_l=0.5;
+	MH->hnu_l=0.5;
+	MH->accept_Z=0;
+	MH->accept_up=0;
+	MH->accept_nu=0; /*h sd; accept=0*/
 return 0;
 }
 

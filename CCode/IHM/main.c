@@ -27,16 +27,16 @@
 	iters=atoi(argv[2]);    /*iterations*/
 	thin=atoi(argv[3]);        /*thining*/
 
-	data->CAPiter=atoi(argv[4]);        /*thining*/
+	data->CAPiter=atoi(argv[4]);        /*ORF*/
 
         inzstruct_data(data);
-	inzstruct_para(para,data);
+/*	inzstruct_para(para,data);
 	inzstruct_priors(priors);
 	inzstruct_MH(MH);
 
 	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,0);
 	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,1);
-
+*/
        	gsl_rng_free(RNG);
 	return 0;
 }

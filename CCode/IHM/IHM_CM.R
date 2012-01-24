@@ -1,5 +1,5 @@
 filename="M_IHM_100"
-CAPORF=100
+CAPORF=4292
 library(qfaBayes,lib="~/R")
  library(qfa,lib="~/R")
 library(rjags,lib="~/R")
@@ -483,36 +483,41 @@ stop()########################################################
 
 
 
-
 stop()
 
 L=100
-pdf(file="testplot2.pdf")
+pdf(file="IHMtestplot100_2.pdf")
 
 #Z_l
 for (i in 1:L){
 j=i
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])),type="l");plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 }
 
 #sigma_Z
 i=6*L+5
 j=L+1
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #Z_p
 i=L+1
 j=L+2
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #nu_l
 j=L+3
 for (i in (5*L+4):(6*L+3)){
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 j=j+1
 }
 
@@ -520,25 +525,30 @@ j=j+1
 i=6*L+7
 j=2*L+3
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #nu_p
 i=6*L+4
 j=2*L+4
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #alpha_c[2]
 i=L+3
 j=2*L+5
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #delta_l
 j=2*L+6
 for (i in (2*L+4):(3*L+3)){
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 j=j+1
 }
 
@@ -546,7 +556,9 @@ j=j+1
 j=3*L+6
 for (i in (4*L+4):(5*L+3)){
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 j=j+1
 }
 
@@ -554,21 +566,24 @@ j=j+1
 i=6*L+6
 j=4*L+6
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 #upsilon_c
 i=6*L+10
 j=4*L+7
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 
 #sigma_upsilon
 i=6*L+8
 j=4*L+8
 plot(density(aa[,j]),main=paste(colnames(samp)[i],t.test((aa[,j]),samp[,i])$p.value));lines(density(samp[,i]),col=2); 
-plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));points(samp[,i],col=2);
-
+par(mfrow=c(2,1))
+plot(c(aa[,j]),main=paste(mean(aa[,j])-mean(samp[,i])));plot(samp[,i],col=2,type="l");
+par(mfrow=c(1,1))
 dev.off()
 
 i=M+N+3;j=i+N+1;

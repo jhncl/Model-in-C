@@ -1,5 +1,25 @@
 SHM
+IHM
 JHM
+
+Things To Do:
+Makefile build main should depend on data
+condor grab data and main from within folder i.e. SHM/data100 
+no need for .o files etc. 
+makefile to cp main to second location
+
+
+Data
+
+
+
+
+git clone "****"
+
+git commit -m 'jh'
+git add "file"
+git rm "file"
+git push -u origin master
 
 
 
@@ -24,3 +44,99 @@ Existing Git Repo?
   git push -u origin master
 
 git pull
+
+
+
+spare code 
+
+/*READ IN*/
+
+gsl_matrix *getParticleMatrix(char *filename)
+{
+    int line_length = 10000000;    
+    int nrows, ncols;
+       
+    FILE* f;  
+    char *pch;
+    char line[10000000];
+    gsl_matrix *particles;
+    
+    
+    f=fopen(filename, "r");
+    if(NULL==f)
+    {
+        fprintf(stderr, "Cannot open file %s\n", filename);
+        exit(1);
+    }
+
+    nrows = 0, ncols = 0;
+    /*Scan once to get the dimensions
+        there doesn't seem to be a realloc matrix function
+    */
+
+    while(fgets(line, line_length, f) != NULL){
+        pch = strtok(line," ");
+        while(nrows == 0 && pch != NULL )
+        {
+            ncols++;
+            pch = strtok(NULL," ");
+        }
+        nrows++;
+    }
+    
+    fclose(f);
+        
+    /*Create matrix and fill up*/
+    particles = gsl_matrix_alloc(nrows, ncols);
+    nrows = 0; ncols = 0;
+    f=fopen(filename, "r");
+      
+    while(fgets(line, line_length, f) != NULL){
+        pch = strtok(line," ");
+        while(pch != NULL )
+        {
+            gsl_matrix_set(particles, nrows, ncols, atof(pch));
+            ncols++;
+            pch = strtok(NULL," ");
+        }
+        ncols = 0;
+        nrows++;
+    }
+    fclose(f);
+    
+    return(particles);    
+}    
+
+double meanParticleMatrix(gsl_matrix* matrix,int col,int start,int end){
+	int i;
+	double mean=0;
+	for (i=start;i<=end;i++){
+		mean=mean+gsl_matrix_get(matrix,i,col);
+	}
+	mean=mean/(end-start+1);
+	return(mean);
+}
+
+int datadouble(char filename[], char filename2[], double datavec[],int length,struct_data *D)
+{
+int i;
+double P,K,r;
+gsl_matrix* matrixA=getParticleMatrix(filename);
+gsl_matrix* matrixB=getParticleMatrix(filename2);
+i=D->SHIFTmn+2*D->L+3-1;
+P=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
+
+for (i=0;i<D->SHIFTmn;i++){
+K=exp(meanParticleMatrix(matrixA,i,1,D->CAPiter));
+r=exp(meanParticleMatrix(matrixA,i+D->SHIFTmn+2*D->L+4-1,1,D->CAPiter));
+D->y[i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
+}
+i=D->SHIFTmn+2*D->L+3-1;
+P=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
+for (i=0;i<(D->MAXmn-D->SHIFTmn);i++){
+K=exp(meanParticleMatrix(matrixB,i,1,D->CAPiter));
+r=exp(meanParticleMatrix(matrixB,i+(D->MAXmn-D->SHIFTmn)+2*D->L+4-1,1,D->CAPiter));
+D->y[D->SHIFTmn+i]=(r/log(2*gsl_max(0,K-P)/gsl_max(0,K-2*P)))*(log(K/P)/log(2));
+}
+return 0;
+}

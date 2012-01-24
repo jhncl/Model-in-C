@@ -16,7 +16,18 @@ typedef struct struct_data {
 } struct_data;
 
 typedef struct struct_MH {
-  double hZ,hnu,hup,accept_Z,accept_nu,accept_up;
+  double 
+halpha_c,
+hsigma_gamma,
+hupsilon_c,
+hsigma_upsilon,
+hsigma_nu,
+hsigma_Z,
+hnu_p,
+hgamma_cl,
+hZ_l,
+hnu_l,
+accept_Z,accept_nu,accept_up;
 } struct_MH;
 
 typedef struct struct_para {
