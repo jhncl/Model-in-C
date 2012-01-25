@@ -1,8 +1,8 @@
 filename="M_IHM_100"
 CAPORF=4292
-library(qfaBayes,lib="~/R")
- library(qfa,lib="~/R")
-library(rjags,lib="~/R")
+library(qfaBayes)
+ library(qfa)
+library(rjags)
 
 
 
@@ -353,7 +353,7 @@ data = list('y'=y,
 'NoORF'=NoORF,
 'N'=N,
 'Z_mu'=log(50),		'eta_Z_p'=1/(6*6),  
-'eta_Z'=-2.772589,	'psi_Z'=1/(7*7),  
+'eta_Z'=-6,		'psi_Z'=1/(0.1*0.1),  
 'eta_nu'=-2.77,		'psi_nu'=1/(3*3),
 'nu_mu'=10.59663,	'eta_nu_p'=1/(5*5), 
 'alpha_mu'=0,		'eta_alpha'=1/(1.5*1.5),

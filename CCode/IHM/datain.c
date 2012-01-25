@@ -6,7 +6,7 @@
 
 int testargc(int argc)
 {
- 	if (argc!=5) {
+ 	if (argc!=4) {
     		perror("argc failed");
     		exit(EXIT_FAILURE);
   	}
@@ -27,10 +27,10 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 {
 	int i;
 	char number[20];
-	double data,*K_lm,*r_lm,P,size;
+	double data,*K_lm,*r_lm,P_a,P_b,size;
 	FILE *file;
 	FILE *file2;
-	size=D->SHIFTmn;
+	size=D->MAXmn;
 	K_lm=malloc(size*sizeof(double)); 
 	r_lm=malloc(size*sizeof(double)); 
 
@@ -42,22 +42,22 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 		}
 		for (i=0;i<D->SHIFTmn;i++){
 			fscanf(file, "%c %lf",number,&data);
-			K_lm[i]=data;   
+			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
 			fscanf(file, "%c %lf",number,&data);
 		}
-		P=data;  
+		P_a=exp(data);  
 		for (i=0;i<D->SHIFTmn;i++){
 			fscanf(file, "%c %lf",number,&data);
-			r_lm[i]=data;   
+			r_lm[i]=exp(data);   
 		}
 	}
 	else{perror(filename);}
 	fclose(file);
 
 	for (i=0;i<D->SHIFTmn;i++){
-		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P)/gsl_max(0,K_lm[i]-2*P)))*(log(K_lm[i]/P)/log(2));
+		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
 	}
 
 	file2=fopen(filename2, "r");
@@ -66,24 +66,24 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 		for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
 			fscanf(file, "%c %s",number,number);
 		}
-		for (i=0;i<D->SHIFTmn;i++){
+		for (i=D->SHIFTmn;i<D->MAXmn;i++){
 			fscanf(file, "%c %lf",number,&data);
-			K_lm[i]=data;   
+			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
 			fscanf(file, "%c %lf",number,&data);
 		}
-		P=data;  
-		for (i=0;i<D->SHIFTmn;i++){
+		P_b=exp(data);  
+		for (i=D->SHIFTmn;i<D->MAXmn;i++){
 			fscanf(file, "%c %lf",number,&data);
-			r_lm[i]=data;   
+			r_lm[i]=exp(data);   
 		}
 	}
 	else{perror(filename2);}
 	fclose(file2);
 
-	for (i=0;i<D->SHIFTmn;i++){
-		D->y[D->SHIFTmn+i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P)/gsl_max(0,K_lm[i]-2*P)))*(log(K_lm[i]/P)/log(2));
+	for (i=D->SHIFTmn;i<D->MAXmn;i++){
+		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));
 	}
 return 0;
 }
@@ -271,7 +271,7 @@ int fillpriors(struct_priors *D_priors)
 {
 
 	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(6*6);      
-	D_priors->eta_Z=-2.772589;		D_priors->psi_Z=1/(7*7);  
+	D_priors->eta_Z=-6;		D_priors->psi_Z=1/(0.1*0.1);
 /*gsl_sf_log(1/(4*4))*/             
 	D_priors->eta_nu=-2.77;		D_priors->psi_nu=1/(3*3);  
 /*log(1/(4*4))*/

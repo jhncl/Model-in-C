@@ -12,7 +12,7 @@
 
 typedef struct struct_data {
   double *y;
-  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTmn,MAXmn,CAPiter;
+  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTmn,MAXmn;
 } struct_data;
 
 typedef struct struct_MH {
