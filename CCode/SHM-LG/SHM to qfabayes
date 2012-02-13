@@ -1,0 +1,193 @@
+QFA<-c(QFA.I,QFA.P,QFA.D)
+samp<-samp[[1]]
+
+#########
+iter<-QFA$iter
+thin<-QFA$thin
+
+y<-QFA$y
+x<-QFA$x
+
+N<-QFA$N
+M<-QFA$M
+NoSum<-QFA$NoSum
+NoORF<-QFA$NoORF
+NoTime<-QFA$NoTime
+gene<-QFA$gene
+
+K_s<-QFA$K_s
+r_s<-QFA$r_s
+PO_s<-QFA$PO_s
+beta<-QFA$beta
+tau_s<-QFA$tau_s
+delta<-QFA$delta
+
+alpha<-QFA$alpha
+gamma<-QFA$gamma
+
+alpha_i<-QFA$alpha_i
+gamma_i<-QFA$gamma_i
+alpha_i_tau<-QFA$alpha_i_tau
+gamma_i_tau<-QFA$gamma_i_tau
+
+alpha_ij<-QFA$alpha_ij
+gamma_ij<-QFA$gamma_ij
+alpha_ij_tau<-QFA$alpha_ij_tau
+gamma_ij_tau<-QFA$gamma_ij_tau
+
+delta_mu<-QFA$delta_mu
+delta_sd<-QFA$delta_sd
+
+namesamp<-QFA$namesamp
+K<-QFA$K
+K_i<-QFA$K_i
+K_ij<-QFA$K_ij
+PO<-QFA$PO
+r<-QFA$r
+r_i<-QFA$r_i
+r_ij<-QFA$r_ij
+taui<-QFA$taui
+tau<-QFA$tau
+K_i_tau<-QFA$K_i_tau
+r_i_tau<-QFA$r_i_tau
+K_ij_tau<-QFA$K_ij_tau
+r_ij_tau<-QFA$r_ij_tau
+
+delta_tau<-QFA$delta_tau
+
+
+#########
+M=17308
+K_lm=tau_K_l=K_o_l=sigma_K_o=K_p=P_l=r_lm=tau_r_l=r_o_l=sigma_r_o=r_p=nu_l=nu_p=sigma_nu=0
+aa<-samp
+#K_lm[%i]
+t=1
+for (i in 1:M){
+j=i
+K_lm[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#tau_K_l[%i]
+j=M+1
+for (i in (2*M+3*N+8):(2*M+4*N+7)){
+tau_K_l[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#"K_o_l[%i] 
+j=M+N+1
+for (i in (M+1):(M+N)){
+K_o_l[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#sigma_K_o ");
+i=2*M+3*N+5
+j=M+2*N+1
+sigma_K_o=mean(samp[,i])
+
+t=1
+#K_p ");
+i=M+1+N
+j=M+2*N+2
+K_p=mean(samp[,i])
+
+t=1
+#"P_l ");
+i=(M+N+2)
+j=M+2*N+3
+P_l=mean(samp[,i])
+
+t=1
+#r_lm[%i] 
+j=M+2*N+4
+for (i in (M+2*N+4):(2*M+2*N+3)){
+r_lm[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#tau_r_l[%i] ",l);
+j=2*M+2*N+4
+for (i in (2*M+4*N+8):(2*M+5*N+7)){
+tau_r_l[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#r_o_l[%i] ",l);
+j=2*M+3*N+4
+for (i in (2*M+2*N+4):(2*M+3*N+3)){
+r_o_l[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#sigma_r_o ");
+i=2*M+3*N+7
+j=2*M+4*N+4
+sigma_r_o=mean(samp[,i]);
+
+t=1
+#r_p ");
+i=2*M+3*N+4
+j=2*M+4*N+5
+r_p=mean(samp[,i]);
+
+t=1
+#"nu_l[%i] ",l);
+j=2*M+4*N+6
+for (i in (M+N+3):(M+2*N+2)){
+nu_l[t]=mean(samp[,i]);t=t+1
+j=j+1
+}
+
+t=1
+#sigma_nu ");
+i=2*M+3*N+6
+j=2*M+5*N+6
+sigma_nu=mean(samp[,i]);
+
+t=1
+#nu_p ");
+i=M+2*N+3
+j=2*M+5*N+7
+nu_p=mean(samp[,i]);
+
+
+###
+stop()
+
+K<-exp(K_p)
+K_i<-exp(K_o_l)
+K_ij<-exp(K_lm)
+PO<-exp(P_l)
+r<-exp(r_p)
+r_i<-exp(r_o_l)
+r_ij<-exp(r_lm)
+taui<-exp(nu_l)
+tau<-exp(nu_p)
+K_i_tau<-exp(sigma_K_o)
+r_i_tau<-exp(sigma_r_o)
+K_ij_tau<-exp(tau_K_l)
+r_ij_tau<-exp(tau_r_l)
+#########
+
+
+pdf("plotsJan12_12.pdf")
+for (i in 1:N)
+{
+plot(-1,-1,main=paste(gene[i],"Repeat Curves"),xlab="Time (days)", ylab="Culture Density (AU)",xlim=c(xlimmin,xlimmax),ylim=c(ylimmin,ylimmax))
+for (j in 1:NoORF[i])
+{
+points(x[j,,i],y[j,,i],col=j)
+KK=K_ij[(j+NoSum[i])]
+rr=r_ij[(j+NoSum[i])]
+curve((KK*PO*exp(rr*x))/(KK+PO*(exp(rr*x)-1)), xlimmin, xlimmax,add=TRUE,col=j) 
+}
+}
+dev.off()

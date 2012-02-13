@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{article}
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{times,natbib}
+\usepackage{amsmath,amsfonts,graphicx}
+\usepackage{color}
+
+\begin{document}
+
+\begin{align*}
+l(K_l,K_{lm})=\prod_{m}^{M_{l}}\operatorname{N}(K_l;K_{lm},\frac{1}{e^{\tau_{K}}})=
+\operatorname{N}(K_l;\mu^{*}_{K_l},\frac{1}{\sigma^{*2}_{K_l}})
+\end{align*}
+\begin{align*}
+\mu^{*}_{K_l}=\sum_{m}^{M_{l}} \frac{y_{lm} }{ M_l}
+\qquad 
+{\sigma^{*2}_{K_l}}=M_{l}e^{\tau_{K}} 
+\end{align*}
+\begin{align*}
+l(K,K_{l})=\prod_{l}^{L}\operatorname{N}(K;\mu^{*}_{K_l},\frac{1}{\frac{1}{e^{\sigma^{*2}_{K_l}}}+{\sigma^{*2}_{K_l}}})=
+\operatorname{N}(K;\mu^{*}_{K},{\sigma^{*2}_{K_l}})
+\end{align*}
+
+\begin{align*}
+\left.\mu^{*}_{K}=\sum_{L}^{l}\frac{\mu^{*}_{K_l}}{\frac{1}{e^{{\sigma^{o2}_{K}}}}+{\sigma^{*2}_{K}}} \middle/ \sum_{L}^{l}\frac{1}{\frac{1}{e^{{\sigma^{o2}_{K}}}}+{\sigma^{*2}_{K}}}  \right.
+\qquad 
+\left.{\sigma^{*2}_{K_{l}}}=1\middle/
+\sum_{L}^{l}\frac{1}{\frac{1}{e^{{\sigma^{o2}_{K}}}}+{\sigma^{*2}_{K}}}\right.
+\end{align*}
+\begin{align*}
+\pi(K|K_{lm})=\operatorname{N}(K;\frac{{\sigma^{*2}_{K}} K_{\mu}+\frac{1}{\eta^{p}_{K}}\mu^{*}_K}{{\sigma^{*2}_{K}}+\frac{1}{\eta^{p}_{K}}},\frac{{\sigma^{*2}_{K}} \frac{1}{\eta^{p}_{K}}}{{\sigma^{*2}_{K}}+\frac{1}{\eta^{p}_{K}}} )
+\end{align*}
+\begin{align*}
+\pi(K_{l}|K,K_{lm})=\operatorname{N}(K_l;
+\frac{
+	{\sigma^{*2}_{K_{l}}} K + \frac{1}{ e^{ {\sigma^{o2}_{K}} } } \mu^{*}_{K_{l}}
+	}{
+	{\sigma^{*2}_{K_{l}}} + \frac{1}{ e^{ {\sigma^{o2}_{K}} } }
+	}
+,\frac{
+	{\sigma^{*2}_{K_{l}}} \frac{1}{e^{{\sigma^{o2}_{K}}}}
+	}{
+	{\sigma^{*2}_{K_{l}}}+\frac{1}{e^{{\sigma^{o2}_{K}}}}} )
+\end{align*}
+
+\end{document}

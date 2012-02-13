@@ -1,0 +1,105 @@
+t=0:10
+K=0.15
+P=0.0001
+r=3
+
+load("myfile.RData")
+y=y/max(c(y)[!is.na(c(y))])
+plot(x[1,,1],y[1,,1],ylim=c(0,0.3))
+for (i in 1:6){points(x[i,,1],y[i,,1],col=i)}
+aa=read.table("output.R",header=T)
+
+
+M=384
+T=1
+I=1000
+L=50
+
+max(aa[,1026])/(M*I*T)	#K
+max(aa[,1027])/(M*I*T)	#r
+
+max(aa[,1028])/(L*I*T)	#nu
+
+max(aa[,1029])/(I*T)	#P
+
+
+pdf("ORF_Curves.pdf")
+t=0:10
+L=50
+M=384
+for (l in 1:L){
+plot(x[1,,l],y[1,,l],ylim=c(0,1),main=paste(l-1,ORFuni[l]))
+for (m in 1:NoORF_a[l]){
+points(x[m,,l],y[m,,l],col=m)
+tt=NoSum_a[l]+m
+K=exp(mean(aa[500:1000,tt]))
+r=exp(mean(aa[500:1000,tt+L+M]))
+P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
+lines(t,(K*P*exp(r*t))/(K+P*(exp(r*t)-1)),col=m)
+}
+}
+
+for (l in 1:L){
+for (m in 1:NoORF_a[l]){
+plot(x[m,,l],y[m,,l],col=m,main=paste(l-1,ORFuni[l],m-1))
+tt=NoSum_a[l]+m
+K=exp(mean(aa[900:1000,tt]))
+r=exp(mean(aa[900:1000,tt+L+M]))
+P=exp(mean(aa[900:1000,colnames(aa)=="P"]))
+lines(t,(K*P*exp(r*t))/(K+P*(exp(r*t)-1)),col=m)
+}
+}
+dev.off()
+
+pdf("Diag.pdf")
+par(mfrow=c(3,3))
+for (i in 1:ncol(aa)){
+plot(aa[,i],main=paste(i,names(aa)[i]))
+plot(density(aa[,i]),main=paste(i,names(aa)[i]))
+acf(aa[,i],main=paste(i,names(aa)[i]))
+}
+dev.off()
+
+
+
+
+
+
+
+
+y=(K*P*exp(r*t))/(K+P*(exp(r*t)-1))
+
+
+plot(t,y,ylim=c(0,1))
+
+aa=read.table("output.R",header=T)
+colnames(aa)
+K=exp(mean(aa[,1]))
+r=exp(mean(aa[,15]))
+P=exp(mean(aa[,41]))
+lines(t,(K*P*exp(r*t))/(K+P*(exp(r*t)-1)))
+
+
+
+K=exp(mean(aa[,1022]))
+r=exp(mean(aa[,1023]))
+P=exp(mean(aa[,1025]))
+lines(t,(K*P*exp(r*t))/(K+P*(exp(r*t)-1)))
+
+K=exp(mean(aa[,38]))
+r=exp(mean(aa[,39]))
+P=exp(mean(aa[,41]))
+lines(t,(K*P*exp(r*t))/(K+P*(exp(r*t)-1)))
+
+
+load("50ORF.RData")
+x[is.na(x)]=-999
+y=y/max(c(y)[!is.na(c(y))])
+y[is.na(y)]=-999
+xx<-aperm(x,c(2,1,3))
+yy<-aperm(y,c(2,1,3))
+write.table(file="xdata.txt",c(xx))
+write.table(file="ydata.txt",c(yy))
+
+write.table(file="NoORFdata.txt",c(NoORF_a))
+write.table(file="NoTIMEdata.txt",c(NoTime_a)[-1])
