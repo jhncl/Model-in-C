@@ -1,14 +1,13 @@
 #!/bin/bash            
-dataA1="AdamCdc13-1"
-dataB1="RAD9"
+dataA1="cdc"
+dataB1="ura3"
 model="JHM"                                                                                                                                     
-name="CC_${model}_${dataA1}_${dataB1}"
-burn="500000"
-iter="100000"
-thin="10"
+burn="1"
+iter="1000"
+thin="100"
 
-cp ~/Model-in-C/CCode/Data/${model}/* ~/Model-in-C/CCode/${model}/
 
+name="CC_${model}_${dataA1}_${dataB1}_${burn}_${iter}_${thin}"
 
 echo "#!/bin/sh                                                                                                                                              
 hostname                                                                                                                                                     

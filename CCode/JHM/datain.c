@@ -120,7 +120,7 @@ int dataLMN(char filename[],char filename2[], int *datavecL,int *datavecM,int *d
 	if ( file2 != NULL ){
 		fscanf(file2, "%s %lf",number,&data);
 		fscanf(file2, "%s %lf",number,&data);
-		testsame(*datavecL,data); /*TEST L*/		
+		testsame(*datavecL,data); 	
 		*datavecL=data;     
 
 		fscanf(file2, "%s %lf",number,&data);
@@ -130,9 +130,9 @@ int dataLMN(char filename[],char filename2[], int *datavecL,int *datavecM,int *d
 		*datavecN=gsl_max(*datavecN,data);
 
 		fscanf(file2, "%s %lf",number,&data);
-		testsame(*datavecmaxy,data); /*TEST y length*/		
+		testsame(*datavecmaxy,data); 
 		*datavecmaxy=data;
-		testsame(*datavecmaxy,(*datavecL)*(*datavecM)*(*datavecN)); /*TEST ylength to SHIFTlmn */		
+		testsame(*datavecmaxy,(*datavecL)*(*datavecM)*(*datavecN));
 
 		fscanf(file2, "%s %lf",number,&data);
 		*datavecmaxTIMEb=data;
@@ -159,18 +159,18 @@ return 0;
 int inzstruct_data(struct_data *data)
 {
 	long size;
-	dataLMN("LMNmaxdataA1.txt","LMNmaxdataB1.txt",
-		&data->L,&data->M,&data->N,&data->maxy,&data->maxTIMEa,&data->maxTIMEb);      /*swap*/  
-
-	data->SHIFTlmn=data->maxy; /*input from file*/
-	size=data->maxy*2; /*input from file*/
-  	data->y=malloc(size*sizeof(double));        /*Cycle with SHIFTlmn*/
-        data->x=malloc(size*sizeof(double));        /*Cycle with SHIFTlmn*/
+		dataLMN("LMNmaxdataA1.txt","LMNmaxdataB1.txt",
+		&data->L,&data->M,&data->N,&data->maxy,&data->maxTIMEa,&data->maxTIMEb);     
+		
+	data->SHIFTlmn=data->maxy;
+	size=data->maxy*2;
+  	data->y=malloc(size*sizeof(double));  
+        data->x=malloc(size*sizeof(double));  
 	size=data->L*2;
-	data->NoORF=malloc(size*sizeof(double));    /*Cycle with data->L*/
-	data->NoSUM=malloc(size*sizeof(double));    /*Cycle with data->L*/
-	size=data->maxTIMEa+data->maxTIMEb;/*inputfromfile*/
-	data->NoTIME=malloc(size*sizeof(double));   /*Cycle with NoSUM*/
+	data->NoORF=malloc(size*sizeof(double));  
+	data->NoSUM=malloc(size*sizeof(double));
+	size=data->maxTIMEa+data->maxTIMEb;
+	data->NoTIME=malloc(size*sizeof(double));  
 	
 	if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
@@ -178,7 +178,7 @@ int inzstruct_data(struct_data *data)
   	}
 
 	datadouble("ydataA1.txt","ydataB1.txt",data->y,data->maxy);
-        datadouble("xdataA1.txt","xdataB1.txt",data->x,data->maxy);/*ymax=xmax*/
+        datadouble("xdataA1.txt","xdataB1.txt",data->x,data->maxy);
         dataint("NoORFdataA1.txt","NoORFdataB1.txt",data->NoORF,data->L,data->L);
         dataint("NoTIMEdataA1.txt","NoTIMEdataB1.txt",data->NoTIME,data->maxTIMEa,data->maxTIMEb);
 
@@ -245,7 +245,7 @@ int fillpara(struct_para *D_para, struct_data *D)
 int c,l,m,ll,mm;
 	/*initials*/
 	/*P*/
-	D_para->P=gsl_sf_log(0.0002);      /*LMean*/
+	D_para->P=-24.41;      /*LMean*/
 
 	/*K*/
 	for (c=0;c<2;c++){
@@ -255,18 +255,18 @@ int c,l,m,ll,mm;
 				mm=D->NoSUM[ll]+m;
 				D_para->K_clm[mm]=D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
 				if(D_para->K_clm[mm]>0){
-					D_para->K_clm[mm]=gsl_sf_log(D_para->K_clm[mm]);
+					D_para->K_clm[mm]=-17.3;
 				}
 			}
 		}
 	}
 
 				
-	for (l=0;l<(2*D->L);l++)          {D_para->tau_K_cl[l]=1/(0.4*0.4);}                  /*Precision*/
+	for (l=0;l<(2*D->L);l++)          {D_para->tau_K_cl[l]=7;}                  /*Precision*/
 
-	for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=gsl_sf_log(0.25);}        /*LMean*/
-	D_para->sigma_K_o=1/(0.6*0.6);               /*Precision*/
-	D_para->K_p=gsl_sf_log(0.1);       /*LMean*/
+	for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=-17.30;}        /*LMean*/
+	D_para->sigma_K_o=6;               /*Precision*/
+	D_para->K_p=-17.30;       /*LMean*/
 
 	/*r*/
 	for (c=0;c<2;c++){
@@ -274,7 +274,7 @@ int c,l,m,ll,mm;
 			ll=c*D->L+l;
 			for (m=0;m<D->NoORF[l];m++){
 				mm=D->NoSUM[ll]+m;
-				D_para->r_clm[mm]=gsl_sf_log(1.5);   
+				D_para->r_clm[mm]=0.759;   
 			} 
 		}  
 	}
@@ -301,18 +301,18 @@ int c,l,m,ll,mm;
 
                
 
-	for (l=0;l<2*D->L;l++)          {D_para->tau_r_cl[l]=15;}                  /*Precision*/
+	for (l=0;l<2*D->L;l++)          {D_para->tau_r_cl[l]=5;}                  /*Precision*/
 
-	for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=gsl_sf_log(1);}     	   /*LMean*/
-	D_para->sigma_r_o=16;               /*Precision*/
+	for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=0.759;}     	   /*LMean*/
+	D_para->sigma_r_o=4;               /*Precision*/
 
-	D_para->r_p=gsl_sf_log(2.5);       /*LMean*/
+	D_para->r_p=0.759;       /*LMean*/
 
 	/*nu*/
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=18;}                      /*LMean*/
-	D_para->sigma_nu=0.0025;   /*Precision for lMean*/
+	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=50;}                      /*LMean*/
+	D_para->sigma_nu=-103.87;   /*Precision for lMean*/
 
-	D_para->nu_p=18;   /*LMean*/
+	D_para->nu_p=50;   /*LMean*/
 
 	
 	for (l=0;l<D->L;l++)          {D_para->gamma_cl[l]=0;} 
@@ -338,18 +338,18 @@ int fillpriors(struct_priors *D_priors)
 	/*Priors*/
 	/*K*/
 	D_priors->sigma_K=7;               D_priors->phi_K=0.1;               /*Gamma  Shape; Scale */
-	D_priors->eta_K_o=8;               D_priors->psi_K_o=1;             /*Gamma  Shape; Scale */
+	D_priors->eta_K_o=6;               D_priors->psi_K_o=0.1;             /*Gamma  Shape; Scale */
 	/*r*/
-	D_priors->sigma_r=-1;               D_priors->phi_r=0.1;               /*Gamma  Shape; Scale */
-	D_priors->eta_r_o=1;               D_priors->psi_r_o=1;             /*Gamma  Shape; Scale */
+	D_priors->sigma_r=5;               D_priors->phi_r=0.111;               /*Gamma  Shape; Scale */
+	D_priors->eta_r_o=3;               D_priors->psi_r_o=0.111;             /*Gamma  Shape; Scale */
 	/*nu*/
-	D_priors->eta_nu=-1;              D_priors->psi_nu=1;              /*Gamma  Shape; Scale */
+	D_priors->eta_nu=-103.87;              D_priors->psi_nu=0.1;              /*Gamma  Shape; Scale */
 
 	/*K*//*r*//*nu*//*P*/
-	D_priors->K_mu=gsl_sf_log(0.2192928);      D_priors->eta_K_p=1;      /*Normal  LMean; Precisions */
-	D_priors->r_mu=gsl_sf_log(2.5);            D_priors->eta_r_p=1;      /*Normal  LMean; Precisions */
-	D_priors->nu_mu=gsl_sf_log(31);            D_priors->eta_nu_p=1;     /*Normal  LMean; Precisions */
-	D_priors->P_mu=gsl_sf_log(0.0002);         D_priors->eta_P=1/0.01;   /*Normal  LMean; Precisions */
+	D_priors->K_mu=-17.302;      D_priors->eta_K_p=0.25;      /*Normal  LMean; Precisions */
+	D_priors->r_mu=0.759;            D_priors->eta_r_p=0.25;      /*Normal  LMean; Precisions */
+	D_priors->nu_mu=50;            D_priors->eta_nu_p=0.0004;     /*Normal  LMean; Precisions */
+	D_priors->P_mu=-24.41;         D_priors->eta_P=0.25;   /*Normal  LMean; Precisions */
 	/*data2.c*/       
 
 	D_priors->alpha_mu=0;          D_priors->eta_alpha=1/(1.5*1.5);
@@ -357,7 +357,7 @@ int fillpriors(struct_priors *D_priors)
 	D_priors->p=0.05;    
 	D_priors->eta_gamma=-3.583519;	D_priors->psi_gamma=1/(4*4);
 	D_priors->eta_omega=-3.583519;	D_priors->psi_omega=1/(4*4);
-	D_priors->eta_upsilon=-3.218;	 	   D_priors->psi_upsilon=1;	    
+	D_priors->eta_upsilon=-3.218;	 	   D_priors->psi_upsilon=1/(4*4);	    
 	D_priors->upsilon_mu=0;	
 
 

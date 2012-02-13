@@ -1,8 +1,8 @@
 filename="M_SHM_A_FULL"
 
 library(rjags)
-library(qfa,lib="~/R")
-library(qfaBayes,lib="~/R") 
+library(qfa)
+library(qfaBayes) 
 
 
 Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
@@ -81,8 +81,8 @@ write.table(file="LMNmaxdata.txt",c(N,max(NoORF_a),max(NoTime_a),length(y),lengt
 
  QFA.P<-list(
 
- sigma_K=7,               phi_K=0.1,
- eta_K_o=8,               psi_K_o=1,
+sigma_K=3,            phi_K=0.5, 
+eta_K_o=0.5,          psi_K_o=1, 
 
  sigma_r=-1,               phi_r=0.1,
  eta_r_o=1,               psi_r_o=1,

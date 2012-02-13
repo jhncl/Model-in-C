@@ -1,13 +1,13 @@
 #!/bin/bash            
-data="AdamCdc13-1" 
+data="cdc" 
 model="SHM"                                                                                                                                     
-ORF="100"
-name="CC_${model}_${data}_${ORF}"
-burn="500000"
-iter="100000"
-thin="10"
+ORF="5000"
 
-cp ~/Model-in-C/CCode/Data/${model}/${data}/* ~/Model-in-C/CCode/${model}/
+burn="1"
+iter="1000"
+thin="100"
+
+name="CC_${model}_${data}_${ORF}_${burn}_${iter}_${thin}"
 
 echo "#!/bin/sh                                                                                                                                              
 hostname                                                                                                                                                     
@@ -39,7 +39,7 @@ Output = hello_condor.out
                                                                                                                                                              
 Log = hello_condor.log                                                                                                                                       
                                                                                                                                                              
-transfer_input_files = main, Makefile, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt,LMNmaxdata.txt, main.c, functions.c, functions.h, datain.c, datain.c datain.h, print.c, print.h                                                                                                                               
+transfer_input_files = main,headers.h, Makefile, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt,LMNmaxdata.txt, main.c, functions.c, functions.h, datain.c, datain.h, print.c, print.h                                                                                                                               
                                                                                                                                                              
 transfer_files = ALWAYS                                                                                                                                      
                                                                                                                                                              
