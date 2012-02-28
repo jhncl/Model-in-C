@@ -1,0 +1,112 @@
+\begin{align*}
+K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{cl}),(e^{ \tau_{cl}^K })^{-1})\\
+K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )\\
+\\
+\pi(K_{l}^o |\theta)&=\sqrt{\frac{e^{ \sigma^{K,o} }}{2\pi}} e^{-\frac{1}{2}(K_{l}^o-K^p)^{2}e^{ \sigma^{K,o} } }
+\prod_{c=1}^{2}\prod_{m=1}^{M^{cl}}\sqrt{\frac{e^{ \tau_{cl}^K }}{2\pi}} e^{-\frac{1}{2}(K_{clm}-e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{cl}))^{2}e^{ \tau_{cl}^K } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(K_{l}^o |\theta)}&
+\color{red}{
+=-\frac{1}{2}(K_{l}^o-K^p)^{2}e^{ \sigma^{K,o} } 
++
+\sum_{c=1}^{2}\sum_{m=1}^{M^{cl}}\frac{1}{2}(K_{clm}-e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{cl})^{2}e^{\tau_{cl}^K}
++C}\\
+\text{Similarly for $r_{l}^o$}\\
+\color{red}{l\pi(r_{l}^o |\theta)}&
+\color{red}{
+=-\frac{1}{2}(r_{l}^o-r^p)^{2}e^{ \sigma^{r,o} } 
++
+\sum_{c=1}^{2}\sum_{m=1}^{M^{cl}}\frac{1}{2}(r_{clm}-e^{\beta_{c}}(r_{l}^o+\delta_{l}\omega_{cl})^{2}e^{\tau_{cl}^r}
++C}
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \upsilon_{l}+\nu_{c}  })^{-1} ) \\
+\nu_{l} &\sim \operatorname{N}(\nu_{\mu},(e^{ \sigma^{\nu} })^{-1})\\
+\\
+\pi(\nu_{l}|\theta)&=\sqrt{\frac{e^{ \sigma^{\nu} }}{2\pi}} e^{-\frac{1}{2}(\nu_{l}-\nu_{\mu})^{2}e^{ \sigma^{\nu} } }
+\prod_{c=1}^{2}\prod_{m=1}^{M_{cl}}\sqrt{\frac{e^{ \nu_{l}+\upsilon{c} }}{2\pi}} e^{-\frac{1}{2}(y_{clmn}-\hat{y}_{clmn})^{2}e^{ \nu_{l}+\upsilon{c} } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(\nu_{l}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\nu_{l}-\nu_{\mu})^{2}e^{ \sigma^{\nu} } 
++
+\sum_{c=1}^{2}\sum_{m=1}^{M_{cl}}\frac{1}{2}(\nu_{l}-(y_{clmn}-\hat{y}_{clmn})^{2}e^{ \nu_{l} +\upsilon_{c} })
++C}
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{cl}),(e^{ \tau_{cl}^K })^{-1})\\
+r_{clm} &\sim \operatorname{N}(e^{\beta_{c}}(r_{l}^o+\delta_{l}\omega_{cl}),(e^{ \tau_{cl}^r })^{-1})\\
+\delta_{l} &\sim Bern(p)\\
+\color{red}{
+\pi(y_{2lm}|,\delta_{l}=1,\theta)}&
+\color{red}{
+=(p)\times
+\prod_{m=1}^{m_{2l}}
+\sqrt{\frac{e^{ \tau_{2l}^K }}{2\pi}} e^{-\frac{1}{2}(K_{2lm}-e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{2l}))^{2}e^{ \tau_{2l}^K } }
+\sqrt{\frac{e^{ \tau_{2l}^r }}{2\pi}} e^{-\frac{1}{2}(r_{2lm}-e^{\beta_{c}}(r_{l}^o+\delta_{l}\omega_{2l}))^{2}e^{ \tau_{2l}^r } }
+}
+\\
+\color{red}{
+\pi(y_{2lm}|,\delta_{l}=0,\theta)}&
+\color{red}{
+=(1-p)\times
+\prod_{m=1}^{m_{2l}}
+\sqrt{\frac{e^{ \tau_{2l}^K }}{2\pi}} e^{-\frac{1}{2}(K_{2lm}-e^{\alpha_{2}}(K_{l}^o))^{2}e^{ \tau_{2l}^K } }
+\sqrt{\frac{e^{ \tau_{2l}^r }}{2\pi}} e^{-\frac{1}{2}(r_{2lm}-e^{\beta_{2}}(r_{l}^o))^{2}e^{ \tau_{2l}^r } }
+}
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )\\
+\sigma^{K,o} &\sim \operatorname{N}(\eta^{K,o}, (\psi^{K,o})^{-1} )\\
+\pi(\sigma^{K,o} |\theta)&=
+\sqrt{\frac{\psi^{K,o}}{2\pi}} e^{-\frac{1}{2}(\sigma^{K,o}-\eta^{K,o})^{2}\psi^{K,o} }
+\prod_{l=1}^{L}
+\sqrt{\frac{
+e^{ \sigma^{K,o}}
+}{2\pi}} e^{-\frac{1}{2}(
+K_{l}^o-K^p
+)^{2} 
+e^{ \sigma^{K,o}}
+}\\
+\text{Taking logs}\\
+\color{red}{l\pi(\sigma^{K,o}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\sigma^{K,o}-\eta^{K,o})^{2}\psi^{K,o} 
++
+\sum_{l=1}^{L}\frac{1}{2}(\sigma^{K,o}-(K_{l}^o-K^p)^{2}e^{\sigma^{K,o}})
++C
+}
+\\
+\text{Similarly for $\sigma^{r,o}$}\\
+\color{red}{l\pi(\sigma^{r,o}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\sigma^{r,o}-\eta^{r,o})^{2}\psi^{r,o} 
++
+\sum_{l=1}^{L}\frac{1}{2}(\sigma^{r,o}-(r_{l}^o-r^p)^{2}e^{\sigma^{r,o}})
++C
+}
+\\
+\text{and similarly for $\sigma^{\nu}$}\\
+\color{red}{l\pi(\sigma^{\nu}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\sigma^{\nu}-\eta^{\nu})^{2}\psi^{\nu} 
++
+\sum_{l=1}^{L}\frac{1}{2}(\sigma^{\nu}-(\nu_{l}-\nu^p)^{2}e^{\sigma^{\nu}})
++C
+}
+\end{align*}

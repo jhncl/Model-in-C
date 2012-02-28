@@ -1,0 +1,360 @@
+
+#P#
+vec_P<-array(dim=c(max(QFA.I$NoORF),QFA.I$N,2))
+for (c in 1:2){
+for (i in 1:QFA.I$N){
+for (j in 1:QFA.I$NoORF[i,c]){
+vec_P[j,i,c]<-na.omit(c(QFA.D$y[j,1,i,c]))
+}}}
+P=median(vec_P)
+
+#K_lm#
+t=l=1
+for (i in 1:2){
+for (i in 1:QFA.I$N){
+	for (j in 1:QFA.I$NoORF[i,c]){
+		l[t]<-QFA.D$y[j,QFA.I$NoTime[ QFA.I$NoSum[i,c]+j,c ],i,c]
+		t=t+1
+	}
+}
+}
+K_lm=l
+#K_l#
+t=l=1
+for (i in 1:QFA.I$N){
+l[t]=median(K_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]])
+t=t+1
+}
+K_l=l
+#K#
+K=median(K_l)
+#r_lm#
+t=l=1
+for (c in 1:2){
+	for (i in 1:QFA.I$N){
+		for (j in 1:QFA.I$NoORF[i,c]){
+			val<-order(na.omit(QFA.D$y[j,-1,i,c]-QFA.D$y[j,-QFA.I$NoTime[QFA.I$NoSum[i]+j],i,c]),decreasing=T)[1]
+			valt<-(QFA.D$x[j,val+1,i,c]+QFA.D$x[j,val,i,c])/2
+			l[t]<-log((K_lm[t]-P)/P)/valt
+			t=t+1
+		}
+	}
+}
+r_lm=l
+r_lm[is.nan(r_lm)]=0
+#r_l#
+t=l=1
+for (i in 1:QFA.I$N){
+l[t]=median(r_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]])
+t=t+1
+}
+r_l=l
+#r#
+r=median(r_l)
+#sigma_K_o#
+sigma_K_o=1/var(log(K_l[K_l>0]))
+#sigma_r_o#
+sigma_r_o=1/var(log(r_l[r_l>0]))
+t=llll=1
+for (i in 1:QFA.I$N){
+llll[t]=1/median(ll[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]])
+t=t+1
+}
+nu_l#
+t=l=ll=1
+for (c in 1:2){
+	for (i in 1:QFA.I$N){
+		for (j in 1:QFA.I$NoORF[i,c]){
+			ll[t]<-var(QFA.D$y[j,c(1,2),i,c])
+			t=t+1
+		}
+	}
+}
+t=llll=1
+for (i in 1:QFA.I$N){
+llll[t]=1/median(ll[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]])
+t=t+1
+}
+nu_l=llll
+nu_l[nu_l==Inf]=max(nu_l[!nu_l==Inf])
+#nu_l#
+nu_mu=median(nu_l)
+
+sigma_nu=1/var(log(nu_l[nu_l>0]))
+
+
+#tau_K_l#
+t=l=1
+for (i in 1:QFA.I$N){
+l[t]<-1/var(log(K_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]][K_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]]>0]))
+t=t+1
+}
+tau_K_l=l
+tau_K_l=l
+tau_K_l[tau_K_l==Inf]=max(tau_K_l[!tau_K_l==Inf])
+tau_K_l[is.na(tau_K_l)]=max(tau_K_l[!is.na(tau_K_l)])
+
+#tau_r_l#
+t=l=1
+for (i in 1:QFA.I$N){
+l[t]<-1/var(r_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]][r_lm[QFA.I$NoSum[i]:QFA.I$NoSum[i+1]]>0])
+t=t+1
+}
+tau_r_l=l
+tau_r_l[tau_r_l==Inf]=max(tau_r_l[!tau_r_l==Inf])
+tau_r_l[is.na(tau_r_l)]=max(tau_r_l[!is.na(tau_r_l)])
+
+
+
+
+
+library("rjags")
+
+
+
+QFA.P<-list(
+ sigma_K_o=log(sigma_K_o), phi_K=1/(max(abs(log(sigma_K_o)),sigma_K_o))^2,#gd
+ eta_K_o=log(median(tau_K_l)),  psi_K_o=1/(max(abs(log(median(tau_K_l))),median(tau_K_l)))^2,#gd
+
+ sigma_r_o=log(sigma_r_o), phi_r=1/(max(abs(log(sigma_r_o)),sigma_r_o))^2,#gd
+ eta_r_o=log(median(tau_r_l)),   psi_r_o=1/(max(abs(log(median(tau_r_l))),median(tau_r_l)))^2,#gd
+
+ eta_nu=log(sigma_nu),    psi_nu=1/(max(abs(log(median(sigma_nu))),median(sigma_nu)))^2,#gd
+
+ K_mu=log(K),	            eta_K_p=1/(max(abs(log(K)),K))^2,
+ r_mu=log(r),               eta_r_p=1/(max(abs(log(r)),r))^2,
+ nu_mu=log(nu_mu),           eta_nu_p=1/(max(abs(log(nu_mu)),nu_mu))^2,
+ P_mu=log(P),        eta_P=1/(max(abs(log(P)),P))^2,
+
+alpha_mu=0,             eta_alpha=1/(2)^2,
+beta_mu=0,              eta_beta=1/(2)^2,
+p=0.05,
+eta_gamma=log(median(tau_K_l)),    psi_gamma=1/(max(abs(log(median(tau_K_l))),median(tau_K_l)))^2,
+eta_omega=log(median(tau_r_l)),    psi_omega=1/(max(abs(log(median(tau_r_l))),median(tau_r_l)))^2,
+eta_upsilon=log(1/(2*2)),     psi_upsilon=1/(2)^2,
+upsilon_mu=0)
+write.table(as.matrix(QFA.P),file="priors.txt")
+
+log(sigma_nu)
+log(K)
+log(r)
+log(nu_mu)
+log(P)
+# 
+library(gplots)
+MAX=max(a$Growth)/(256*136*136)
+
+
+pdf("priors_JHM.pdf") 
+par(mfcol=c(2,1))
+t=1
+a=QFA.P$sigma_K
+bb=1/(QFA.P$phi_K)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$eta_K_o
+bb=1/(QFA.P$psi_K_o)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$sigma_r
+bb=1/(QFA.P$phi_K)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$eta_r_o
+bb=1/(QFA.P$psi_K_o)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$eta_nu
+bb=1/(QFA.P$psi_nu)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$K_mu
+bb=1/(QFA.P$eta_K_p)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,1,MAX)
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$r_mu
+bb=1/(QFA.P$eta_r_p)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,8)
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$nu_mu
+bb=1/(QFA.P$eta_nu_p)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$P_mu
+bb=1/(QFA.P$eta_P)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,8)
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$alpha_mu
+bb=1/(QFA.P$eta_alpha)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,4)
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$beta_mu
+bb=1/(QFA.P$eta_beta)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,4)
+,main=names(QFA.P)[t])
+t=t+2
+textplot(c(QFA.P$p)
+,main=names(QFA.P)[t])
+textplot(c(0.05)
+,main=names(QFA.P)[t])
+t=t+1
+a=QFA.P$eta_gamma
+bb=1/(QFA.P$psi_gamma)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$eta_omega
+bb=1/(QFA.P$psi_omega)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=QFA.P$eta_upsilon
+bb=1/(QFA.P$psi_upsilon)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+2
+a=0
+bb=1/(exp(QFA.P$eta_upsilon))^0.5
+l<-rnorm(2000,a,bb)
+plot(density(1/exp(l)^0.5),main=names(QFA.P)[t])
+textplot(data.frame(1/exp(quantile(l))^0.5,exp(quantile(l)))
+,main=names(QFA.P)[t])
+t=t+1
+
+dev.off()
+stop()
+
+
+jags <- jags.model('model1.bug',
+                   data = list('x' = QFA.D$x,'y' = QFA.D$y,'SHIFT'=QFA.I$SHIFT,
+'N' = QFA.I$N,'NoTime' = QFA.I$NoTime,'NoORF' = QFA.I$NoORF,'NoSum' = QFA.I$NoSum,
+'sigma_K'=QFA.P$sigma_K,                'phi_K'=QFA.P$phi_K,
+'eta_K_o'=QFA.P$eta_K_o,                'psi_K_o'=QFA.P$psi_K_o,
+'sigma_r'=QFA.P$sigma_r,                'phi_r'=QFA.P$phi_r,
+'eta_r_o'=QFA.P$eta_r_o,                'psi_r_o'=QFA.P$psi_r_o,
+'eta_nu'=QFA.P$eta_nu,          'psi_nu'=QFA.P$psi_nu,
+'K_mu'=QFA.P$K_mu,              'eta_K_p'=QFA.P$eta_K_p,
+'r_mu'=QFA.P$r_mu,              'eta_r_p'=QFA.P$eta_r_p,
+'nu_mu'=QFA.P$nu_mu,            'eta_nu_p'=QFA.P$eta_nu_p,
+'P_mu'=QFA.P$P_mu,              'eta_P'=QFA.P$eta_P,
+'alpha_mu'=QFA.P$alpha_mu,              'eta_alpha'=QFA.P$eta_alpha,
+'beta_mu'=QFA.P$beta_mu,                'eta_beta'=QFA.P$eta_beta,
+'p'=QFA.P$p,
+'eta_gamma'=QFA.P$eta_gamma,    'psi_gamma'=QFA.P$psi_gamma,
+'eta_omega'=QFA.P$eta_omega,    'psi_omega'=QFA.P$psi_omega,
+'eta_upsilon'=QFA.P$eta_upsilon,        'psi_upsilon'=QFA.P$psi_upsilon,
+'upsilon_mu'=QFA.P$upsilon_mu
+),
+n.chains = 1,n.adapt = 100)
+
+samp<-coda.samples(jags,
+ c(
+'K_clm_L',
+'tau_K_cl',
+'K_o_l',
+'sigma_K_o',
+'K_p',
+'P_L',
+'r_clm_L',
+'tau_r_cl',
+'r_o_l',
+'sigma_r_o',
+'r_p',
+'nu_l',
+'sigma_nu',
+'nu_p',
+'alpha_c',
+'beta_c',
+'delta_l',
+'gamma_cl',
+'sigma_gamma',
+'omega_cl',
+'sigma_omega',
+'upsilon_c',
+'sigma_upsilon'
+),
+              100000,thin=100)
+samp<-samp[[1]]
+
+
+
+write("
+model {
+        for (l in 1:N){
+                for (c in 1:2){
+                        for (m in 1:NoORF[l,c]){
+                                for (n in 1:NoTime[NoSum[l,c]+m,c]){
+                                y[m,n,l,c] ~ dnorm(y.hat[m,n,l,c],exp(nu_l[l]+upsilon_c[c]))
+                                y.hat[m,n,l,c] <- (K_clm[(SHIFT[c]+NoSum[l,c]+m)]*P*exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c]))/(K_clm[(SHIFT[c]+NoSum[l,c]+m)]+P*(exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c])-1))
+                                }
+                        K_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(K_clm_L[(SHIFT[c]+NoSum[l,c]+m)])
+                        K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(alpha_c[c]+(K_o_l[l]+delta_l[l,c]*gamma_cl[l,c])),exp(tau_K_cl[l+(c-1)*N]))
+                        r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[l,c]+m)]))  
+                        r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(tau_r_cl[l+(c-1)*N]))
+                        }
+                        tau_K_cl[l+(c-1)*N]~dnorm(sigma_K,phi_K)
+                        tau_r_cl[l+(c-1)*N]~dnorm(sigma_r,phi_r)
+                }
+                K_o_l[l]~dnorm(K_p,exp(sigma_K_o))
+                r_o_l[l]~dnorm(r_p,exp(sigma_r_o))
+                nu_l[l]~dnorm(nu_p,exp(sigma_nu))
+                delta_l[l,1]<-0
+                delta_l[l,2]~dbern(p)
+                gamma_cl[l,1]<-0
+                gamma_cl[l,2]~dnorm(0,exp(sigma_gamma))
+                omega_cl[l,1]<-0
+                omega_cl[l,2]~dnorm(0,exp(sigma_omega))
+        }
+        alpha_c[1]<-0
+        alpha_c[2]~dnorm(alpha_mu,eta_alpha)
+        beta_c[1]<-0
+        beta_c[2]~dnorm(beta_mu,eta_beta)
+        upsilon_c[1]<-0
+        upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
+        K_p~dnorm(K_mu,eta_K_p)
+        r_p~dnorm(r_mu,eta_r_p)
+        nu_p~dnorm(nu_mu,eta_nu_p)
+        P <- exp(P_L)
+        P_L ~dnorm(P_mu,eta_P)
+        sigma_K_o~dnorm(eta_K_o,psi_K_o)
+        sigma_r_o~dnorm(eta_r_o,psi_r_o)
+        sigma_nu~dnorm(eta_nu,psi_nu)
+        sigma_upsilon~dnorm(eta_upsilon,psi_upsilon)
+        sigma_gamma~dnorm(eta_gamma,psi_gamma)
+        sigma_omega~dnorm(eta_omega,psi_omega)
+
+}","model1.bug")
+

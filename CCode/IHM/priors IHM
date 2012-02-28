@@ -1,0 +1,110 @@
+#Z#
+l=0
+vec_Z=log(y[!is.na(y)][y[!is.na(y)]>0])
+Z_mu=mean(vec_Z)
+eta_Z_p=1/(4*abs(Z_mu))^2
+l<-log(c(y[1,,])[c(y[1,,])>0])
+ll<-log(c(y[2,,])[c(y[2,,])>0])
+eta_Z=log(1/max(var(l[!is.na(l)]),var(ll[!is.na(ll)])))
+psi_Z=1/(4*abs(eta_Z))^2
+l=0
+t=1
+for (c in 1:2){
+for (i in 1:N){
+l[t]=1/var(y[,c,i][!is.na(y[,c,i])])
+t=t+1
+}}
+nu_l=l[!is.na(l)]
+nu_mu=log(median(nu_l))
+eta_nu_p=1/(3*abs(nu_mu))^2
+eta_nu=log(1/var(log(l[!is.na(l)][l[!is.na(l)]>0])))
+psi_nu=1/(10*abs(eta_nu))^2
+alpha_mu=0
+eta_alpha=1/(2)^2
+p=0.05
+eta_gamma=eta_Z
+psi_gamma=psi_Z
+eta_upsilon=log(1/(2*2))    
+psi_upsilon=1/(2)^2
+upsilon_mu=0
+
+QFA.P=list(
+'Z_mu'=Z_mu,		'eta_Z_p'=eta_Z_p,  
+'eta_Z'=eta_Z,		'psi_Z'=psi_Z,  
+'eta_nu'=eta_nu,		'psi_nu'=psi_nu,
+'nu_mu'=nu_mu,	'eta_nu_p'=eta_nu_p, 
+'alpha_mu'=alpha_mu,		'eta_alpha'=eta_alpha,
+'p'=p,
+'eta_gamma'=eta_gamma,          'psi_gamma'=psi_gamma,
+'eta_upsilon'=eta_upsilon,		'psi_upsilon'=psi_upsilon,   
+'upsilon_mu'=upsilon_mu
+)
+write.table(as.matrix(QFA.P),file="priors.txt")
+library(gplots)
+
+
+pdf("priors_IHM.pdf") 
+par(mfcol=c(2,1))
+t=1
+a=QFA.P$Z_mu
+bb=1/(QFA.P$eta_Z_p)^0.5
+l=rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(density(vec_Z),col=2) #log
+textplot(data.frame(quantile(l),quantile(vec_Z)))
+t=t+2
+a=QFA.P$eta_Z
+bb=1/(QFA.P$psi_Z)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(c(QFA.P$eta_Z,QFA.P$eta_Z),c(0,10000),col=2) #log
+textplot(data.frame(quantile(l),QFA.P$eta_Z))
+t=t+2
+a=QFA.P$eta_nu
+bb=1/(QFA.P$psi_nu)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(c(QFA.P$eta_nu,QFA.P$eta_nu),c(0,10000),col=2) #log
+textplot(data.frame(quantile(l),QFA.P$eta_nu))
+t=t+2
+a=QFA.P$nu_mu
+bb=1/(QFA.P$eta_nu_p)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(density(log(nu_l)),col=2) #log
+textplot(data.frame(quantile(l),QFA.P$eta_nu))  
+t=t+2
+a=QFA.P$alpha_mu
+bb=1/(QFA.P$eta_alpha)^0.5
+plot(density(exp(rnorm(2000,a,bb))),main=names(QFA.P)[t])
+lines(c(exp(QFA.P$alpha_mu),exp(QFA.P$alpha_mu)),c(0,10000),col=3) #log
+textplot(data.frame(exp(quantile((rnorm(2000,a,bb)))),0,4)
+,main=names(QFA.P)[t])
+t=t+2
+textplot(c(QFA.P$p)
+,main=names(QFA.P)[t])
+textplot(c(0.05)
+,main=names(QFA.P)[t])
+t=t+1
+a=QFA.P$eta_gamma
+bb=1/(QFA.P$psi_gamma)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(c(QFA.P$eta_Z,QFA.P$eta_Z),c(0,10000),col=3) #log
+textplot(data.frame(quantile(l),QFA.P$eta_Z))###########
+t=t+2
+a=QFA.P$eta_upsilon
+bb=1/(QFA.P$psi_upsilon)^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(c(QFA.P$eta_upsilon,QFA.P$eta_upsilon),c(0,10000),col=2) #log
+textplot(data.frame(quantile(l),QFA.P$eta_upsilon))
+t=t+2
+a=0
+bb=1/(exp(QFA.P$eta_upsilon))^0.5
+l<-rnorm(2000,a,bb)
+plot(density(l),main=names(QFA.P)[t])
+lines(c(0,0),c(0,10000),col=2) #log
+textplot(data.frame(quantile(l),0))
+t=t+1
+dev.off()
