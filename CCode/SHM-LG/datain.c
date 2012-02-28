@@ -139,13 +139,14 @@ int inzstruct_data(struct_data *data)
   return 0;
 }
 
-int inzstruct_para(struct_para *para,struct_data *data)
+int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 {
   long size;
 
   size=data->SHIFTlmn;
   para->K_lm=malloc(size*sizeof(double));
   para->r_lm=malloc(size*sizeof(double));
+
   size=data->L;
   para->tau_K_l=malloc(size*sizeof(double));
   para->tau_r_l=malloc(size*sizeof(double));
@@ -153,7 +154,12 @@ int inzstruct_para(struct_para *para,struct_data *data)
   para->r_o_l=malloc(size*sizeof(double));
   para->nu_l=malloc(size*sizeof(double));
 
-  fillpara(para,data);
+  para->star_K_lm=malloc(size*sizeof(double));
+  para->star_tau_K_l=malloc(size*sizeof(double));
+  para->star_r_lm=malloc(size*sizeof(double));
+  para->star_tau_r_l=malloc(size*sizeof(double));
+
+  fillpara(para,data,priors);
   return 0;
 }
 
@@ -180,7 +186,7 @@ int filldata(struct_data *D)
   return 0;
 }
 
-int fillpara(struct_para *D_para, struct_data *D)
+int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
   int l,m,mm;
   /*initials*/
@@ -189,58 +195,91 @@ int fillpara(struct_para *D_para, struct_data *D)
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
       D_para->K_lm[mm]=D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
-      if(D_para->K_lm[mm]>0){D_para->K_lm[mm]=-17.95;}
+      if(D_para->K_lm[mm]>0){D_para->K_lm[mm]=D_priors->K_mu;}
     }
   }
 
-  for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=7;}                  /*Precision*/
+  for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=D_priors->sigma_K;}                  /*Precision*/
 
-  for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=-17.30211;}        /*LMean*/
-  D_para->sigma_K_o=6;               /*Precision*/
-  D_para->K_p=-17.30211;       /*LMean*/
+  for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=D_priors->K_mu;}        /*LMean*/
+  D_para->sigma_K_o=D_priors->eta_K_o;               /*Precision*/
+  D_para->K_p=D_priors->K_mu;       /*LMean*/
 
   /*r*/
   for (l=0;l<D->L;l++){
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
-      D_para->r_lm[mm]=0.759;
+      D_para->r_lm[mm]=D_priors->r_mu;
     }
   }                          /*LMean*/
 
-  for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=5;}                  /*Precision*/
+  for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=D_priors->sigma_r;}                  /*Precision*/
 
-  for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=1.506297;}        /*LMean*/
-  D_para->sigma_r_o=4;               /*Precision*/
+  for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=D_priors->r_mu;}        /*LMean*/
+  D_para->sigma_r_o=D_priors->eta_r_o;               /*Precision*/
 
-  D_para->r_p=0.759;       /*LMean*/
+  D_para->r_p=D_priors->r_mu;       /*LMean*/
 
   /*nu*/
-  for (l=0;l<D->L;l++)          {D_para->nu_l[l]=-98;}                      /*LMean*/
-  D_para->sigma_nu=-103.87;   /*Precision for lMean*/
+  for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}                      /*LMean*/
+  D_para->sigma_nu=D_priors->eta_nu;   /*Precision for lMean*/
 
-  D_para->nu_p=50;   /*LMean*/
+  D_para->nu_p=D_priors->nu_mu;   /*LMean*/
   /*P*/
-  D_para->P=-25;      /*LMean*/
+  D_para->P=D_priors->P_mu;      /*LMean*/
   return 0;
 }
 
 int fillpriors(struct_priors *D_priors)
 {
   /*Priors*/
-  /*K*/
-  D_priors->sigma_K=7;/*7*/               D_priors->phi_K=0.1;/*0.1*/               /*Gamma  Shape; Scale */
-  D_priors->eta_K_o=10;   /*8*/            D_priors->psi_K_o=0.01;             /*Gamma  Shape; Scale */
-  /*r*/
-  D_priors->sigma_r=5;               D_priors->phi_r=0.111;               /*Gamma  Shape; Scale */
-  D_priors->eta_r_o=6;               D_priors->psi_r_o=0.111;             /*Gamma  Shape; Scale */
-  /*nu*/
-  D_priors->eta_nu=-103.87;              D_priors->psi_nu=0.1;              /*Gamma  Shape; Scale */
-
-  /*K*//*r*//*nu*//*P*/
-  D_priors->K_mu=-17.95;      D_priors->eta_K_p=0.25;      /*Normal  LMean; Precisions */
-  D_priors->r_mu=0.759;            D_priors->eta_r_p=0.25;      /*Normal  LMean; Precisions */
-  D_priors->nu_mu=50;            D_priors->eta_nu_p=0.0004;     /*Normal  LMean; Precisions */
-  D_priors->P_mu=-25.131006;         D_priors->eta_P=0.25;   /*Normal  LMean; Precisions */
+  char number[20];
+  double data;
+  FILE *file = fopen("priors.txt", "r");
+  if ( file != NULL ){  
+    fscanf(file, "%s %lf",number,&data);
+    fscanf(file, "%s %lf",number,&data);
+    /*K*/
+    D_priors->sigma_K=data;
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->phi_K=data;          
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_K_o=data; 
+    fscanf(file, "%s %lf",number,&data);   
+    D_priors->psi_K_o=data;            
+    /*r*/
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->sigma_r=data;              
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->phi_r=data;          
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_r_o=data;              
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->psi_r_o=data;       
+    /*nu*/
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_nu=data;         
+    fscanf(file, "%s %lf",number,&data); 
+    D_priors->psi_nu=data;      
+    /*K*//*r*//*nu*//*P*/
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->K_mu=data;     
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_K_p=data;      /*Normal  LMean; Precisions */
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->r_mu=data;   
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_r_p=data;      /*Normal  LMean; Precisions */
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->nu_mu=data;      
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->eta_nu_p=data;     /*Normal  LMean; Precisions */
+    fscanf(file, "%s %lf",number,&data);
+    D_priors->P_mu=data;   
+    D_priors->eta_P=data;   /*Normal  LMean; Precisions */
+  }
+  else{perror("Priors");}  
+  fclose(file);
   return 0;
 }
 

@@ -215,9 +215,9 @@ D->L=gsl_min(D->L,CAPL);
 	for (i=0;i<iter;i++){
 	for (j=0;j<thin;j++){
 		D_para->P=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->P,MCMC_P,-999,-999);
-D_MH->hP=1;		
-		D_para->sigma_K_o=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->sigma_K_o,MCMC_sigma_K_o,-999,-999);
-D_MH->hP=0.2;
+D_MH->hnu=1;		
+		D_para->sigma_K_o=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hnu,D_para->sigma_K_o,MCMC_sigma_K_o,-999,-999);
+D_MH->hnu=0.1;
 		D_para->sigma_r_o=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->sigma_r_o,MCMC_sigma_r_o,-999,-999);
 		D_para->sigma_nu=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->sigma_nu,MCMC_sigma_nu,-999,-999);
 

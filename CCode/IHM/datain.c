@@ -185,7 +185,7 @@ int inzstruct_data(struct_data *data)
 return 0;
 }
 
-int inzstruct_para(struct_para *para,struct_data *data)
+int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 {
 	long size;
 	size=data->L;
@@ -196,7 +196,7 @@ int inzstruct_para(struct_para *para,struct_data *data)
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
 	para->upsilon_c=malloc(size*sizeof(double));
-	fillpara(para,data);
+	fillpara(para,data,priors);
 return 0;
 }
 
@@ -239,51 +239,77 @@ int filldata(struct_data *D)
 return 0;
 }
 
-int fillpara(struct_para *D_para, struct_data *D)
+int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
 	int l;
 
 	/*initials*/
-	for (l=0;l<D->L;l++){D_para->Z_l[l]=gsl_sf_log(50);}
-	D_para->sigma_Z=gsl_sf_log(0.0025);     
-	D_para->Z_p=gsl_sf_log(50);  
+	for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}
+	D_para->sigma_Z=D_priors->eta_Z;     
+	D_para->Z_p=D_priors->Z_mu;  
 
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=gsl_sf_log(0.1);}          
-	D_para->sigma_nu=gsl_sf_log(0.01);   
+	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
+	D_para->sigma_nu=D_priors->eta_nu;   
   
-	D_para->nu_p=gsl_sf_log(0.1);    
+	D_para->nu_p=D_priors->nu_mu;    
 
 	for (l=0;l<D->L;l++)          {D_para->gamma_cl[l]=0;} 
 
-	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}  
+	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}/*!*/  
 
-	D_para->alpha_c[0]=gsl_sf_log(1);/**/
-	D_para->alpha_c[1]=gsl_sf_log(1);
-	D_para->sigma_gamma=gsl_sf_log(1);
-	D_para->upsilon_c[0]=gsl_sf_log(1); /**/
-	D_para->upsilon_c[1]=gsl_sf_log(1);	
-	D_para->sigma_upsilon=2;
+	D_para->alpha_c[0]=0;/**/
+	D_para->alpha_c[1]=D_priors->alpha_mu;
+	D_para->sigma_gamma=D_priors->eta_gamma;
+	D_para->upsilon_c[0]=0; /**/
+	D_para->upsilon_c[1]=0;	
+	D_para->sigma_upsilon=D_priors->eta_upsilon;
 
 return 0;
 }
 
 int fillpriors(struct_priors *D_priors)
 {
-
-	D_priors->Z_mu=gsl_sf_log(50);		D_priors->eta_Z_p=1/(6*6);      
-	D_priors->eta_Z=-6;		D_priors->psi_Z=1/(0.1*0.1);
-/*gsl_sf_log(1/(4*4))*/             
-	D_priors->eta_nu=-2.77;		D_priors->psi_nu=1/(3*3);  
-/*log(1/(4*4))*/
-	D_priors->nu_mu=10.59663;    		D_priors->eta_nu_p=1/(5*5); 
-/*gsl_sf_log(1/(0.005*0.005))*/
-	D_priors->alpha_mu=0;      		D_priors->eta_alpha=1/(1.5*1.5);
-	D_priors->p=0.05;    
-	D_priors->eta_gamma=-3.583519;		D_priors->psi_gamma=1/(4*4);
-/*log(1/(6*6))*/
-	D_priors->eta_upsilon=-3.218;		D_priors->psi_upsilon=1;
-/*log(1/(5*5))*/	    
-	D_priors->upsilon_mu=0;			
+/*priors*/
+  char number[20];
+  double data;
+  FILE *file = fopen("priors.txt", "r");
+  if ( file != NULL ){  
+    fscanf(file, "%s %lf",number,&data);
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->Z_mu=data;	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_Z_p=data;      
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_Z=data;	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->psi_Z=data;
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_nu=data;	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->psi_nu=data;  
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->nu_mu=data;    	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_nu_p=data; 
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->alpha_mu=data;      	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_alpha=data;
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->p=data;    
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_gamma=data;	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->psi_gamma=data;
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->eta_upsilon=data;	
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->psi_upsilon=data;
+    fscanf(file, "%s %lf",number,&data);
+	D_priors->upsilon_mu=data;			
+  }
+  else{perror("Priors");}  
+  fclose(file);
 return 0;
 }
 

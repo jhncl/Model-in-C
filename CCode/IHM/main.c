@@ -28,8 +28,8 @@
 	thin=atoi(argv[3]);        /*thining*/
 
         inzstruct_data(data);
-	inzstruct_para(para,data);
 	inzstruct_priors(priors);
+	inzstruct_para(para,data,priors);
 	inzstruct_MH(MH);
 
 	gibbsandMHloop(burn,-999,RNG,data,para,priors,MH,0);

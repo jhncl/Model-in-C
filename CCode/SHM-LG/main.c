@@ -30,9 +30,9 @@
 	CAPL=atoi(argv[4]);        /*CAP D->L*/
 
         inzstruct_data(data);
-	inzstruct_para(para,data);
-
 	inzstruct_priors(priors);
+	inzstruct_para(para,data,priors);
+
 	inzstruct_MH(MH);
 
 	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,CAPL,0);
