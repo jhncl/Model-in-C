@@ -358,11 +358,11 @@ void update_lik_a(double para_mean[],double para_prec[],double scale[],double in
 			sum=0;
 			for (m=0;m<D->NoORF[ll];m++){
 				mm=D->NoSUM[ll]+m;
-				sum+=(para_mean[mm]-exp(scale[c])*interaction[l]*D_para->delta_l[l])/exp(scale[c]);
+				sum+=(para_mean[mm]-scale[c]-interaction[l]*D_para->delta_l[l]);
 			}
 		} 
 	mu[l]=sum/(D->NoORF[l]+D->NoORF[l+D->L]);
-  	sig[l]=1/(exp(para_prec[l])*D->NoORF[l]+exp(para_prec[l+D->L]+scale[1]+scale[1])*D->NoORF[ll]);
+  	sig[l]=1/(exp(para_prec[l])*D->NoORF[l]+exp(para_prec[l+D->L])*D->NoORF[l+D->L]);
 	}
 }
 
