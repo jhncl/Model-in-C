@@ -1,7 +1,11 @@
 #!/bin/bash           
                                                               
 step1="`pwd`"
-model_temp="`basename $step1`"
+data="`basename $step1`"
+step2="`dirname $step1`"
+step3="`basename $step2`"
+data=$step3"_"$data
+model="SHM"
 
 ORF="5000"
 
@@ -9,7 +13,7 @@ burn="100000"
 iter="1000"
 thin="100"
 
-name="CC_${model_temp}_${ORF}_${burn}_${iter}_${thin}"
+name="CC_${model}_${data}_${ORF}_${burn}_${iter}_${thin}"
 
 echo "#!/bin/sh                                                                                                                                              
 hostname                                                                                                                                                                                                                                                                                          

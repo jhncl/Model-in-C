@@ -1,7 +1,7 @@
 #!/bin/bash                                                                                                                                                  
 step1="`pwd`"
 data="`basename $step1`"
-step2="`dirname step1`"
+step2="`dirname $step1`"
 step3="`basename $step2`"
 data=$step3_$data
 model="JHM"
