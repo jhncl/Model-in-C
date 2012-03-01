@@ -1,15 +1,19 @@
-#!/bin/bash            
-dataA1="cdc"
-dataB1="ura3"
-model="JHM"                                                                                                                                     
-burn="1"
+#!/bin/bash                                                                                                                                                  
+step1="`pwd`"
+data="`basename $step1`"
+
+data="cdc"
+model="JHM"
+burn="100000"
 iter="1000"
 thin="100"
 
 
-name="CC_${model}_${dataA1}_${dataB1}_${burn}_${iter}_${thin}"
+name="CC_${model}_${data}_${burn}_${iter}_${thin}"
 
-echo "#!/bin/sh                                                                                                                                              
+
+echo "#!/bin/sh
+                                                                                                                                              
 hostname                                                                                                                                                     
 make                                                                                                                                                         
 sleep 10                                                                                                                                                     
