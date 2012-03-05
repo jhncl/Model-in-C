@@ -9,9 +9,9 @@ model="SHM"
 
 ORF="5000"
 
-burn="100000"
-iter="1000"
-thin="100"
+burn="200000"
+iter="10000"
+thin="10"
 
 name="CC_${model}_${data}_${ORF}_${burn}_${iter}_${thin}"
 

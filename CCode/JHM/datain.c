@@ -245,19 +245,21 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 int c,l,m,ll,mm;
 	/*initials*/
 
-	/*K*/
-	for (c=0;c<2;c++){
-		for (l=0;l<D->L;l++){
-			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[ll];m++){
-				mm=D->NoSUM[ll]+m;
-				D_para->K_clm[mm]=D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
-				if(D_para->K_clm[mm]>0){
-					D_para->K_clm[mm]=D_priors->K_mu;
-				}
-			}
-		}
+
+  /*K*/
+ for (c=0;c<2;c++){
+    for (l=0;l<D->L;l++){
+      ll=c*D->L+l;
+      for (m=0;m<D->NoORF[ll];m++){
+	mm=D->NoSUM[ll]+m;
+	if (D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_clm[mm]=D_priors->P_mu;}
+	else{     
+		D_para->K_clm[mm]=gsl_sf_log(D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
 	}
+
+      }
+    }
+  }
 
 				
 	for (l=0;l<(2*D->L);l++)          {D_para->tau_K_cl[l]=D_priors->sigma_K;}                  /*Precision*/

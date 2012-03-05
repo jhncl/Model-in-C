@@ -186,11 +186,13 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
   int l,m,mm;
   /*initials*/
   /*K*/
-  for (l=0;l<D->L;l++){
+ for (l=0;l<D->L;l++){
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
-      D_para->K_lm[mm]=D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
-      if(D_para->K_lm[mm]>0){D_para->K_lm[mm]=D_priors->K_mu;}
+      if(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_lm[mm]=D_priors->P_mu;}
+	else{     
+		D_para->K_lm[mm]=gsl_sf_log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
+	}
     }
   }
 
