@@ -177,7 +177,7 @@ int inzstruct_data(struct_data *data)
 
 	size=data->MAXmn;
 	data->y=malloc(size*sizeof(double));  
-	datadouble("CCode100Adam.txt","CCode100C.txt",data);
+	datadouble("dataA1.txt","dataB1.txt",data);
 	/*if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
     		exit(EXIT_FAILURE);
