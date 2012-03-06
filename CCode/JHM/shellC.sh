@@ -37,11 +37,11 @@ Universe = vanilla
                                                                                                                                                              
 #Requirements = OpSys == “LINUX” && Arch ==“X86_64”                                                                                                          
                                                                                                                                                              
-Error = hello_condor.err                                                                                                                                     
+Error = ${name}.err                                                                                                                                     
                                                                                                                                                              
-Output = hello_condor.out                                                                                                                                    
+Output = ${name}.out                                                                                                                                    
                                                                                                                                                              
-Log = hello_condor.log                                                                                                                                       
+Log = ${name}.log                                                                                                                                       
                                                                                                                                                              
 transfer_input_files =priors.txt, main, Makefile, ydataA1.txt, ydataB1.txt, xdataA1.txt, xdataB1.txt,NoTIMEdataA1.txt,NoTIMEdataB1.txt, NoORFdataA1.txt,LMNmaxdataA1.txt, NoORFdataB1.txt, LMNmaxdataB1.txt, main.c, functions.c, functions.h, datain.c, datain.c, datain.h, print.c, print.h                                                                                                                    
                                                                                                                                                              

@@ -37,9 +37,9 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	file=fopen(filename, "r");
 	i=0;
 	if ( file != NULL ){
-		for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
+	  /*for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
 			fscanf(file, "%c %s",number,number);
-		}
+			}*/
 		for (i=0;i<D->SHIFTmn;i++){
 			fscanf(file, "%c %lf",number,&data);
 			K_lm[i]=exp(data);   
@@ -63,9 +63,9 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	file2=fopen(filename2, "r");
 	i=0;
 	if ( file != NULL ){
-		for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
+	  /*for (i=0;i<2*D->SHIFTmn+5*D->L+7+4;i++){
 			fscanf(file, "%c %s",number,number);
-		}
+			}*/
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
 			fscanf(file, "%c %lf",number,&data);
 			K_lm[i]=exp(data);   
@@ -177,7 +177,7 @@ int inzstruct_data(struct_data *data)
 
 	size=data->MAXmn;
 	data->y=malloc(size*sizeof(double));  
-	datadouble("dataA1.txt","dataB1.txt",data);
+	datadouble("dataA2.txt","dataB2.txt",data);
 	/*if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
 		perror("malloc failed");
     		exit(EXIT_FAILURE);

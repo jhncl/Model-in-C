@@ -21,8 +21,7 @@ hostname
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
 ./main $burn $iter $thin $ORF >${name}.R                                                                                                                             
-date                                                                                                                                                         
-die" > ${name}.sh
+date                                                                                                                                              " > ${name}.sh
 
 echo "#####################                                                                                                                                  
                                                                                                                                                              
@@ -38,11 +37,11 @@ Universe = vanilla
                                                                                                                                                              
 #Requirements = OpSys == “LINUX” && Arch ==“X86_64”                                                                                                          
                                                                                                                                                              
-Error = hello_condor.err                                                                                                                                     
+Error = ${name}.err                                                                                                                                     
                                                                                                                                                              
-Output = hello_condor.out                                                                                                                                    
+Output = ${name}.out                                                                                                                                    
                                                                                                                                                              
-Log = hello_condor.log                                                                                                                                       
+Log = ${name}.log                                                                                                                                       
                                                                                                                                                              
 transfer_input_files = main,headers.h, Makefile, priors.txt, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt,LMNmaxdata.txt, main.c, functions.c, functions.h, datain.c, datain.h, print.c, print.h                                                                                                                               
                                                                                                                                                              

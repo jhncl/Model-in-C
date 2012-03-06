@@ -36,13 +36,13 @@ Universe = vanilla
                                                                                                                                                              
 #Requirements = OpSys == “LINUX” && Arch ==“X86_64”                                                                                                          
                                                                                                                                                              
-Error = hello_condor.err                                                                                                                                     
+Error = ${name}.err                                                                                                                                     
                                                                                                                                                              
-Output = hello_condor.out                                               
+Output = ${name}.out                                               
 
-Log = hello_condor.log                                                                                                                                       
+Log = ${name}.log                                                                                                                                       
                                                                                                                                                              
-transfer_input_files = priors.txt,main,headers.h, Makefile, dataA1.txt, dataB1.txt, NoORFdataA1.txt,LMNmaxdataA1.txt, NoORFdataB1.txt, LMNmaxdataB1.txt, main.c, functions.c, functions.h, datain.c, datain.c, datain.h, print.c, print.h                                                                                                                               
+transfer_input_files = priors.txt,main,headers.h, Makefile, dataA2.txt, dataB2.txt, NoORFdataA1.txt,LMNmaxdataA1.txt, NoORFdataB1.txt, LMNmaxdataB1.txt, main.c, functions.c, functions.h, datain.c, datain.c, datain.h, print.c, print.h                                                                                                                               
                                                                                                                                                              
 transfer_files = ALWAYS                                                                                                                                      
                                                                                                                                                              
