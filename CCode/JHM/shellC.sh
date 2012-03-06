@@ -11,12 +11,12 @@ thin="10"
 
 name="CC_${model}_${data}_${burn}_${iter}_${thin}"
 
-
+make
 echo "#!/bin/sh
                                                                                                                                               
 hostname                                                                                                                                                     
-make                                                                                                                                                         
-sleep 10                                                                                                                                                     
+                                                                                                                                                         
+                                                                                                                                                    
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
 ./main $burn $iter $thin >${name}.R                                                                                                                             

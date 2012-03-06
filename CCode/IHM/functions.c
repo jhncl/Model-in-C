@@ -194,8 +194,8 @@ double aug_delta_l(gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors
 int gibbsandMHloop(int iter,int thin,gsl_rng *RNG,struct_data *D,struct_para *D_para,struct_priors *D_priors ,struct_MH *D_MH,int print){
 int i,j,l;
 
-if (print==0){printheader(D);
-	for (i=0;i<iter;i++){
+ if (print==0){printheader(D);}
+  /*for (i=0;i<iter;i++){
 			D_para->alpha_c[1]=MCMC_base_adaptive(
 				RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->halpha_c,D_para->alpha_c[1],MCMC_alpha_c,-999,-999,-999);
 
@@ -220,8 +220,8 @@ if (print==0){printheader(D);
 			}
 	}
 }
-
-if (print==1){
+*/
+ /*if (print==1){*/
 	for (i=0;i<iter;i++){
 		for (j=0;j<thin;j++){
 
@@ -234,8 +234,8 @@ if (print==1){
 				RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hsigma_upsilon,D_para->sigma_upsilon,MCMC_sigma_upsilon,-999,-999,-999);
 			D_para->sigma_nu=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hsigma_nu,D_para->sigma_nu,MCMC_sigma_nu,-999,-999,-999);
 			D_para->Z_p=gauss_sample(RNG,D,0,D->L,D_para->Z_l,exp(D_para->sigma_Z),D_priors->Z_mu,D_priors->eta_Z_p);
-			D_para->sigma_Z=gsl_min(-4,MCMC_base(
-				RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hsigma_Z,D_para->sigma_Z,MCMC_sigma_Z,-999,-999,-999));   
+			D_para->sigma_Z=MCMC_base(
+				RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hsigma_Z,D_para->sigma_Z,MCMC_sigma_Z,-999,-999,-999);   
 			D_para->nu_p=gauss_sample(RNG,D,0,D->L,D_para->nu_l,exp(D_para->sigma_nu),D_priors->nu_mu,D_priors->eta_nu_p);
 
 			for (l=0;l<D->L;l++){
@@ -246,9 +246,9 @@ if (print==1){
 				D_para->nu_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_Z,&D_MH->hnu_l,D_para->nu_l[l],MCMC_nu_l,-999,l,-999);
 			}
 		}
-		printdata(D,D_para,D_MH);
+		if (print==1){printdata(D,D_para,D_MH);}
 	}
-}
+	/*}*/
 
 return 0;
 }
