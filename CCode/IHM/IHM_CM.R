@@ -76,50 +76,53 @@ alpha1<-A1
 alpha2<-A2
 nuj1<-nuj[1]
 nuj2<-nuj[2]
-write.table(rbind(gene,ORF,mu_i,gamma,delta,taui,alpha1,alpha2,mu,tau,nu,nuj1,nuj2)[,order],paste("Table_",work,".pdf",sep=""))
+write.table(rbind(gene,ORF,Z_l,gamma,delta,taui,alpha1,alpha2,mu,tau,nu,nuj1,nuj2)[,order],paste("Table_",work,".pdf",sep=""))
 }
 
 ###########################################
 print("plot fitted with Conditioning on delta=1")
 ###########################################
 funplot1<-function(){
-limmin<-min(A1*mu_i, A2*(mu_i+gamma))
-limmax<-max(A1*mu_i, A2*(mu_i+gamma))
+limmin<-0
+limmax<-max(A1*Z_l, A2*(Z_l*delta_gamma))
 i=1:N
 plot(1,type="n",main=paste("Treatment",treat,"Degrees","(Conditioning on deltas=1)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control (=Alpha1*mu_i)",ylab="Query (=Alpha2*(mu_i+gamma_i))",col=8,pch=19,cex=0.5)
 lines(A1*c(0,1000),A2*c(0,1000),lwd=2)
-points(A1*mu_i[i], A2*(mu_i[i]+gamma[i]),main=paste("Treatment",treat,"Degrees","(Conditioning on deltas=1)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single (=Alpha1*mu_i)",ylab="Double (=Alpha2*(mu_i+gamma_i))",col=8,pch=19,cex=0.5)
+points(A1*Z_l[i], A2*(Z_l[i]*delta_gamma[i]),col=8,pch=19,cex=0.5)
 i=vecorder[gamma[vecorder]>0]
-points(A1*mu_i[i],A2*(mu_i[i]+gamma[i]),ylim=c(0,5),xlim=c(0,5),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
+points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=3,pch=19,cex=0.5)
 i=vecorder[gamma[vecorder]<=0]  
-points(A1*mu_i[i],A2*(mu_i[i]+gamma[i]),ylim=c(0,5),xlim=c(0,5),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+points(A1*Z_l[i],A2*(Z_l[i]+gamma[i]),col=2,pch=19,cex=0.5)
 i=vecorder
-text(A1*mu_i[i],A2*(mu_i[i]+gamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
+text(A1*Z_l[i],A2*(Z_l[i]+gamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
 }
 
 ###########################################
 print("plot fitted NO conditioning")
 ###########################################
 funplot2<-function(){
-limmin<-min(A1*mu_i, A2*(mu_i+deltagamma))
-limmax<-max(A1*mu_i, A2*(mu_i+deltagamma))
+limmin<-0
+limmax<-max(A1*Z_l, A2*Z_l*delta_gamma)
 i=1:N
-plot(1,type="n",main=paste("Treatment",treat,"Degrees","(delta=Posterior Expectations)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control (=Alpha1*mu_i)",ylab="Query (=Alpha2*(mu_i+delta_i*gamma_i))",col=8,pch=19,cex=0.5)
-lines(A1*c(0,1000),A2*c(0,1000),lwd=2)
-points(A1*mu_i[i], A2*(mu_i[i]+deltagamma[i]),main=paste("Treatment",treat,"Degrees","(delta=Posterior Expectations)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single (=Alpha1*mu_i)",ylab="Double (=Alpha2*(mu_i+delta_i*gamma_i))",col=8,pch=19,cex=0.5)
-i=vecorder[deltagamma[vecorder]>0]
-points(A1*mu_i[i],A2*(mu_i[i]+deltagamma[i]),ylim=c(0,5),xlim=c(0,5),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
-i=vecorder[deltagamma[vecorder]<=0]  
-points(A1*mu_i[i],A2*(mu_i[i]+deltagamma[i]),ylim=c(0,5),xlim=c(0,5),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+plot(1,type="n",main=paste("Treatment",treat,"Degrees","(delta=Posterior Expectations)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control Fitness (=Z_l)",ylab="Query Fitness (=exp(alpha+Z_l+delta_l*gamma_l))",col=8,pch=19,cex=0.5)
+lines(c(-1000,10000),c(-1000,10000),col="grey",lwd=2,)
+lines(A1*c(-1000,10000),A2*c(-1000,10000),lwd=2,col="grey",lty=2)
+lines(c(Z_l[gene=="HIS3"],Z_l[gene=="HIS3"]),c(-1000,10000),lwd=2,col="cadetblue")
+lines(c(-1000,10000),c(c(Z_l+delta_gamma)[gene=="HIS3"],c(Z_l+delta_gamma)[gene=="HIS3"]),lwd=2,col="cadetblue")
+points(A1*Z_l[i], A2*(Z_l[i]*delta_gamma[i]),col=8,pch=19,cex=0.5)
+i=vecorder[delta_gamma[vecorder]>0]
+points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=3,pch=19,cex=0.5)
+i=vecorder[delta_gamma[vecorder]<=0]  
+points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=2,pch=19,cex=0.5)
 i=vecorder
-text(A1*mu_i[i],A2*(mu_i[i]+deltagamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
+text(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
 }
 
 ##########################################
 print("Data plot with highlighted Interactions")
 ##########################################
 funplot3<-function(){
-limmin<-min(y,na.rm=TRUE)
+limmin<-min(y,na.rm=TRUE)*1.1
 limmax<-max(y,na.rm=TRUE)*1.1
 plot(1,type="n",main=paste("Treatment",treat,"Degrees"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control",ylab="Query",pch=19,col=8,cex=0.5)
 lines(c(-1000,10000),A2*c(-1000,10000),col="cadetblue",lwd=2,)
@@ -439,17 +442,21 @@ if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
 namesamp<-names(vecsamp)
 #write.table(samp,"backup.txt")
 #write.table(vecsamp,"backup2.txt")
-A1<-vecsamp[1]
-A2<-vecsamp[2]
-delta<-vecsamp[(N+3):(2*N+2)]
-gamma<-vecsamp[(3*N+3):(4*N+2)]
-if(nrow(samp)>1) {deltagamma<-colMeans(samp[,(N+3):(2*N+2)]*samp[,(3*N+3):(4*N+2)])} else {deltagamma<-(samp[,(N+3):(2*N+2)]*samp[,(3*N+3):(4*N+2)])}
-mu_i<-vecsamp[(4*N+4):(5*N+3)]
-mu<-vecsamp[4*N+3]
-nu<-vecsamp[(5*N+4)]
-nuj<-vecsamp[(5*N+5):(5*N+6)]
-tau<-vecsamp[(5*N+7)]
-taui<-vecsamp[(5*N+8):(6*N+7)]
+Z_l<-exp(vecsamp[1:(N)])
+sigma_Z<-exp(vecsamp[N+1])
+Z<-exp(vecsamp[N+2])
+nu_l<-exp(vecsamp[(N+3):(2*N+2)])
+sigma_nu<-exp(vecsamp[2*N+3])
+nu<-exp(vecsamp[(2*N+4)])
+A1<-exp(0)
+A2<-exp(vecsamp[2*N+5])
+delta<-vecsamp[(2*N+6):(3*N+5)]
+gamma<-vecsamp[(3*N+6):(4*N+5)]
+sigma_gamma<-exp(vecsamp[(4*N+6)])
+upsilon_c <-exp(vecsamp[(4*N+7)])
+sigma_upsilon<-exp(vecsamp[(4*N+8)])
+if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])} else {delta_gamma<-(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])}
+delta_gamma=exp(delta_gamma)
 
 ##########################################
 print("Ordering")
