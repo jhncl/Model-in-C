@@ -56,6 +56,10 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	else{perror(filename);}
 	fclose(file);
 
+        for (i=0;i<D->SHIFTmn;i++){
+	  if(K_lm[i]<=P_a){K_lm[i]=2*P_a;}
+        }
+
 	for (i=0;i<D->SHIFTmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
 	}
@@ -81,6 +85,11 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	}
 	else{perror(filename2);}
 	fclose(file2);
+
+	for (i=D->SHIFTmn;i<D->MAXmn;i++){
+          if(K_lm[i]<=P_b){K_lm[i]=2*P_b;}
+        }
+
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));

@@ -32,7 +32,7 @@
 	inzstruct_para(para,data,priors);
 	inzstruct_MH(MH);
 
-	gibbsandMHloop(burn,-999,RNG,data,para,priors,MH,0);
+	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,0);
 	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,1);
        	gsl_rng_free(RNG);
 	return 0;
