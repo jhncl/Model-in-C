@@ -26,8 +26,7 @@ return 0;
 int datadouble(char filename[],char filename2[],struct_data *D)
 {
 	int i;
-	char number[20];
-	double data,*K_lm,*r_lm,P_a,P_b,size;
+       	double data,*K_lm,*r_lm,P_a,P_b,size;
 	FILE *file;
 	FILE *file2;
 	size=D->MAXmn;
@@ -41,15 +40,15 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 			fscanf(file, "%c %s",number,number);
 			}*/
 		for (i=0;i<D->SHIFTmn;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 		}
 		P_a=exp(data);  
 		for (i=0;i<D->SHIFTmn;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 			r_lm[i]=exp(data);   
 		}
 	}
@@ -71,15 +70,15 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 			fscanf(file, "%c %s",number,number);
 			}*/
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 		}
 		P_b=exp(data);  
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%c %lf",number,&data);
+			fscanf(file, "%lf",&data);
 			r_lm[i]=exp(data);   
 		}
 	}
@@ -250,10 +249,24 @@ return 0;
 
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
-	int l;
-
+  int l,m,mm;
+  double SUM=0;
 	/*initials*/
-	for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}
+	/*for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}*/
+	for (l=0;l<D->L;l++){
+	  for (m=0;m<D->NoORF[l];m++){
+	    mm=D->NoSUM[l]+m;
+	    SUM += D->y[mm];
+	  }
+	  if ((SUM/D->NoORF[l])<1){
+	    D_para->Z_l[l]=0;
+	  }
+	  else{
+	    D_para->Z_l[l]=gsl_sf_log(SUM/D->NoORF[l]);
+	  }
+	  SUM=0;
+	}
+
 	D_para->sigma_Z=D_priors->eta_Z;     
 	D_para->Z_p=D_priors->Z_mu;  
 
