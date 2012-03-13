@@ -387,6 +387,7 @@ fscanf(file, "%s %lf",number,&data);
 fscanf(file, "%s %lf",number,&data); 
    D_priors->eta_P=data;   
 	/*data2.c*/       
+   fscanf(file, "%s %lf",number,&data);
 fscanf(file, "%s %lf",number,&data);
 	D_priors->alpha_mu=data;     
 fscanf(file, "%s %lf",number,&data);

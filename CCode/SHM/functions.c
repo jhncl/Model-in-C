@@ -190,8 +190,8 @@ D_MH->hP=0.2;
 		D_para->nu_p=gauss_sample(RNG,D,0,D->L,D_para->nu_l,exp(D_para->sigma_nu),D_priors->nu_mu,D_priors->eta_nu_p);
 
 		for (l=0;l<D->L;l++){
-			D_para->tau_K_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->tau_K_l[l],MCMC_tau_K_l,l,-999);
-			D_para->tau_r_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->tau_r_l[l],MCMC_tau_r_l,l,-999);
+		  D_para->tau_K_l[l]=gsl_min(7,MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->tau_K_l[l],MCMC_tau_K_l,l,-999));
+		  D_para->tau_r_l[l]=gsl_min(11,MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->tau_r_l[l],MCMC_tau_r_l,l,-999));
 
 			D_para->K_o_l[l]=gauss_sample(RNG,D,D->NoSUM[l],D->NoORF[l],D_para->K_lm,exp(D_para->tau_K_l[l]),D_para->K_p,exp(D_para->sigma_K_o));
 			D_para->r_o_l[l]=gauss_sample(RNG,D,D->NoSUM[l],D->NoORF[l],D_para->r_lm,exp(D_para->tau_r_l[l]),D_para->r_p,exp(D_para->sigma_r_o));

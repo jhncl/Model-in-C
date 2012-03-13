@@ -432,10 +432,10 @@ D_MH->hK=0.0001;
 				for (c=0;c<2;c++){
 					ll=c*D->L+l;
 
-					D_para->tau_K_cl[ll]=MCMC_base(
-						RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_K_cl[ll],MCMC_tau_K_cl,c,l,-999);
-					D_para->tau_r_cl[ll]=MCMC_base(
-						RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_r_cl[ll],MCMC_tau_r_cl,c,l,-999);
+					D_para->tau_K_cl[ll]=gsl_min(7,MCMC_base(
+										 RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_K_cl[ll],MCMC_tau_K_cl,c,l,-999));
+					D_para->tau_r_cl[ll]=gsl_min(11,MCMC_base(
+										  RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_r_cl[ll],MCMC_tau_r_cl,c,l,-999));
 
 					for (m=0;m<D->NoORF[l];m++){ 
 						mm=D->NoSUM[ll]+m;
