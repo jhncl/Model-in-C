@@ -61,7 +61,6 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=0;i<D->SHIFTmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
-                D->y[i]=pow(exp(30),(D->y[i]/2000));
 	}
 
 	file2=fopen(filename2, "r");
@@ -93,8 +92,6 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));
-                D->y[i]=pow(exp(30),(D->y[i]/2000));
-
 	}
 return 0;
 }
