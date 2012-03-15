@@ -249,6 +249,7 @@ return 0;
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
 int c,l,m,ll,mm;
+ double SUM=0,SUMa=0,SUMb=0;
 	/*initials*/
   /*K*/
 for (c=0;c<2;c++){

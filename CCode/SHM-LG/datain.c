@@ -189,6 +189,7 @@ int filldata(struct_data *D)
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
   int l,m,mm;
+  double SUM=0,SUMa=0;
   /*initials*/
   /*K*/
 for (l=0;l<D->L;l++){
