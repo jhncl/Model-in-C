@@ -1,0 +1,11 @@
+
+x[is.na(x)]=-999
+y=y/max(c(y)[!is.na(c(y))])
+y[is.na(y)]=-999
+xx<-aperm(x,c(2,1,3))
+yy<-aperm(y,c(2,1,3))
+write.table(file="xdata.txt",c(xx))
+write.table(file="ydata.txt",c(yy))
+
+write.table(file="NoORFdata.txt",c(NoORF_a))
+write.table(file="NoTIMEdata.txt",c(NoTime_a)[-1])

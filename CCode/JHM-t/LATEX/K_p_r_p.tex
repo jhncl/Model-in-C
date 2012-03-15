@@ -1,0 +1,61 @@
+\begin{align*}
+K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )\\
+K^p &\sim \operatorname{N}(K^\mu, ({\eta^{K,p}})^{-1} )\\
+\\
+\pi(K_p|\theta)&=
+\sqrt{\frac{\eta^{K,p}}{2\pi}} e^{-\frac{1}{2}(K^p-K^\mu)^{2}\eta^{K,p} }
+\prod_{l=1}^{L}\sqrt{\frac{e^{ \sigma^{K,o} }}{2\pi}} e^{-\frac{1}{2}(K_{l}^o-K^p)^{2}e^{ \sigma^{K,o} } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(K_p|\theta)}&
+\color{red}{
+=-\frac{1}{2}(K^p-K^\mu)^{2}e^{\eta^{K,p}}
+-
+\sum_{l=1}^{L}\frac{1}{2}(K_{l}^o-K^p)^{2}e^{ \sigma^{K,o} }
++C
+}\\
+\text{Similarly for $r_p$}\\
+\color{red}{l\pi(r_p|\theta)}&
+\color{red}{
+=-\frac{1}{2}(r^p-r^\mu)^{2}e^{\eta^{r,p}}
+-
+\sum_{l=1}^{L}\frac{1}{2}(r_{l}^o-r^p)^{2}e^{ \sigma^{r,o} }
++C}\\ 
+\text{similarly for $\nu_p$}\\
+\color{red}{l\pi(\nu^p|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\nu^p-\nu^\mu)^{2}\eta^{\nu,p}
+-
+\sum_{l=1}^{L}
+\frac{1}{2}(\nu_{l}-\nu^p)^{2}e^{ {\sigma}^{\nu} } 
++C}\\
+\text{similarly for $\upsilon_p$}\\
+\color{red}{l\pi(\upsilon^p|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\upsilon^p-\upsilon^\mu)^{2}\eta^{\upsilon,p}
+-
+\sum_{c=1}^{2}
+\frac{1}{2}(\upsilon_{c}-\upsilon^p)^{2}e^{ {\sigma}^{\upsilon} } 
++C}
+\end{align*}
+
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \nu_{l}+\upsilon_{c}})^{-1} ) \\
+P &\sim \operatorname{N}(P^\mu, ({\eta^{P}})^{-1} )\\
+\\
+\pi(P|\theta)&=
+\sqrt{\frac{\eta^{P}}{2\pi}} e^{-\frac{1}{2}(P^p-P^\mu)^{2}\eta^{P} }
+\prod_{c=1}^{2}\prod_{l=1}^{L}\prod_{m=1}^{m_{cl}}\prod_{n=1}^{n_{clm}}
+\sqrt{\frac{e^{ \nu_{l}+\upsilon_{c}}}{2\pi}} e^{-\frac{1}{2}(y_{clmn}-\hat{y}_{clmn})^{2}e^{ \nu_{l}+\upsilon_{l}} }\\
+\text{Taking logs}\\
+\color{red}{l\pi(P|\theta)}&
+\color{red}{
+=-\frac{1}{2}(P^p-P^\mu)^{2}\eta^{P}
+-
+\sum_{c=1}^{2}\sum_{l=1}^{L}\sum_{m=1}^{m_{cl}}\sum_{n=1}^{n_{clm}}
+\frac{1}{2}(y_{lmn}-\hat{y}_{lmn})^{2}e^{\nu_{l}+\upsilon_{l}}
++C}\end{align*}

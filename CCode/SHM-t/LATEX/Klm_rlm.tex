@@ -1,0 +1,54 @@
+\begin{align*}
+y_{lmn} &\sim \operatorname{N}(\hat{y}_{lmn},(e^{ \nu_{l}})^{-1} ) \\
+\hat{y}_{lmn} &= f(x_{lmn};e^{ K_{lm} } ,e^{ r_{lm} } , e^{ P })\\
+K_{lm} &\sim \operatorname{N}(K_{l}^o, (e^{ \tau_{l}^K })^{-1} )\\
+\\
+\pi(K_{lm}|\theta)&=
+\sqrt{\frac{e^{ \tau_{l}^K }}{2\pi}} e^{-\frac{1}{2}(K_{lm}-K_{l}^o)^{2}e^{ \tau_{l}^K } }
+\prod_{n=1}^{N_{lm}}\sqrt{\frac{e^{ \nu_{l}}}{2\pi}} e^{-\frac{1}{2}(y_{lmn}-\hat{y}_{lmn})^{2}e^{ \nu_{l}} }\\
+\text{Taking logs}\\
+\color{red}{l\pi(K_{lm}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(K_{lm}-K_{l}^o)^{2}e^{\tau_{l}^K }
+-
+\sum_{n=1}^{N_{lm}}\frac{1}{2}(y_{lmn}-\hat{y}_{lmn})^{2}e^{\nu_{l}}
++C
+}\\
+\text{Similarly for $r_{lm}$}\\
+\color{red}{l\pi(r_{lm}|\theta)}&
+\color{red}{
+=-\frac{1}{2}(r_{lm}-r_{l}^o)^{2}e^{ \tau_{l}^r}
+-
+\sum_{n=1}^{N_{lm}}\frac{1}{2}(y_{lmn}-\hat{y}_{lmn})^{2}e^{ \nu_{l} }
++C
+} 
+\end{align*}
+
+\begin{center}
+\line(1,0){250}
+\end{center}
+
+\begin{align*}
+K_{lm} &\sim \operatorname{N}(K_{l}^o, (e^{ \tau_{l}^K })^{-1} )\\
+\tau_{l}^K &\sim \operatorname{N}(\sigma^{K}, (\phi^{K})^{-1} )\\
+\pi(\tau_{l}^K|\theta)&=
+\sqrt{\frac{\phi^{K}}{2\pi}} e^{-\frac{1}{2}(\tau_{l}^K-\sigma^{K})^{2}\phi^{K} }
+\prod_{m=1}^{m_{l}}
+\sqrt{\frac{e^{ \tau_{l}^K }}{2\pi}} e^{-\frac{1}{2}(K_{lm}-K_{l}^o)^{2}e^{ \tau_{l}^K } }\\
+\text{Taking logs}\\
+\color{red}{l\pi(\tau_{l}^K|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\tau_{l}^K-\sigma^{K})^{2}\phi^{K}
++
+\sum_{m=1}^{m_{l}}\frac{1}{2}(\tau_{l}^K -(K_{lm}-K_{l}^o)^{2}e^{\tau_{l}^K })
++C
+}\\
+\text{Similarly for $\tau_{l}^r$}\\
+\color{red}{l\pi(\tau_{l}^r|\theta)}&
+\color{red}{
+=-\frac{1}{2}(\tau_{l}^r-\sigma^{r})^{2}\phi^{r}
++
+\sum_{m=1}^{m_{l}}\frac{1}{2}(\tau_{l}^r -(r_{lm}-r_{l}^o)^{2}e^{\tau_{l}^r })
++C
+}
+\end{align*}

@@ -1,0 +1,162 @@
+library(qfaBayes)
+
+Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
+
+DescripControl<-"ExptDescriptionCDC13.txt"
+a<-rod.read(files=Control,inoctimes=DescripControl)
+qfa.variables(a)
+Screen<-as.character(unique(a$Screen.Name))
+Treat<-27
+MPlate<-15#as.character(unique(a$MasterPlate.Number))
+a<-funcREMOVE(a,Screen,Treat,MPlate)
+
+Row<-a$Row
+Col<-a$Col
+for (i in 1:nrow(a)){
+if (nchar(Row[i])<2){Row[i]=paste(0,Row[i],sep="")}
+if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
+}
+
+a$ID<-paste(a$Barcode,a$MasterPlate.Number,Row,Col,sep="")
+
+ORFuni=unique(a$ORF)[order(unique(a$ORF))]########
+funcIDlist<-function(x){
+a$ID[a$ORF==x]
+}
+funcStrip<-function(x,i){x[1:i]}
+IDstrip=sapply(ORFuni,funcIDlist)
+IDstrip=sapply(IDstrip,unique)
+IDstrip=lapply(IDstrip,i=6,funcStrip)
+IDstrip=unlist(IDstrip)
+IDstrip=na.omit(IDstrip)
+a<-a[a$ID%in%IDstrip,]
+#########
+
+a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
+
+
+
+Control<-c("cdc13-1_rad9D_SDLv2_Rpt1.txt","cdc13-1_rad9D_SDLv2_Rpt2.txt","cdc13-1_rad9D_SDLv2_Rpt3.txt","cdc13-1_rad9D_SDLv2_Rpt4.txt")
+DescripControl<-"ExptDescriptionCDC13RAD9.txt"
+b<-rod.read(files=Control,inoctimes=DescripControl)
+
+qfa.variables(b)
+Screen<-as.character(unique(b$Screen.Name))
+Treat<-27
+MPlate<-15#as.character(unique(b$MasterPlate.Number))
+b<-funcREMOVE(b,Screen,Treat,MPlate)
+
+
+Row<-b$Row
+Col<-b$Col
+for (i in 1:nrow(b)){
+if (nchar(Row[i])<2){Row[i]=paste(0,Row[i],sep="")}
+if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
+}
+
+b$ID<-paste(b$Barcode,b$MasterPlate.Number,Row,Col,sep="")
+ORFuni_b<-unique(b$ORF)[order(unique(b$ORF))]
+####
+sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
+####
+
+########
+funcIDlist<-function(x){
+b$ID[b$ORF==x]
+}
+funcStrip<-function(x,i){x[1:i]}
+IDstrip=sapply(ORFuni,funcIDlist)
+IDstrip=sapply(IDstrip,unique)
+IDstrip=lapply(IDstrip,i=6,funcStrip)
+IDstrip=unlist(IDstrip)
+IDstrip=na.omit(IDstrip)
+b<-b[b$ID%in%IDstrip,]
+#########
+
+b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
+
+
+Scaling=TRUE
+IDuni<-unique(a$ID)
+ORFuni<-unique(a$ORF)
+
+
+#gene<-unlist(lapply(ORFuni,funcGENE,data=a))
+N<-length(ORFuni);M<-length(IDuni)
+NoORF_a<-unlist(lapply(ORFuni,funcNoORF,data=a))#no of repeats each orf
+NoTime_a<-c(0,unlist(lapply(IDuni,funcNoTime,data=a)))# 0+ no of
+NoSum_a<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_a)))
+
+IDunib<-unique(b$ID)
+ORFunib<-unique(b$ORF)
+Nb<-length(ORFunib);Mb<-length(IDunib)
+NoORF_b<-unlist(lapply(ORFunib,funcNoORF,data=b))#no of repeats each orf
+NoTime_b<-c(0,unlist(lapply(IDunib,funcNoTime,data=b)))# 0+ no of
+
+dimr<-max(NoORF_a,NoORF_b);dimc<-max(NoTime_a,NoTime_b)
+y<-funcXY(a$Growth,M,N,NoTime_a,NoSum_a,dimr,dimc)
+x<-funcXY(a$Expt.Time,M,N,NoTime_a,NoSum_a,dimr,dimc)
+y<-y/max(y[!is.na(y)])###
+
+QFA.I<-list("NoORF"=c(NoORF_a),"NoTime"=c(NoTime_a)[-1],"NoSum"=c(NoSum_a),"N"=
+N,"M"=M,"gene"=gene)
+if (Scaling==TRUE){y<-funcSCALING(a,y)}
+QFA.D<-list(y=y,x=x,ORFuni=ORFuni)
+
+x[is.na(x)]=-999
+y=y/max(c(y)[!is.na(c(y))])
+y[is.na(y)]=-999
+xx<-aperm(x,c(2,1,3))
+yy<-aperm(y,c(2,1,3))
+write.table(file="xdataA1.txt",c(xx))
+write.table(file="ydataA1.txt",c(yy))
+
+write.table(file="NoORFdataA1.txt",c(NoORF_a))
+write.table(file="NoTIMEdataA1.txt",c(NoTime_a)[-1])
+
+write.table(file="LMNmaxdataA1.txt",c(N,max(NoORF_a),max(NoTime_a),length(y),length(NoTime_a[-1])))
+
+
+
+################
+aa<-a
+a<-b
+################
+
+Scaling=TRUE
+IDuni<-unique(a$ID)
+ORFuni<-unique(a$ORF)
+
+
+#gene<-unlist(lapply(ORFuni,funcGENE,data=a))
+N<-length(ORFuni);M<-length(IDuni)
+NoORF_a<-unlist(lapply(ORFuni,funcNoORF,data=a))#no of repeats each orf
+NoTime_a<-c(0,unlist(lapply(IDuni,funcNoTime,data=a)))# 0+ no of
+NoSum_a<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_a)))
+############################################################same row and coldimr<-max(NoORF_a);dimc<-max(NoTime_a)
+y<-funcXY(a$Growth,M,N,NoTime_a,NoSum_a,dimr,dimc)
+x<-funcXY(a$Expt.Time,M,N,NoTime_a,NoSum_a,dimr,dimc)
+y<-y/max(y[!is.na(y)])###
+
+QFA.I<-list("NoORF"=c(NoORF_a),"NoTime"=c(NoTime_a)[-1],"NoSum"=c(NoSum_a),"N"=
+N,"M"=M,"gene"=gene)
+if (Scaling==TRUE){y<-funcSCALING(a,y)}
+QFA.D<-list(y=y,x=x,ORFuni=ORFuni)
+
+
+x[is.na(x)]=-999
+y=y/max(c(y)[!is.na(c(y))])
+y[is.na(y)]=-999
+xx<-aperm(x,c(2,1,3))
+yy<-aperm(y,c(2,1,3))
+write.table(file="xdataB1.txt",c(xx))
+write.table(file="ydataB1.txt",c(yy))
+
+write.table(file="NoORFdataB1.txt",c(NoORF_a))
+write.table(file="NoTIMEdataB1.txt",c(NoTime_a)[-1])
+
+write.table(file="LMNmaxdataB1.txt",c(N,max(NoORF_a),max(NoTime_a),length(y),length(NoTime_a[-1])))
+
+
+
+

@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{times,natbib}
+\usepackage{amsmath,amsfonts,graphicx}
+\usepackage{color}
+
+\begin{document}
+
+\begin{align*}
+l&=1,2,...,L \qquad &\text{ORF}\\
+m&=1,...,M_{l} \qquad &\text{Repeat}\\
+n&=1,2,...,N_{lm} \qquad &\text{Time Point}\\
+\\
+y_{lmn} &\sim \operatorname{N}(\hat{y}_{lmn},(e^{ \nu_{l}  })^{-1} ) \\
+\hat{y}_{lmn} &= f(x_{lmn};e^{ K_{lm} } ,e^{ r_{lm} } , e^{ P })\\
+\end{align*}
+
+
+
+\begin{align*}
+\text{Repeat level}\\
+K_{lm} &\sim \operatorname{N}(K_{l}^o, (e^{ \tau_{l}^K })^{-1} )\qquad\qquad &\tau_{l}^K &\sim \operatorname{N}(\sigma^{K}, (\phi^{K})^{-1} )\\
+\\
+r_{lm} &\sim \operatorname{N}(r_{l}^o, (e^{ \tau_{l}^r })^{-1} )  &\tau_{l}^r &\sim \operatorname{N}(\sigma^{r}, (\phi^{r})^{-1} )\\
+\\
+\text{ORF level}\\
+K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )&\sigma^{K,o} &\sim \operatorname{N}(\eta^{K,o}, (\psi^{K,o})^{-1} )\\
+r_{l}^o &\sim \operatorname{N}(r^p, (e^{ \sigma^{r,o} })^{-1} )&\sigma^{r,o} &\sim \operatorname{N}(\eta^{r,o}, (\psi^{r,o})^{-1} )\\
+\nu_{l} &\sim \operatorname{N}(\nu^p, (e^{ {\sigma}^{\nu} })^{-1} )&\sigma^{\nu} &\sim \operatorname{N}(\eta^{\nu}, (\psi^{\nu})^{-1} )\\
+\end{align*}
+
+\begin{align*}
+\text{Population level}\\
+K^p &\sim \operatorname{N}(K^\mu, ({\eta^{K,p}})^{-1} )\\
+r^p &\sim \operatorname{N}(r^\mu, ({\eta^{r,p}})^{-1} )\\
+\nu^p &\sim \operatorname{N}(\nu^\mu, (\eta^{\nu,p})^{-1} )\\
+\\
+P &\sim \operatorname{N}(P^\mu, ({\eta^{P}})^{-1} )\\
+\end{align*}
+
+\newpage
+
+\include{Klm_rlm}
+\include{Kl_rl}
+\include{Kp_rp}
+
+\end{document}
+
+
+\sqrt{\frac{}{2\pi}} e^{-\frac{1}{2}()^{2} }
+
+\prod_{l=1}^{L}\prod_{m=1}^{m_{l}}\prod_{n=1}^{n_{lm}}
+
+\sum_{l=1}^{L}\sum_{m=1}^{M_{l}}\sum_{n=1}^{N_{lm}}
