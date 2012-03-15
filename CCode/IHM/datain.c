@@ -250,7 +250,7 @@ return 0;
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
   int l,m,mm;
-  double SUM=0;
+  double SUM=0,SUMa=0;
 	/*initials*/
 	/*for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}*/
 	for (l=0;l<D->L;l++){
@@ -265,10 +265,10 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	    D_para->Z_l[l]=gsl_sf_log(SUM/D->NoORF[l]);
 	  }
 	  SUM=0;
+	  SUMa+=D_para->Z_l[l];
 	}
-
-	D_para->sigma_Z=D_priors->eta_Z;     
-	D_para->Z_p=D_priors->Z_mu;  
+	D_para->Z_p=SUMa/D->L;
+	D_para->sigma_Z=D_priors->eta_Z;       
 
 	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
 	D_para->sigma_nu=D_priors->eta_nu;   

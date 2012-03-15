@@ -184,24 +184,26 @@ int filldata(struct_data *D)
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
   int l,m,mm;
+  double SUM=0,SUMa=0;
   /*initials*/
   /*K*/
  for (l=0;l<D->L;l++){
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
-      if(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_lm[mm]=D_priors->P_mu;}
+      if(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_lm[mm]=D_priors->P_mu;SUM+=D_para->K_lm[mm];}
 	else{     
-		D_para->K_lm[mm]=gsl_sf_log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
+	  D_para->K_lm[mm]=gsl_sf_log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);SUM+=D_para->K_lm[mm];
 	}
     }
+    D_para->K_o_l[l]=SUM/D->NoORF[l];
+    SUM=0;
+    SUMa+=D_para->K_o_l[l];
   }
+ D_para->K_p=SUMa/D->L;       /*LMean*/
 
   for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=D_priors->sigma_K;}                  /*Precision*/
-
-  for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=D_priors->K_mu;}        /*LMean*/
+  
   D_para->sigma_K_o=D_priors->eta_K_o;               /*Precision*/
-  D_para->K_p=D_priors->K_mu;       /*LMean*/
-
   /*r*/
   for (l=0;l<D->L;l++){
     for (m=0;m<D->NoORF[l];m++){
