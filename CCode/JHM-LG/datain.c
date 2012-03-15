@@ -221,10 +221,11 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->hK=0.0001;	MH->accept_K=0;
-	MH->hr=0.001;	MH->accept_r=0;
-	MH->hnu=0.3;	MH->accept_nu=0;
-	MH->hP=0.1;	MH->accept_P=0;  /*h sd; accept=0*/
+	MH->hK=0.1;	MH->accept_K=0;
+	MH->hr=0.1;	MH->accept_r=0;
+	MH->hnu=0.4;	MH->accept_nu=0;
+	MH->hP=0.2;	MH->accept_P=0;  /*h sd; accept=0*/
+	MH->halpha=0.01;
 return 0;
 }
 
