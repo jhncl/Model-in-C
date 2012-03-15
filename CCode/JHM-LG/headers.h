@@ -66,6 +66,12 @@ typedef struct struct_priors {
 } struct_priors;
 
 typedef struct struct_MH {
-  double hP,hnu,hK,hr,accept_P,accept_nu,accept_K,accept_r;
+  double 
+    hP,
+    hnu,
+    hK,
+    hr,
+    halpha,
+accept_P,accept_nu,accept_K,accept_r;
 } struct_MH;
 

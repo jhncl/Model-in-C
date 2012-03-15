@@ -250,27 +250,33 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
 int c,l,m,ll,mm;
 	/*initials*/
-
-	/*K*/
-	for (c=0;c<2;c++){
-		for (l=0;l<D->L;l++){
-			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[ll];m++){
-				mm=D->NoSUM[ll]+m;
-				D_para->K_clm[mm]=D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1];
-				if(D_para->K_clm[mm]>0){
-					D_para->K_clm[mm]=D_priors->K_mu;
-				}
-			}
+  /*K*/
+for (c=0;c<2;c++){
+    for (l=0;l<D->L;l++){
+      ll=c*D->L+l;
+      for (m=0;m<D->NoORF[ll];m++){
+	mm=D->NoSUM[ll]+m;
+	if (D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_clm[mm]=D_priors->P_mu;}
+	else{     
+		D_para->K_clm[mm]=gsl_sf_log(D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
 		}
-	}
-
+	if (c==0){SUMa+=exp(D_para->K_clm[mm]);SUM+=D_para->K_clm[mm];}
+	  else{ SUMb+=exp(D_para->K_clm[mm]);}
+      }
+      if(c==0){D_para->K_o_l[l]=SUM/D->NoORF[l];}
+      SUM=0;
+      }
+  }
+ D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->maxy-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
+ D_para->beta_c[1]=D_para->alpha_c[1];
+ SUM=0;
+ for (l=0;l<(D->L);l++){SUM+=D_para->K_o_l[l];}
+ D_para->K_p=SUM/D->L;
 				
 	for (l=0;l<(2*D->L);l++)          {D_para->tau_K_cl[l]=D_priors->sigma_K;}                  /*Precision*/
 
-	for (l=0;l<D->L;l++)          {D_para->K_o_l[l]=D_priors->K_mu;}        /*LMean*/
+       /*LMean*/
 	D_para->sigma_K_o=D_priors->eta_K_o;               /*Precision*/
-	D_para->K_p=D_priors->K_mu;       /*LMean*/
 
 	/*r*/
 	for (c=0;c<2;c++){
@@ -327,8 +333,7 @@ int c,l,m,ll,mm;
  
 	D_para->alpha_c[0]=0;
 	D_para->beta_c[0]=0;
-	D_para->alpha_c[1]=D_priors->alpha_mu;
-	D_para->beta_c[1]=D_priors->beta_mu;  
+
 	D_para->sigma_gamma=D_priors->eta_gamma;
 	D_para->sigma_omega=D_priors->eta_omega;
 	D_para->upsilon_c[0]=0; 
