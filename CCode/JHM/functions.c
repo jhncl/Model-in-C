@@ -355,23 +355,16 @@ int i,j,l,m,mm,c,ll;
 	for (i=0;i<iter;i++){
 		for (j=0;j<thin;j++){
 			D_para->P=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_P,&D_MH->hP,D_para->P,MCMC_P,-999,-999,-999);
-/**********************D_para->P=-8.59382058;**********************/
-D_MH->hK=0.00003;
-			D_para->alpha_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->alpha_c[1],MCMC_alpha_c,-999,-999,-999);
-			D_para->beta_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->beta_c[1],MCMC_beta_c,-999,-999,-999);
-D_MH->hK=0.0001;
+			D_para->alpha_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->halpha,D_para->alpha_c[1],MCMC_alpha_c,-999,-999,-999);
+			D_para->beta_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->halpha,D_para->beta_c[1],MCMC_beta_c,-999,-999,-999);
+			/*			printf("%g %g %g %g\n",(D_para->nu_l[0]),exp( D_para->tau_r_cl[0]),exp(D_para->upsilon_c[1]),(D_para->nu_p));*/
 			D_para->sigma_gamma=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_gamma,MCMC_sigma_gamma,-999,-999,-999);
 			D_para->sigma_omega=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_omega,MCMC_sigma_omega,-999,-999,-999);
-D_MH->hK=1;
 			D_para->sigma_upsilon=MCMC_base(
-				RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_upsilon,MCMC_sigma_upsilon,-999,-999,-999);
-D_MH->hK=0.0001;
-			D_para->sigma_nu=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_nu,MCMC_sigma_nu,-999,-999,-999);
-	
-D_MH->hK=0.1;
+				RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hP,D_para->sigma_upsilon,MCMC_sigma_upsilon,-999,-999,-999);
+			D_para->sigma_nu=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hP,D_para->sigma_nu,MCMC_sigma_nu,-999,-999,-999);
 			D_para->sigma_K_o=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_K_o,MCMC_sigma_K_o,-999,-999,-999);
 			D_para->sigma_r_o=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->sigma_r_o,MCMC_sigma_r_o,-999,-999,-999);
-D_MH->hK=0.0001;	
 			D_para->K_p=gauss_sample(RNG,D,0,D->L,D_para->K_o_l,exp(D_para->sigma_K_o),D_priors->K_mu,D_priors->eta_K_p);
 			D_para->r_p=gauss_sample(RNG,D,0,D->L,D_para->r_o_l,exp(D_para->sigma_r_o),D_priors->r_mu,D_priors->eta_r_p);
 			D_para->nu_p=gauss_sample(RNG,D,0,D->L,D_para->nu_l,exp(D_para->sigma_nu),D_priors->nu_mu,D_priors->eta_nu);
@@ -379,21 +372,19 @@ D_MH->hK=0.0001;
 			D_para->upsilon_c[1]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->upsilon_c[1],MCMC_upsilon_c,-999,-999,-999);
 	
 			for (l=0;l<D->L;l++){
-D_MH->hK=0.3;
 				D_para->K_o_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hK,D_para->K_o_l[l],MCMC_K_o_l,-999,l,-999);
-D_MH->hK=0.9;
 				D_para->r_o_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hK,D_para->r_o_l[l],MCMC_r_o_l,-999,l,-999);
-D_MH->hK=0.0001;
-
 				D_para->nu_l[l]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->nu_l[l],MCMC_nu_l,-999,l,-999);
 
 				D_para->gamma_cl[l]=MCMC_base(
 					RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->gamma_cl[l],MCMC_gamma_cl,-999,l,-999);
 				D_para->omega_cl[l]=MCMC_base(
-					RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->omega_cl[l],MCMC_omega_cl,-999,l,-999);
+					RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->omega_cl[l],MCMC_omega_cl,-999,l,-999)
+;
 				D_para->delta_l[l]=aug_delta_l(RNG,D,D_para,D_priors,l);
 
 				for (c=0;c<2;c++){
+
 					ll=c*D->L+l;
 
 					D_para->tau_K_cl[ll]=gsl_min(7,MCMC_base(
@@ -403,11 +394,8 @@ D_MH->hK=0.0001;
 
 					for (m=0;m<D->NoORF[l];m++){ 
 						mm=D->NoSUM[ll]+m;
-D_MH->hK=0.1;
-
 						D_para->K_clm[mm]=gsl_min(0,MCMC_base(
 							RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->K_clm[mm],MCMC_K_clm,c,l,m));
-D_MH->hK=0.0001;
 						D_para->r_clm[mm]=gsl_min(3.5,MCMC_base(
 							RNG,D,D_para,D_priors,&D_MH->accept_r,&D_MH->hr,D_para->r_clm[mm],MCMC_r_clm,c,l,m));
 					}
