@@ -61,7 +61,8 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=0;i<D->SHIFTmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
-                D->y[i]=pow(exp(30),(D->y[i]/2000));
+		D->y[i]=(D->y[i]);
+		/*	printf("%g\n",D->y[i]);*/
 	}
 
 	file2=fopen(filename2, "r");
@@ -93,8 +94,8 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));
-                D->y[i]=pow(exp(30),(D->y[i]/2000));
-
+		D->y[i]=(D->y[i]);
+		/*printf("%g\n",D->y[i]);*/
 	}
 return 0;
 }
@@ -215,7 +216,7 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->halpha_c=0.5;
+	MH->halpha_c=0.008;
 	MH->hsigma_gamma=0.5;
 	MH->hupsilon_c=0.5;
 	MH->hsigma_upsilon=0.5;
@@ -223,7 +224,7 @@ int fillMH(struct_MH *MH)
 	MH->hsigma_Z=0.5;
 	MH->hnu_p=0.5;
 	MH->hgamma_cl=0.5;
-	MH->hZ_l=0.5;
+	MH->hZ_l=0.2;
 	MH->hnu_l=0.5;
 	MH->accept_Z=0;
 	MH->accept_up=0;
@@ -252,8 +253,8 @@ return 0;
 
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
-  int l,m,mm;
-  double SUM=0;
+  int l,m,mm,ll;
+  double SUM=0,SUMa=0,SUMb=0;
 	/*initials*/
 	/*for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}*/
 	for (l=0;l<D->L;l++){
@@ -283,7 +284,24 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}/*!*/  
 
 	D_para->alpha_c[0]=0;/**/
-	D_para->alpha_c[1]=D_priors->alpha_mu;
+	
+	for (l=0;l<D->L;l++){
+	  SUMa+=D_para->Z_l[l];
+	  ll=l+D->L;
+	  for (m=0;m<D->NoORF[ll];m++){
+	    mm=D->NoSUM[ll]+m;
+	      SUM+=D->y[mm];
+	  }
+	  if ((SUM/D->NoORF[ll])<1){
+	    SUMb+=0;
+	  }
+	  else{
+	    SUMb+=gsl_sf_log(SUM/D->NoORF[ll]);
+	  }
+	  SUM=0;
+	}
+
+	D_para->alpha_c[1]=gsl_sf_log(SUMb/SUMa);
 	D_para->sigma_gamma=D_priors->eta_gamma;
 	D_para->upsilon_c[0]=0; /**/
 	D_para->upsilon_c[1]=0;	

@@ -5,11 +5,11 @@ data="`basename $step1`"
 step2="`dirname $step1`"
 step3="`basename $step2`"
 data=$step3_$data
-burn="100000"
+burn=$1
 iter="10000"
 thin="10"
 
-model="IHM" 
+model="IHM_us" 
                                                                                              name="CC_${model}_${data}_${burn}_${iter}_${thin}"
 make                                                                                                                                 
 echo "#!/bin/sh                                                                                                                                              
