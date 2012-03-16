@@ -1,10 +1,10 @@
 filename="M_IHM_100"
 CAPORF=6000
-library(qfaBayes)
- library(qfa)
+#library(qfaBayes)
+# library(qfa)
 library(rjags)
-
-
+library(qfa,lib="/home/b0919573/R")                                                                                                                        
+library(qfaBayes,lib="/home/b0919573/R")  
 
 control<-"dataA2.txt"
 query<-"dataB2.txt"

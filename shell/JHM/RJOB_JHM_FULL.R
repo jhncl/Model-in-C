@@ -1,6 +1,8 @@
-library(qfaBayes,lib="~/R")
- library(qfa,lib="~/R")
-library(rjags,lib="~/R")
+#library(qfaBayes,lib="~/R")
+# library(qfa,lib="~/R")
+library(rjags)
+library(qfa,lib="/home/b0919573/R")                                                                                                                        
+library(qfaBayes,lib="/home/b0919573/R")  
 priors<-read.table("priors.txt",header=T)
 
 QFA.P<-list(

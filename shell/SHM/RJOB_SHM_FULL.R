@@ -1,9 +1,10 @@
 CAPN=6000
 
 library(rjags)
-library(qfa,lib="~/R")
-library(qfaBayes,lib="~/R")
-
+#library(qfa,lib="~/R")
+#library(qfaBayes,lib="~/R")
+library(qfa,lib="/home/b0919573/R")                                                                                                                        
+library(qfaBayes,lib="/home/b0919573/R")  
 #################################################
 #################################################
 priors<-read.table("priors.txt",header=T)
