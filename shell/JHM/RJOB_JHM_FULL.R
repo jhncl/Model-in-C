@@ -76,8 +76,8 @@ model {
 }","model1.bug")
 
 library("rjags")
-
-
+filename="RCode_JHM"
+l<-date()
 jags <- jags.model('model1.bug',
                    data = list('x' = QFA.D$x,'y' = QFA.D$y,'SHIFT'=QFA.I$SHIFT,
 'N' = QFA.I$N,'NoTime' = QFA.I$NoTime,'NoORF' = QFA.I$NoORF,'NoSum' = QFA.I$NoSum, 
@@ -100,7 +100,7 @@ jags <- jags.model('model1.bug',
 ),
 n.chains = 1,n.adapt = 100)
 
-l=date()
+ll=date()
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -127,12 +127,10 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              1000,thin=1)
-ll<-data()
+              2000,thin=10)
+lll<-data()
 save(samp,file=paste(filename,"_F0.R",sep=""))
 
-update(jags,10000)
-
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -160,11 +158,10 @@ samp<-coda.samples(jags,
 'sigma_upsilon'
 
 ),
-              20000,thin=20)
-lll<-date()
+              2000,thin=10)
+llll<-date()
 save(samp,file=paste(filename,"_F1.R",sep=""))
 
-
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -191,8 +188,8 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              1000000,thin=10)
-
+              2000,thin=10)
+lllll<-date()
 save(samp,file=paste(filename,"_F2.R",sep=""))
 
 stop()

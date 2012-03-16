@@ -153,7 +153,10 @@ QFA.P=list('Z_mu'=log(50),'eta_Z_p'=1/(6*6),
 'upsilon_mu'=0)
 QFA.P[1:16]=priors[1:16,1]
 
+filename="RCode_IHM"
+
 library("rjags")
+l<-date()
 jags <- jags.model('model1.bug',
 data = list('y'=y,
 'NoORF'=NoORF,
@@ -172,6 +175,9 @@ n.chains = 1,n.adapt = 100)
 ###################################
 print("Fit Model/UPDATE")
 ###################################
+ll<-date()
+update(jags,100000)
+lll<-date()
 samp<-coda.samples(jags,
           c(
         'Z_l',
@@ -187,15 +193,14 @@ samp<-coda.samples(jags,
         'upsilon_c',
         'sigma_upsilon'
 ),
-            1000,thin=1)
+            10000,thin=10)
 print("1")
-l<-date()
+llll<-date()
 save(samp,file=paste(filename,"_F0.R",sep=""))
-
+update(jags,100000)
 print("2")
-
-update(jags, 10000)
 print("3")
+lllll<-date()
 samp<-coda.samples(jags,
           c(
 	'Z_l',
@@ -211,11 +216,11 @@ samp<-coda.samples(jags,
 	'upsilon_c', 
 	'sigma_upsilon'
 ),
-            1000000,thin=10)
-ll<-date()
+            10000,thin=10)
+llllll<-date()
 save(samp,file=paste(filename,"_F1.R",sep=""))
 
-
+stop()
 samp<-coda.samples(jags,
           c(
         'Z_l',
@@ -232,7 +237,7 @@ samp<-coda.samples(jags,
         'sigma_upsilon'
 ),
             1000000,thin=10)
-lll<-date()
+lllllll<-date()
 save(samp,file=paste(filename,"_F2.R",sep=""))
 
 

@@ -1,4 +1,3 @@
-
 CAPN=6000
 
 library(rjags)
@@ -46,6 +45,7 @@ sigma_r_o ~ dnorm(eta_r_o,psi_r_o)
 ","model1.bug")
 QFA.I$N=min(QFA.I$N,CAPN)
 l<-date()
+filename="RCode_SHM"
  jags <- jags.model('model1.bug',
                     data = list('x' = QFA.D$x,
                                 'y' = QFA.D$y,
@@ -66,6 +66,7 @@ l<-date()
                     n.chains = 1,
                     n.adapt = 100)
 ll<-date()
+
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
     'K_o_l',            'sigma_K_o',  
@@ -76,17 +77,13 @@ samp<-coda.samples(jags,
     'r_p',
     'nu_l',             'sigma_nu',
     'nu_p'),
-              1000,thin=1)
+              10000,thin=10)
 lll<-date()
 save(samp,file=paste(filename,"_F0.R",sep=""))
-write.table(c(l,ll,lll),file="time.txt")
-stop()
-error()
- update(jags,10000)
-date()
+
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
-    'K_o_l',            'sigma_K_o',  
+    'K_o_l',            'sigma_K_o',
     'K_p',
     'P_L',
     'r_lm_L',            'tau_r_l',
@@ -94,10 +91,10 @@ samp<-coda.samples(jags,
     'r_p',
     'nu_l',             'sigma_nu',
     'nu_p'),
-              20000,thin=20)
+              10000,thin=10)
 
 save(samp,file=paste(filename,"_F1.R",sep=""))
-
+llll<-date()
 
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
@@ -109,8 +106,8 @@ samp<-coda.samples(jags,
     'r_p',
     'nu_l',             'sigma_nu',
     'nu_p'),
-              100000,thin=10)
-
+              10000,thin=10)
+lllll<-date()
 save(samp,file=paste(filename,"_F2.R",sep=""))
 
 

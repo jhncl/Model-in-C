@@ -1,13 +1,12 @@
 #!/bin/bash
 
 name=`echo $1 | sed '$s/..$//'`
-
+echo "$name"
 echo "#!/bin/sh
 hostname
 date
 R CMD BATCH $1 R$name.log
-date
-die" > R$name.sh
+date" > R$name.sh
 
 echo "#####################
 
@@ -29,7 +28,7 @@ Output = hello_condor.out
 
 Log = hello_condor.log
 
-transfer_input_files = $1
+transfer_input_files = $1, priors.txt
 
 transfer_files = ALWAYS
 
@@ -38,6 +37,3 @@ Queue
 
 chmod 755 R$name.sh
 condor_submit something.classad
-sleep 1
-
-done
