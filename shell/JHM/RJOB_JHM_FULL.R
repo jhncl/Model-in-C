@@ -41,8 +41,10 @@ model {
          		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[l,c]+m)]))				           
     			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(tau_r_cl[l+(c-1)*N]))
 			}
-	tau_K_cl[l+(c-1)*N]~dnorm(sigma_K,phi_K)
-	tau_r_cl[l+(c-1)*N]~dnorm(sigma_r,phi_r)
+tau_K_cl[l+(c-1)*N]<-min(7,tau_K_cl_UT[l+(c-1)*N])
+	tau_K_cl_UT[l+(c-1)*N]~dnorm(sigma_K,phi_K)
+tau_r_cl[l+(c-1)*N]<-min(11,tau_r_cl_UT[l+(c-1)*N])
+	tau_r_cl_UT[l+(c-1)*N]~dnorm(sigma_r,phi_r)
 		}
 
 		K_o_l[l]~dt(K_p,exp(sigma_K_o),4)
