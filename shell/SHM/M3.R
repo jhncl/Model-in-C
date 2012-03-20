@@ -2,11 +2,11 @@ K=exp(as.numeric(vec4[11,1]))
 r=exp(as.numeric(vec4[13,1]))
 P=exp(as.numeric(vec4[17,1]))
 Z_mu=((log((K/P))/log(2))*(r/log(2*((K-P)/(K-2*P)))))
-Z_mu=log((exp(30)^(Z_mu/2000))-(1) )
+Z_mu=log(1.01^Z_mu-1)
 K_vec=exp(range(vec[11,][!is.na(vec[11,])]))
 r_vec=exp(range(vec[13,][!is.na(vec[13,])]))
 l=((log((K_vec/P))/log(2))*(r_vec/log(2*((K_vec-P)/(K_vec-2*P)))))
-l=log((exp(30)^(l/2000))-(1))
+l=log(1.01^l-1)
 eta_Z_p=1/(max(abs(Z_mu-l[1]),abs(Z_mu-l[2])) /2 )^2
 eta_alpha=1/((l[2]/(l[1]))/2)^2
 p=0.05
@@ -22,7 +22,7 @@ K[K<2*P]=2*P[K<2*P]
 r[r<=0]=0
 r[r>8]=8
 vec=(log((K/P))/log(2))*(r/log(2*((K-P)/(K-2*P))))
-vec=log((exp(30)^(vec/2000))-(1))
+vec=log(1.01^vec-1)
 NoORF=numeric(0)
 
 for (i in 1:LEN){
@@ -58,7 +58,12 @@ for (i in 1:LEN){##
 ZZ[i]=1/var(Z[t:c(t-1+ll[i])][is.finite(Z[t:c(t-1+ll[i])])])###
 }###
 
-ZZ=log(ZZ)
+ZZg=log(ZZ)
+ZZg[is.na(ZZg)]=mean(ZZg[!is.na(ZZg)])
+eta_gamma=(median(ZZg))
+psi_gamma=1/((max(abs((median(ZZg))-(max(ZZg))),abs((median(ZZg))-(min(ZZg))))*1.1)/2 )^2
+
+ZZ=log(ZZ/2)###### t dist only df =4 ###################################
 ZZ[is.na(ZZ)]=mean(ZZ[!is.na(ZZ)])
 eta_Z=(median(ZZ))
 psi_Z=1/((max(abs((median(ZZ))-(max(ZZ))),abs((median(ZZ))-(min(ZZ))))*1.1)/2 )^2
@@ -84,7 +89,7 @@ QFA.P=list(
 'nu_mu'=nu_mu,                      'eta_nu_p'=eta_nu_p,
 'alpha_mu'=0,                       'eta_alpha'=eta_alpha,
 'p'=p,
-'eta_gamma'=eta_Z,              'psi_gamma'=psi_Z,
+'eta_gamma'=eta_gamma,              'psi_gamma'=psi_gamma,
 'eta_upsilon'=log(1/(2*2)),     'psi_upsilon'=1/(2)^2,
 'upsilon_mu'=0
 )

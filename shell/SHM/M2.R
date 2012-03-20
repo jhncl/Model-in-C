@@ -29,7 +29,10 @@ t=t+1
 setwd("~/QFADatasets/SHM/")
 }
 
+
+
 LEN=t-1
+
 vec=matrix(nrow=nrow(a[[1]]),ncol=LEN)
 for (j in 1:nrow(a[[1]])){
 for (i in 1:LEN){
@@ -37,6 +40,7 @@ vec[j,i]=a[[i]][j,1]
 if (a[[i]][19,1]<1000){vec[j,i]=NA}
 }
 }
+
 
 vec2=matrix(nrow=nrow(a[[1]]),ncol=6)
 for (i in 1:nrow(a[[1]]))
@@ -52,7 +56,8 @@ vec3[i+1]=1/( (max(vec2[i,5]-vec2[i,3],vec2[i,3]-vec2[i,1])*1.1)/2 )^2
 
 l=numeric(0)
 for (i in 1:LEN){
-l=c(l,log(aa[[i]][,1]))}
+l=c(l,log(aa[[i]][,1]/2))}### t dist only df =4 ###########################
+
 ll=numeric(0)
 for (i in 1:LEN){
 ll=c(ll,log(aa[[i]][,2]))}
