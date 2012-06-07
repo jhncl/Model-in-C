@@ -1,0 +1,27 @@
+K_clm[((1:N)[gene=="SPE2"]-1)*8+1:8])
+K_clm[N*8+((1:N)[gene=="SPE2"]-1)*8+1:8])
+x=QFA.D$x
+y=QFA.D$y
+pdf("plot.pdf")
+list=c(1:N)[gene=="SPE1"]
+list=c(list,c(1:N)[gene=="SPE2"])
+list=c(list,c(1:N)[gene=="SPE3"])
+list=c(list,c(1:N)[gene=="MRE11"])
+list=c(list,c(1:N)[gene=="RAD50"])
+list=c(list,c(1:N)[gene=="XRS2"])
+for (l in list){
+for (c in 0:1){
+plot(x[,,l,c+1],y[,,l,c+1],main=gene[l])
+for (m in 1:8){
+points(x[m,,l,c+1],y[m,,l,c+1],col=m+1)
+K=exp(K_clm[N*8*c+(l-1)*8+m])
+r=exp(r_clm[N*8*c+(l-1)*8+m])
+P=PO
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),0,20,col=m+1,add=T)
+}
+K=exp(K_o_l[l]+gamdelt[l]*c+log(A2)*c)
+r=exp(r_o_l[l]+omegadelt[l]*c+log(B2)*c)
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),0,20,col=1,add=T,lwd=2)
+}
+}
+dev.off()

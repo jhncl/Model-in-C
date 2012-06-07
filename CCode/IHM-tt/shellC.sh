@@ -1,27 +1,26 @@
-#!/bin/bash           
-                                                              
+#!/bin/bash  
+
 step1="`pwd`"
 data="`basename $step1`"
 step2="`dirname $step1`"
 step3="`basename $step2`"
-data=$step3"_"$data
-model="SHM-t-df3_31MAY_THELASTdf5"
-
-ORF="5000"
-
+data=$step3_$data
 burn=$1
 iter="10000"
 thin="10"
 
-name="CC_${model}_${data}_${ORF}_${burn}_${iter}_${thin}"
-make
+model="IHM-tt-df3_29MAY_2K" 
+name="CC_${model}_${data}_${burn}_${iter}_${thin}"
+make                                                                                                                                 
 echo "#!/bin/sh                                                                                                                                              
-hostname                                                                                                                                                                                                                                                                                          
-                                                                              
+hostname                                                                        
+
+                                                                                                                                                                                                                                                                                                                                                                                     
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
-./main $burn $iter $thin $ORF >${name}.R                                                                                                                             
-date                     " > ${name}.sh
+./main $burn $iter $thin >${name}.R                                                                                                                             
+date                                                                                                                                                         
+die" > ${name}.sh
 
 echo "#####################                                                                                                                                  
                                                                                                                                                              
@@ -29,7 +28,7 @@ echo "#####################
                                                                                                                                                              
 #####################                                                                                                                                        
                                                                                                                                                              
-Executable = ${name}.sh                                                                                                                              
+Executable = ${name}.sh                                                                                                                                         
                                                                                                                                                              
 #Arguments = I bring you tidings of joy                                                                                                                      
                                                                                                                                                              
@@ -39,11 +38,11 @@ Universe = vanilla
                                                                                                                                                              
 Error = ${name}.err                                                                                                                                     
                                                                                                                                                              
-Output = ${name}.out                                                                                                                                    
-                                                                                                                                                             
+Output = ${name}.out                                               
+
 Log = ${name}.log                                                                                                                                       
                                                                                                                                                              
-transfer_input_files = main,headers.h, Makefile, priors.txt, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt,LMNmaxdata.txt, main.c, functions.c, functions.h, datain.c, datain.h, print.c, print.h                                                                                                                               
+transfer_input_files = priors.txt,main,headers.h, Makefile, dataA2.txt, dataB2.txt, NoORFdataA1.txt,LMNmaxdataA1.txt, NoORFdataB1.txt, LMNmaxdataB1.txt, main.c, functions.c, functions.h, datain.c, datain.c, datain.h, print.c, print.h                                                                                                                               
                                                                                                                                                              
 transfer_files = ALWAYS                                                                                                                                      
                                                                                                                                                              
@@ -53,5 +52,3 @@ Queue
 chmod 755 ${name}.sh
 condor_submit something.classad
 sleep 1
-
-                            

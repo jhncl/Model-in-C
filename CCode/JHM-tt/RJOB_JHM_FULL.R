@@ -1,156 +1,12 @@
-filename="M_JHM_100"
+#library(qfaBayes,lib="~/R")
+# library(qfa,lib="~/R")
+load("M_JHM_FULL_27_27.RData")
+library(rjags)
+library(qfa,lib="/home/b0919573/R")                                                                                                                        
+library(qfaBayes,lib="/home/b0919573/R")  
+priors<-read.table("priors.txt",header=T)
 
-library(qfaBayes,lib="~/R")
- library(qfa,lib="~/R")
-library(rjags,lib="~/R")
- Control<-c("Adam_cdc13-1_SDLV2_REP1.txt","Adam_cdc13-1_SDLV2_REP2.txt","Adam_cdc13-1_SDLV2_REP3.txt","Adam_cdc13-1_SDLV2_REP4.txt")
-
-DescripControl<-"ExptDescriptionCDC13.txt"
-a<-rod.read(files=Control,inoctimes=DescripControl)
-qfa.variables(a)
-Screen<-as.character(unique(a$Screen.Name))
-Treat<-27
-MPlate<-as.character(unique(a$MasterPlate.Number))
-a<-funcREMOVE(a,Screen,Treat,MPlate)
-
-Row<-a$Row
-Col<-a$Col
-for (i in 1:nrow(a)){
-if (nchar(Row[i])<2){Row[i]=paste(0,Row[i],sep="")}
-if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
-}
-
-a$ID<-paste(a$Barcode,a$MasterPlate.Number,Row,Col,sep="")
-
-ORFuni=unique(a$ORF)########
-funcIDlist<-function(x){
-a$ID[a$ORF==x]
-}
-funcStrip<-function(x,i){x[1:i]}
-IDstrip=sapply(ORFuni,funcIDlist)
-IDstrip=sapply(IDstrip,unique)
-IDstrip=lapply(IDstrip,i=8,funcStrip)
-IDstrip=unlist(IDstrip)
-IDstrip=na.omit(IDstrip)
-a<-a[a$ID%in%IDstrip,]
-#########
-
-a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
-
-a<-a[a$ORF%in%unique(a$ORF)[1:100],]#############################################################
-ORFuni=unique(a$ORF)########
-
-
-
-
-Control<-c("cdc13-1_rad9D_SDLv2_Rpt1.txt","cdc13-1_rad9D_SDLv2_Rpt2.txt","cdc13-1_rad9D_SDLv2_Rpt3.txt","cdc13-1_rad9D_SDLv2_Rpt4.txt")
-DescripControl<-"ExptDescriptionCDC13RAD9.txt"
-b<-rod.read(files=Control,inoctimes=DescripControl)
-
-qfa.variables(b)
-Screen<-as.character(unique(b$Screen.Name))
-Treat<-27
-MPlate<-as.character(unique(b$MasterPlate.Number))
-b<-funcREMOVE(b,Screen,Treat,MPlate)
-
-
-Row<-b$Row
-Col<-b$Col
-for (i in 1:nrow(b)){
-if (nchar(Row[i])<2){Row[i]=paste(0,Row[i],sep="")}
-if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
-}
-
-b$ID<-paste(b$Barcode,b$MasterPlate.Number,Row,Col,sep="")
-
-
-########
-funcIDlist<-function(x){
-b$ID[b$ORF==x]
-}
-funcStrip<-function(x,i){x[1:i]}
-IDstrip=sapply(ORFuni,funcIDlist)
-IDstrip=sapply(IDstrip,unique)
-IDstrip=lapply(IDstrip,i=8,funcStrip)
-IDstrip=unlist(IDstrip)
-IDstrip=na.omit(IDstrip)
-b<-b[b$ID%in%IDstrip,]
-#########
-b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
-
-b<-b[b$ORF%in%unique(a$ORF)[1:100],]######################################################
-
-ORFuni_b<-unique(b$ORF)[1:100]
-
-####
-sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
-####
-
-ORFuni<-unique(a$ORF)[1:100] ###############################################################
-
-#a<-funcIDORDER(a)
-IDuni<-unique(a$ID)
-gene<-unlist(lapply(ORFuni,funcGENE,data=a))#?
-N<-length(ORFuni);M<-length(IDuni)
-NoORF_a<-unlist(lapply(ORFuni,funcNoORF,data=a))#no of repeats each orf
-NoTime_a<-c(0,unlist(lapply(IDuni,funcNoTime,data=a)))# 0+ no of time each repeat
-NoSum_a<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_a)))
-
-#b<-funcIDORDER(b)
-IDuni<-unique(b$ID)
-###
-
-
-
-#gene<-unlist(lapply(ORFuni,funcGENE,data=a))#?
-N<-length(ORFuni);M<-length(IDuni)#?
-NoORF_b<-unlist(lapply(ORFuni,funcNoORF,data=b))#no of repeats each orf
-NoTime_b<-c(0,unlist(lapply(IDuni,funcNoTime,data=b)))# 0+ no of time each repeat
-NoSum_b<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_b)))
-
-
-dimr<-max(NoORF_a,NoORF_b);dimc<-max(NoTime_a,NoTime_b)
-
-y<-funcXY_J(a$Growth,b$Growth,M,N,NoTime_a,NoSum_a,NoTime_b,NoSum_b,dimr,dimc)
-x<-funcXY_J(a$Expt.Time,b$Expt.Time,M,N,NoTime_a,NoSum_a,NoTime_b,NoSum_b,dimr,dimc)
-
-QFA.I<-list("NoORF"=cbind(NoORF_a,NoORF_b),"NoTime"=cbind(NoTime_a,NoTime_b)[-1,],"NoSum"=cbind(NoSum_a,NoSum_b),"N"=N,"M"=M,"gene"=gene,SHIFT=c(0,max(NoSum_a,NoSum_b))
-)
-Scaling=FALSE######
-if (Scaling==TRUE){y<-funcSCALING(rbind(a,b),y)}
-QFA.D<-list(x=x,y=y)
-
-
-x[is.na(x)]=-999
-y[is.na(y)]=-999
-xx<-aperm(x[,,,1],c(2,1,3))
-yy<-aperm(y[,,,1],c(2,1,3))
-write.table(file="xdataA1.txt",c(xx))
-write.table(file="ydataA1.txt",c(yy))
-
-write.table(file="NoORFdataA1.txt",c(NoORF_a))
-write.table(file="NoTIMEdataA1.txt",c(NoTime_a)[-1])
-write.table(file="LMNmaxdataA1.txt",c(N,max(NoORF_a),max(NoTime_a),length(y)/2,length(NoTime_a[-1])))
-
-xx<-aperm(x[,,,2],c(2,1,3))
-yy<-aperm(y[,,,2],c(2,1,3))
-write.table(file="xdataB1.txt",c(xx))
-write.table(file="ydataB1.txt",c(yy))
-
-write.table(file="NoORFdataB1.txt",c(NoORF_b))
-write.table(file="NoTIMEdataB1.txt",c(NoTime_b)[-1])
-write.table(file="LMNmaxdataB1.txt",c(N,max(NoORF_b),max(NoTime_b),length(y)/2,length(NoTime_b[-1])))
-
-
-
-
-
-
-
-
-
-
-Priors<-list(
+QFA.P<-list(
 sigma_K=7,		phi_K=0.1,
 eta_K_o=8,		psi_K_o=1,
 sigma_r=-1,		phi_r=0.1,
@@ -168,6 +24,9 @@ eta_gamma=-3.583519,	psi_gamma=1/(4*4),
 eta_omega=-3.583519,	psi_omega=1/(4*4),
 eta_upsilon=-3.218,	psi_upsilon=1,	    
 upsilon_mu=0)
+QFA.P[1:18]=priors[1:18,1]
+QFA.P[19:30]=priors[20:31,1]
+
 
 write("
 model {
@@ -175,27 +34,35 @@ model {
 		for (c in 1:2){
    		 	for (m in 1:NoORF[l,c]){
 	 		        for (n in 1:NoTime[NoSum[l,c]+m,c]){
-				y[m,n,l,c] ~ dnorm(y.hat[m,n,l,c],exp(nu_l[l]+upsilon_c[c]))
+				y[m,n,l,c] ~ dt(y.hat[m,n,l,c],exp(nu_l[l]+upsilon_c[c]),5)
 				y.hat[m,n,l,c] <- (K_clm[(SHIFT[c]+NoSum[l,c]+m)]*P*exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c]))/(K_clm[(SHIFT[c]+NoSum[l,c]+m)]+P*(exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c])-1))
 				}
 			K_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(K_clm_L[(SHIFT[c]+NoSum[l,c]+m)])
-			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(alpha_c[c]+(K_o_l[l]+delta_l[l,c]*gamma_cl[l,c])),exp(tau_K_cl[l+(c-1)*N]))
-         		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(min(3.5,r_clm_L[(SHIFT[c]+NoSum[l,c]+m)]))				           
-    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(exp(beta_c[c]+(r_o_l[l]+delta_l[l,c]*omega_cl[l,c])),exp(tau_r_cl[l+(c-1)*N]))
+			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(K_o_l[l]*exp(alpha_c[c]+(delta_l[l,c]*gamma_cl_LOG[l,c])),exp(tau_K_cl[l+(c-1)*N]))I(,0)
+         		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(r_clm_L[(SHIFT[c]+NoSum[l,c]+m)])				           
+    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(r_o_l[l]*exp(beta_c[c]+(delta_l[l,c]*omega_cl_LOG[l,c])),exp(tau_r_cl[l+(c-1)*N]))I(,3.5)
 			}
-			tau_K_cl[l+(c-1)*N]~dnorm(sigma_K,phi_K)
-			tau_r_cl[l+(c-1)*N]~dnorm(sigma_r,phi_r)
+tau_K_cl[l+(c-1)*N]<-(tau_K_cl_UT[l+(c-1)*N])
+	tau_K_cl_UT[l+(c-1)*N]~dnorm(tau_K_p[c],sigma_tau_K[c])I(0,)
+tau_r_cl[l+(c-1)*N]<-(tau_r_cl_UT[l+(c-1)*N])
+	tau_r_cl_UT[l+(c-1)*N]~dnorm(tau_r_p[c],sigma_tau_r[c])
+	
 		}
 
-		K_o_l[l]~dnorm(K_p,exp(sigma_K_o))
-		r_o_l[l]~dnorm(r_p,exp(sigma_r_o))
+		K_o_l[l]~dt(exp(K_p),exp(sigma_K_o),3)I(0,)
+		r_o_l[l]~dt(exp(r_p),exp(sigma_r_o),3)I(0,)
 		nu_l[l]~dnorm(nu_p,exp(sigma_nu))
 		delta_l[l,1]<-0
                 delta_l[l,2]~dbern(p)
 		gamma_cl[l,1]<-0
-		gamma_cl[l,2]~dnorm(0,exp(sigma_gamma))
+		gamma_cl[l,2]~dt(1,exp(sigma_gamma),3)I(0,)
 		omega_cl[l,1]<-0
-		omega_cl[l,2]~dnorm(0,exp(sigma_omega))
+		omega_cl[l,2]~dt(1,exp(sigma_omega),3)I(0,)
+gamma_cl_LOG[l,1]<-log(gamma_cl[l,1])
+gamma_cl_LOG[l,2]<-log(gamma_cl[l,2])
+omega_cl_LOG[l,1]<-log(omega_cl[l,1])
+omega_cl_LOG[l,2]<-log(omega_cl[l,2])
+
 	}
 	alpha_c[1]<-0
 	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
@@ -217,47 +84,31 @@ model {
 	sigma_gamma~dnorm(eta_gamma,psi_gamma)
 	sigma_omega~dnorm(eta_omega,psi_omega)
 
+tau_K_p[1] ~ dnorm(tau_K_mu,eta_tau_K_p)
+tau_K_p[2] ~ dnorm(tau_K_mu,eta_tau_K_p)
+tau_r_p[1] ~ dnorm(tau_r_mu,eta_tau_r_p)
+tau_r_p[2] ~ dnorm(tau_r_mu,eta_tau_r_p)
+sigma_tau_K[1] ~ dnorm(eta_tau_K,psi_tau_K)
+sigma_tau_K[2] ~ dnorm(eta_tau_K,psi_tau_K)
+sigma_tau_r[1] ~ dnorm(eta_tau_r,psi_tau_r)
+sigma_tau_r[2] ~ dnorm(eta_tau_r,psi_tau_r)
+
 }","model1.bug")
 
-QFA.P<-Priors
 library("rjags")
-
-vec_Kij<-array(dim=c(max(QFA.I$NoORF),QFA.I$N,2))
-for (c in 1:2){
-for (i in 1:QFA.I$N){
-for (j in 1:QFA.I$NoORF[i,c]){
-vec_Kij[j,i,c]<-na.omit(c(QFA.D$y[j,,i,c]))[length(na.omit(c(QFA.D$y[j,,i,c])))]
-}}}
-init_K_ij<-c(vec_Kij)[!is.na(c(vec_Kij))]
-init_K_ij[init_K_ij<0.0001]=0.0001
-init_K_ij<-log(init_K_ij)
-init_K_i<-colMeans(vec_Kij,na.rm=TRUE)
-init_K_i[init_K_i<0.0001]=0.0001
-init_K_i<-log(init_K_i)[,1]
-#####
-PO<-0.0002706728
-vec_rij<-array(dim=c(max(QFA.I$NoORF),QFA.I$N,2))
-for (c in 1:2){
-for (i in 1:QFA.I$N){
-for (j in 1:QFA.I$NoORF[i]){
-vec<-log(y[j,,i,c]*(vec_Kij[j,i,c]-PO)/(PO*(vec_Kij[j,i,c]-y[j,,i,c])))/x[j,,i,c]
-vec_rij[j,i,c]<-median( vec[is.finite(vec)] )
-}}}
-init_r_ij<-c(vec_rij)[!is.na(c(vec_rij))]
-init_r_ij[init_r_ij<=0]=0.1
-init_r_ij<-log(init_r_ij)
-init_r_i<-colMeans(vec_rij,na.rm=TRUE)
-init_r_i[init_r_i<=0]=0.1
-init_r_i<-log(init_r_i)[,1]
-
-
+filename="RCode_JHM"
+l<-date()
 jags <- jags.model('model1.bug',
                    data = list('x' = QFA.D$x,'y' = QFA.D$y,'SHIFT'=QFA.I$SHIFT,
 'N' = QFA.I$N,'NoTime' = QFA.I$NoTime,'NoORF' = QFA.I$NoORF,'NoSum' = QFA.I$NoSum, 
-'sigma_K'=QFA.P$sigma_K,		'phi_K'=QFA.P$phi_K,
+'tau_K_mu'=QFA.P$sigma_K,		'eta_tau_K_p'=QFA.P$phi_K,
+'tau_r_mu'=QFA.P$sigma_r,		'eta_tau_r_p'=QFA.P$phi_r,
+'eta_tau_K'=QFA.P$phi_K,'psi_tau_K'=QFA.P$phi_K,
+'eta_tau_r'=QFA.P$phi_K,'psi_tau_r'=QFA.P$phi_K,
+
 'eta_K_o'=QFA.P$eta_K_o,		'psi_K_o'=QFA.P$psi_K_o,
-'sigma_r'=QFA.P$sigma_r,		'phi_r'=QFA.P$phi_r,
 'eta_r_o'=QFA.P$eta_r_o,		'psi_r_o'=QFA.P$psi_r_o,
+
 'eta_nu'=QFA.P$eta_nu,		'psi_nu'=QFA.P$psi_nu,
 'K_mu'=QFA.P$K_mu,		'eta_K_p'=QFA.P$eta_K_p,
 'r_mu'=QFA.P$r_mu,		'eta_r_p'=QFA.P$eta_r_p,
@@ -273,7 +124,7 @@ jags <- jags.model('model1.bug',
 ),
 n.chains = 1,n.adapt = 100)
 
-date()
+ll=date()
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -300,12 +151,10 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              1000,thin=1)
-
+              20000,thin=10)
+lll<-data()
 save(samp,file=paste(filename,"_F0.R",sep=""))
 
-update(jags,10000)
-
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -333,11 +182,11 @@ samp<-coda.samples(jags,
 'sigma_upsilon'
 
 ),
-              20000,thin=20)
-
+              20000,thin=10)
+llll<-date()
+write.table("RJobtime.txt",c(lll,llll))
 save(samp,file=paste(filename,"_F1.R",sep=""))
 
-
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -364,8 +213,8 @@ samp<-coda.samples(jags,
 'upsilon_c',
 'sigma_upsilon'
 ),
-              1000000,thin=10)
-
+              2000,thin=10)
+lllll<-date()
 save(samp,file=paste(filename,"_F2.R",sep=""))
 
 stop()

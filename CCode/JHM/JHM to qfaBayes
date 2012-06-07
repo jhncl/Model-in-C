@@ -15,13 +15,13 @@ NoTime<-QFA$NoTime
 gene<-QFA$gene
 SHIFT<-QFA$SHIFT
 ###
-L=N
-M=M*2
+L=N=4294
+M=2*N*8
 K_clm=tau_K_cl=K_o_l=sigma_K_o=K_p=P=r_clm=tau_r_cl=r_o_l=sigma_r_o=r_p=nu_l=sigma_nu=nu_p=alpha_c=beta_c=delta_l=gamma_cl=sigma_gamma=omega_cl=sigma_omega=upsilon_c=sigma_upsilon=0
 ####
 t=1
 #K_clm
-for (i in 1:c(2*M))
+for (i in 1:c(M))
 {
 j=i
 K_clm[t]=mean(samp[,j]);t=t+1
@@ -207,24 +207,26 @@ gamdelt=0
 j=2*M+7*L+10
 jj=2*M+8*L+10
 ii=M+4*L+7
+t=1
 for (i in (M+2*L+7):(M+3*L+6))
 {
-gamdelt[t]=mean(samp[,i]*samp[,ii]);t=t+1
+gamdelt[t]=mean(samp[,j]*samp[,jj]);t=t+1
 j=j+1
 ii=i+1
-jj=j+1
+jj=jj+1
 }
 
 omegadelt=0
 j=2*M+7*L+10
 jj=2*M+9*L+11
 ii=M+7*L+8
+t=1
 for (i in (M+2*L+7):(M+3*L+6))
 {
-omegadelt[t]=mean(samp[,i]*samp[,ii]);t=t+1
+omegadelt[t]=mean(samp[,j]*samp[,jj]);t=t+1
 j=j+1
 ii=i+1
-jj=j+1
+jj=jj+1
 }
 
 delta<-delta_l
@@ -232,15 +234,183 @@ A1<-1
 A2<-exp(alpha_c)
 B1<-1
 B2<-exp(beta_c)
-sig<-sum(rep(1,N)[delta>0.1])
+sig<-sum(rep(1,N)[delta>0.5])
 order<-order(1-delta)
 vecorder<-order(1-delta)[1:sig]
+
+K_ij=c(exp(K_o_l),A2*exp(K_o_l+gamdelt))####
+r_ij=c(exp(r_o_l),B2*exp(r_o_l+omegadelt))####
+
 K_ij[K_ij<2*PO]=PO+0.001
+
 vecMDRa<-r_ij/log(2*(K_ij-PO)/(K_ij-2*PO)) #MDR
 vecMDPa<-log(K_ij/PO)/log(2) #MDP
-Mu=vecMDPa*vecMDRa
+mu_a=(vecMDPa*vecMDRa)[1:N]
+mu_b=(vecMDPa*vecMDRa)[(1+N):(2*N)]
+#Mu=vecMDPa*vecMDRa
+
+#Mu_a<-Mu[1:sum(NoORF[,1])]
+#veca<-vecb<-matrix(NA,N,max(NoORF))
+#Mu_b<-Mu[(1+sum(NoORF[,1])):sum(NoORF)]
+#mu_a=mu_b=0
+#for (i in 1:N){
+#mu_a[i]<-mean(Mu_a[(1+NoSum[i,1]):NoSum[i+1,1]])
+#mu_b[i]<-mean(Mu_b[(1+NoSum[i,2]):NoSum[i+1,2]])
+#}
+
+limmin<-0
+#limmax<-max(na.omit(Mu))
+limmax<-max(na.omit(c(mu_b)))
+limmaxx<-max(na.omit(c(mu_a)))
+###PIT
+t=1
+vec=numeric(0)
+for (i in 1:N){
+for (j in 1:NoORF[i,1])
+{
+vec[t]=pnorm(K_clm[t],K_o_l[i],1/(exp(tau_K_cl[i])^0.5))
+t=t+1
+}
+}
+pdf("JHM_hist.pdf")
+hist(vec)
+library(sn)
+vec=pst(K_o_l,df=3,location=K_p,scale=1/(exp(sigma_K_o)^0.5))
+hist(vec)
+dev.off()
+###
+
+Treat=TreatA=TreatB=27
 
 
+
+pdf("JHM_t_plot.pdf")
+
+plot(1,type="n",ylim=c(limmin,limmax),xlim=c(limmin,limmaxx),main="",xlab="",ylab="",pch=19,col=8,cex=0.5)
+lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=4)
+
+lines(lm(mu_b~0+mu_a),col="grey",lty=2)#############
+
+
+
+vecMDRa<-r_ij/log(2*(K_ij-PO)/(K_ij-2*PO)) #MDR
+vecMDPa<-log(K_ij/PO)/log(2) #MDP
+vecMDPa*vecMDRa
+lines(c(-1000,1000),A2*c(-1000,1000),col="grey",lty=2)########
+
+
+
+lines(c(mu_a[gene=="HIS3"],mu_a[gene=="HIS3"]),c(-1000,1000),lwd=2,col="lightblue")
+lines(c(-1000,1000),c(mu_b[gene=="HIS3"],mu_b[gene=="HIS3"]),lwd=2,col="lightblue")
+i=1:N
+points(mu_a[i],mu_b[i],ylim=c(limmin,limmax),xlim=c(limmin,limmax),col=8,pch=19,cex=0.5)
+i=vecorder[omegadelt[order][1:sig]>0]#######
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+i=vecorder[omegadelt[order][1:sig]<=0]  #######
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
+i=vecorder
+text(mu_a[i],(mu_b[i]),gene[i],pos=4,offset=0.1,cex=0.4)
+#legend(1,limmax, c("1-1","simple Lin Reg"), cex=0.5,col=c("grey","grey","black"), lty=c(1,2,3,1))
+#if (sum((1:N)[gene=="HIS3"])==1){
+#legend(1,limmax, c("1-1","simple Lin Reg","HIS3 Fit"), cex=0.5,col=c("grey","grey","black"), lty=c(2,3,1))
+#}
+
+
+mu_a=exp(K_o_l)#####
+mu_b=A2*exp(K_o_l+gamdelt)#####
+limmin<-0
+#limmax<-max(na.omit(Mu))
+limmax<-max(na.omit(c(mu_b)))
+limmaxx<-max(na.omit(c(mu_a)))
+
+plot(1,type="n",ylim=c(limmin,limmax),xlim=c(limmin,limmaxx),main="",xlab="",ylab="",pch=19,col=8,cex=0.5)
+lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=4)
+lines(c(-1000,1000),A2*c(-1000,1000),col="grey",lty=2)########
+lines(c(mu_a[gene=="HIS3"],mu_a[gene=="HIS3"]),c(-1000,1000),lwd=2,col="lightblue")
+lines(c(-1000,1000),c(mu_b[gene=="HIS3"],mu_b[gene=="HIS3"]),lwd=2,col="lightblue")
+i=1:N
+points(mu_a[i],mu_b[i],ylim=c(limmin,limmax),xlim=c(limmin,limmax),col=8,pch=19,cex=0.5)
+i=vecorder[gamdelt[order][1:sig]>0]####
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+i=vecorder[gamdelt[order][1:sig]<=0]  #######
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
+i=vecorder
+text(mu_a[i],(mu_b[i]),gene[i],pos=4,offset=0.1,cex=0.4)
+#legend(1,limmax, c("1-1","simple Lin Reg"), cex=0.5,col=c("grey","grey","black"), lty=c(1,2,3,1))
+#if (sum((1:N)[gene=="HIS3"])==1){
+#legend(1,limmax, c("1-1","simple Lin Reg","HIS3 Fit"), cex=0.5,col=c("grey","grey","black"), lty=c(2,3,1))
+#}
+
+mu_a=exp(r_o_l)#####
+mu_b=B2*exp(r_o_l+omegadelt)#####
+limmin<-0
+#limmax<-max(na.omit(Mu))
+limmax<-max(na.omit(c(mu_b)))
+limmaxx<-max(na.omit(c(mu_a)))
+
+plot(1,type="n",ylim=c(limmin,limmax),xlim=c(limmin,limmaxx),main="",xlab="",ylab="",pch=19,col=8,cex=0.5)
+lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=4)
+lines(c(-1000,1000),B2*c(-1000,1000),col="grey",lty=2)#######
+lines(c(mu_a[gene=="HIS3"],mu_a[gene=="HIS3"]),c(-1000,1000),lwd=2,col="lightblue")
+lines(c(-1000,1000),c(mu_b[gene=="HIS3"],mu_b[gene=="HIS3"]),lwd=2,col="lightblue")
+i=1:N
+points(mu_a[i],mu_b[i],ylim=c(limmin,limmax),xlim=c(limmin,limmax),col=8,pch=19,cex=0.5)
+i=vecorder[omegadelt[order][1:sig]>0]#######
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+i=vecorder[omegadelt[order][1:sig]<=0]  #######
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
+i=vecorder
+text(mu_a[i],(mu_b[i]),gene[i],pos=4,offset=0.1,cex=0.4)
+#legend(1,limmax, c("1-1","simple Lin Reg"), cex=0.5,col=c("grey","grey","black"), lty=c(1,2,3,1))
+#if (sum((1:N)[gene=="HIS3"])==1){
+#legend(1,limmax, c("1-1","simple Lin Reg","HIS3 Fit"), cex=0.5,col=c("grey","grey","black"), lty=c(2,3,1))
+#}
+
+dev.off()
+#
+stop()
+
+delta_gamma<-gamdelt
+delta_omega<-omegadelt
+setwd("~/")
+list<-read.table("FULL_cdc131_27_top.txt",header=T)
+list<-list[1:430,1]
+lORF<-ORFuni[vecorder]
+llORF<-lORF[lORF%in%list]
+llORF_not<-lORF[!(lORF%in%list)]
+lgene<-cbind(gene[ORFuni%in%llORF],as.numeric(delta[ORFuni%in%llORF]),as.numeric(delta_gamma[ORFuni%in%llORF]))
+lgene_not<-cbind(gene[ORFuni%in%llORF_not],as.numeric(delta[ORFuni%in%llORF_not]),as.numeric(delta_gamma[ORFuni%in%llORF_not]))
+
+l<-rep("new",length(vecorder))
+l[lORF%in%llORF]="new and old"
+ORDER<-cbind(gene[vecorder],as.numeric(delta[vecorder]),as.numeric(delta_gamma[vecorder]),l)
+write.table(file="JHM_interactions.txt",ORDER)
+
+ORDER[,4][order(abs(as.numeric(ORDER[,3])),decreasing=T)]
+#
+l<-list[!(list%in%lORF)]
+l<-gene[ORFuni%in%l]
+write.table(l,"JHM_not_interactions.txt")
+
+#Percent interactors
+#
+length(llORF)/length(list)
+length(llORF)/length(lORF)
+
+stop()
+#
+
+vec=0
+t=1
+for ( i in 1:100){for (j in 1:8){vec[t]=max(QFA.D$y[j,,i,1][!is.na(QFA.D$y[j,,i,1])]);t=t+1}}
+for ( i in 1:100){for (j in 1:8){vec[t]=max(QFA.D$y[j,,i,2][!is.na(QFA.D$y[j,,i,2])]);t=t+1}}
+pdf("plot.pdf")
+plot(vec)
+plot(K_ij)
+plot(vec-K_ij)
+dev.off()
+
+Mu=r_ij
 Mu_a<-Mu[1:sum(NoORF[,1])]
 veca<-vecb<-matrix(NA,N,max(NoORF))
 Mu_b<-Mu[(1+sum(NoORF[,1])):sum(NoORF)]
@@ -251,27 +421,29 @@ mu_b[i]<-mean(Mu_b[(1+NoSum[i,2]):NoSum[i+1,2]])
 }
 limmin<-0
 limmax<-max(na.omit(Mu))
-pdf("JHM100plot.pdf")
+
+
+
+
+
+
 
 plot(1,type="n",main=paste("Treatment",Treat,"Degrees"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control",ylab="Query",pch=19,col=8,cex=0.5)
 lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=2)
-abline(lm(mu_b~0+mu_a),col="grey",lty=3)
-if (sum((1:N)[gene=="HIS3"])==1){
-lines(c(mu_a[gene=="HIS3"],mu_b[gene=="HIS3"]),c(-1000,1000),lwd=2)
-lines(c(-1000,1000),c(mean(defb[gene=="HIS3"]),mean(defb[gene=="HIS3"])),lwd=2)}
+abline(lm(mu_b~0+mu_a),col="grey",lty=2)
+lines(c(mu_a[gene=="HIS3"],mu_a[gene=="HIS3"]),c(-1000,1000),lwd=2,col="lightblue")
+lines(c(-1000,1000),c(mu_b[gene=="HIS3"],mu_b[gene=="HIS3"]),lwd=2,col="lightblue")
 i=1:N
 points(mu_a[i],mu_b[i],main=paste("Treatment",Treat,"Degrees","(Conditioning on deltas=1)"),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single (=Alpha1*mu_i)",ylab="Double (=Alpha2*(mu_i+gamma_i))",col=8,pch=19,cex=0.5)
 
-i=vecorder[gamdelt[order][1:sig]>0]
-points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
-
-i=vecorder[gamdelt[order][1:sig]<=0]  
+i=vecorder[omegadelt[order][1:sig]>0]
 points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=2,pch=19,cex=0.5)
+
+i=vecorder[omegadelt[order][1:sig]<=0]  
+points(mu_a[i],(mu_b[i]),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Single",ylab="Double",col=3,pch=19,cex=0.5)
 i=vecorder
 text(mu_a[i],(mu_b[i]),gene[i],pos=4,offset=0.1,cex=0.4)
-legend(1,limmax, c("1-1","simple Lin Reg"), cex=0.5,col=c("grey","grey","black"), lty=c(1,2,3,1))
-if (sum((1:N)[gene=="HIS3"])==1){
-legend(1,limmax, c("1-1","simple Lin Reg","HIS3 Fit"), cex=0.5,col=c("grey","grey","black"), lty=c(2,3,1))
-}
-
-dev.off()
+#legend(1,limmax, c("1-1","simple Lin Reg"), cex=0.5,col=c("grey","grey","black"), lty=c(1,2,3,1))
+#if (sum((1:N)[gene=="HIS3"])==1){
+#legend(1,limmax, c("1-1","simple Lin Reg","HIS3 Fit"), cex=0.5,col=c("grey","grey","black"), lty=c(2,3,1))
+#}

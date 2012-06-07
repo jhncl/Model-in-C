@@ -1,27 +1,28 @@
-#!/bin/bash           
-                                                              
+#!/bin/bash                                                                                                                                                  
 step1="`pwd`"
 data="`basename $step1`"
 step2="`dirname $step1`"
 step3="`basename $step2`"
-data=$step3"_"$data
-model="SHM-t-df3_31MAY_THELASTdf5"
-
-ORF="5000"
-
+data=$step3_$data
+model="JHM-tt-df3_31MAY_THELASTdf5"
 burn=$1
-iter="10000"
+iter="2000"
 thin="10"
 
-name="CC_${model}_${data}_${ORF}_${burn}_${iter}_${thin}"
+
+name="CC_${model}_${data}_${burn}_${iter}_${thin}"
+
 make
-echo "#!/bin/sh                                                                                                                                              
-hostname                                                                                                                                                                                                                                                                                          
-                                                                              
+echo "#!/bin/sh
+                                                                                                                                              
+hostname                                                                                                                                                     
+                                                                                                                                                         
+                                                                                                                                                    
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
-./main $burn $iter $thin $ORF >${name}.R                                                                                                                             
-date                     " > ${name}.sh
+./main $burn $iter $thin >${name}.R                                                                                                                             
+date                                                                                                                                                         
+die" > ${name}.sh
 
 echo "#####################                                                                                                                                  
                                                                                                                                                              
@@ -43,7 +44,7 @@ Output = ${name}.out
                                                                                                                                                              
 Log = ${name}.log                                                                                                                                       
                                                                                                                                                              
-transfer_input_files = main,headers.h, Makefile, priors.txt, ydata.txt, xdata.txt, NoTIMEdata.txt, NoORFdata.txt,LMNmaxdata.txt, main.c, functions.c, functions.h, datain.c, datain.h, print.c, print.h                                                                                                                               
+transfer_input_files =priors.txt, main, Makefile, ydataA1.txt, ydataB1.txt, xdataA1.txt, xdataB1.txt,NoTIMEdataA1.txt,NoTIMEdataB1.txt, NoORFdataA1.txt,LMNmaxdataA1.txt, NoORFdataB1.txt, LMNmaxdataB1.txt, main.c, functions.c, functions.h, datain.c, datain.c, datain.h, print.c, print.h                                                                                                                    
                                                                                                                                                              
 transfer_files = ALWAYS                                                                                                                                      
                                                                                                                                                              

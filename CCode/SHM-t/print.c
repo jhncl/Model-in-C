@@ -51,6 +51,13 @@ for (l=0;l<D->L;l++){
 printf ("sigma_nu ");
 
 printf ("nu_p ");
+ printf ("tau_K_p ");
+ printf ("sigma_tau_K ");
+ printf ("tau_r_p ");
+ printf ("sigma_tau_r ");
+ printf ("A ");
+ printf ("B ");
+
 
 printf ("accept_K ");
 printf ("accept_r ");
@@ -93,6 +100,15 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
   printf ("%g ",D_para->sigma_nu);
 
   printf ("%g ",D_para->nu_p);
+
+  printf ("%g ",D_para->tau_K_p);
+  printf ("%g ",D_para->sigma_tau_K);
+  printf ("%g ",D_para->tau_r_p);
+  printf ("%g ",D_para->sigma_tau_r);
+
+  printf ("%g ",D_para->A);
+  printf ("%g ",D_para->B);
+
 
   printf ("%g ",D_MH->accept_K);
   printf ("%g ",D_MH->accept_r);

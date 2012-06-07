@@ -436,26 +436,29 @@ save(samp,file=paste(filename,"_F2.R",sep=""))
 
 stop()
 
-plot(samp[,colnames(samp)=="upsilon_c[2]"])
 
+samp<-aa
 if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
 namesamp<-names(vecsamp)
 #write.table(samp,"backup.txt")
 #write.table(vecsamp,"backup2.txt")
 Z_l<-exp(vecsamp[1:(N)])
-sigma_Z<-exp(vecsamp[N+1])
-Z<-exp(vecsamp[N+2])
-nu_l<-exp(vecsamp[(N+3):(2*N+2)])
-sigma_nu<-exp(vecsamp[2*N+3])
-nu<-exp(vecsamp[(2*N+4)])
+Z<-exp(vecsamp[N+1])
+
 A1<-exp(0)
-A2<-exp(vecsamp[2*N+5])
-delta<-vecsamp[(2*N+6):(3*N+5)]
-gamma<-vecsamp[(3*N+6):(4*N+5)]
-sigma_gamma<-exp(vecsamp[(4*N+6)])
-upsilon_c <-exp(vecsamp[(4*N+7)])
-sigma_upsilon<-exp(vecsamp[(4*N+8)])
-if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])} else {delta_gamma<-(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])}
+A2<-exp(vecsamp[N+3])
+delta<-vecsamp[(2*N+4):(3*N+3)]
+gamma<-vecsamp[(4*N+4):(5*N+3)]
+nu_l<-exp(vecsamp[(5*N+4):(6*N+3)])
+nu<-exp(vecsamp[(6*N+4)])
+
+sigma_Z<-exp(vecsamp[6*N+5])
+sigma_gamma<-exp(vecsamp[(6*N+6)])
+sigma_nu<-exp(vecsamp[6*N+7])
+sigma_upsilon<-exp(vecsamp[(6*N+8)])
+upsilon_c <-exp(vecsamp[(6*N+10)])
+
+if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+4):(3*N+3)]*samp[,(4*N+4):(5*N+3)])} else {delta_gamma<-(samp[,(2*N+4):(3*N+3)]*samp[,(4*N+4):(5*N+3)])}
 delta_gamma=exp(delta_gamma)
 
 ##########################################
@@ -600,11 +603,13 @@ colnames(samp)[i];names(aa)[j]
 stop()
 
 
-load(".RData")
+load("M_.RData")
 Treat
 gene
 file=""
 samp<-read.table(file,header=T)
+
+samp=aa
 if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
 namesamp<-names(vecsamp)
 #write.table(samp,"backup.txt")
@@ -625,26 +630,117 @@ sigma_upsilon<-exp(vecsamp[(4*N+8)])
 if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])} else {delta_gamma<-(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])}
 delta_gamma=exp(delta_gamma)
 
+sig<-sum(rep(1,N)[delta>0.5])
+order<-order(1-delta)
+vecorder<-order(1-delta)[1:sig]
+####PIT
+library(sn)
+vec=pst(vecsamp[1:(N)],df=3,location=(vecsamp[N+2]),scale=1/((sigma_Z)^0.5))
+#vec=pnorm(vecsamp[1:(N)],vecsamp[N+2],1/((sigma_Z)^0.5))
+pdf("IHM_hist.pdf")
+hist(vec)
+dev.off()
+####
 
+#
+a<-read.table("file.txt")
+a<-matrix(a[,1],nrow=8)
+b<-read.table("file2.txt")
+b<-matrix(b[,1],nrow=8)
+pdf("plot3.pdf")
+plot(Z_l-colMeans(a))
+plot(A2*Z_l*delta_gamma-colMeans(b))
+dev.off()
+#
 pdf(paste("IHM_plot_",file,".pdf",sep=""))
 
 limmin<-0
-limmax<-max(A1*Z_l, A2*Z_l*delta_gamma)
+limmax<-max(A2*Z_l*delta_gamma)
+limmaxx<-max(A1*Z_l)
 i=1:N
-plot(1,type="n",main=expression(paste("Treatment, ",Treat,degree,"C"," (delta=Posterior Expectations)")),ylim=c(limmin,limmax),xlim=c(limmin,limmax),xlab="Control Fitness (=Z_l)",ylab="Query Fitness (=exp(alpha+Z_l+delta_l*gamma_l))",col=8,pch=19,cex=0.5)
-lines(c(-1000,10000),c(-1000,10000),col="grey",lwd=2,)
-lines(A1*c(-1000,10000),A2*c(-1000,10000),lwd=2,col="grey",lty=2)
-lines(c(Z_l[gene=="HIS3"],Z_l[gene=="HIS3"]),c(-1000,10000),lwd=2,col="cadetblue")
-lines(c(-1000,10000),c(c(Z_l+delta_gamma)[gene=="HIS3"],c(Z_l+delta_gamma)[gene=="HIS3"]),lwd=2,col="cadetblue")
+plot(1,type="n",main=expression(paste("Treatment",Treat,degree,"C"," (delta=Posterior Expectations)")),ylim=c(limmin,limmax),xlim=c(limmin,limmaxx),xlab="Control Fitness (=exp(Z_l))",ylab="Query Fitness (=exp(alpha+Z_l+delta_l*gamma_l))",col=8,pch=19,cex=0.5)
+lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=4)
+lines(A1*c(-1000,10000),A2*c(-1000,10000),col="grey",lwd=2)
+lines(c(Z_l[gene=="HIS3"],Z_l[gene=="HIS3"]),c(-1000,10000),lwd=2,col="lightblue")
+lines(c(-1000,10000),c(c(A2*Z_l*delta_gamma)[gene=="HIS3"],c(A2*Z_l*delta_gamma)[gene=="HIS3"]),lwd=2,col="lightblue")
 points(A1*Z_l[i], A2*(Z_l[i]*delta_gamma[i]),col=8,pch=19,cex=0.5)
-i=vecorder[delta_gamma[vecorder]>0]
-points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=3,pch=19,cex=0.5)
-i=vecorder[delta_gamma[vecorder]<=0]  
+i=vecorder[log(delta_gamma)[vecorder]>0]
 points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=2,pch=19,cex=0.5)
+i=vecorder[log(delta_gamma)[vecorder]<=0]  
+points(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),col=3,pch=19,cex=0.5)
 i=vecorder
 text(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
-
+ plot(density((Z_l)))
+ plot(density(A2*(Z_l*delta_gamma)))
 dev.off()
 
+#
+setwd("~/")
+list<-read.table("FULL_cdc131_27_top.txt",header=T)
+list<-list[1:430,1]
+lORF<-ORFuni[vecorder]
+llORF<-lORF[lORF%in%list]
+llORF_not<-lORF[!(lORF%in%list)]
+lgene<-cbind(gene[ORFuni%in%llORF],as.numeric(delta[ORFuni%in%llORF]),as.numeric(delta_gamma[ORFuni%in%llORF]))
+lgene_not<-cbind(gene[ORFuni%in%llORF_not],as.numeric(delta[ORFuni%in%llORF_not]),as.numeric(delta_gamma[ORFuni%in%llORF_not]))
 
+
+
+l<-rep("new",length(vecorder))
+l[lORF%in%llORF]="new and old"
+ORDER<-cbind(gene[vecorder],as.numeric(delta[vecorder]),as.numeric(delta_gamma[vecorder]),l)
+write.table(file="IHM_interactions.txt",ORDER)
+
+ORDER[,4][order(abs(as.numeric(ORDER[,3])),decreasing=T)]
+
+l<-list[!(list%in%lORF)]
+l<-gene[ORFuni%in%l]
+write.table(l,"IHM_not_interactions.txt")
+#Percent interactors
+#
+length(llORF)/length(list)
+length(llORF)/length(lORF)
+
+#
+stop()
+
+plot(density(c(as.numeric(lgene_not[,2]),as.numeric(lgene[,2]))))
+NN1=nrow(lgene)
+NN2=nrow(lgene_not)
+library(ggplot2)
+
+
+pdf(paste("IHM_density_",file,".pdf",sep=""))
+plot(density(bw=0.03,c(as.numeric(lgene_not[,2]),as.numeric(lgene[,2]))))
+NN1=nrow(lgene)
+NN2=nrow(lgene_not)
+lines(density(bw=0.03,as.numeric(lgene[,2])),col=2)
+lines(density(bw=0.03,as.numeric(lgene_not[,2])),col=3)
+dev.off()
+
+pdf(paste("IHM_density_",file,".pdf",sep=""))
+
+library(sm)
+# plot densities 
+cyl <- factor(c(rep("a",NN1),rep("b",NN2)))
+sm.density.compare(c(as.numeric(lgene[,2]),as.numeric(lgene_not[,2])), cyl, xlab="Miles Per Gallon")
+#title(main="MPG Distribution by Car Cylinders")
+# add legend via mouse click
+#colfill<-c(2:(2+length(levels(cyl.f)))) 
+#legend(locator(1), levels(cyl.f), fill=colfill)
+dev.off()
+
+file<-read.table("file.txt")
+file2<-read.table("file2.txt")
+vec=0
+t=1
+f1<-matrix(file[,1],nrow=8)
+f2<-matrix(file2[,1],nrow=8)
+vec=c(colMeans(f1),colMeans(f2))
+data=c(Z_l,A2*Z_l*delta_gamma)
+pdf("plot.pdf")
+plot(vec)
+plot(data)
+plot(vec-data)
+dev.off()
 
