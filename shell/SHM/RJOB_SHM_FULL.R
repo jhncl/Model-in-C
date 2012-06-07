@@ -25,14 +25,12 @@ model {
 		r_lm[(NoSum[i]+j)]<- exp(min(3.5,r_lm_L[(NoSum[i]+j)]))
 		r_lm_L[(NoSum[i]+j)] ~ dnorm(r_o_l[i],exp(tau_r_l[i]))
 		}
-	K_o_l[i] ~ dt( K_p, exp(sigma_K_o),4 )
-	r_o_l[i] ~ dt( r_p, exp(sigma_r_o),4 )
+	K_o_l[i] ~ dt( K_p, exp(sigma_K_o),3 )
+	r_o_l[i] ~ dt( r_p, exp(sigma_r_o),3 )
 	nu_l[i] ~ dnorm(nu_p,  exp(sigma_nu) )
 
-tau_K_l[i]<-min(7,tau_K_l_UT[i])
-	tau_K_l_UT[i]~dnorm(sigma_K,phi_K)
-tau_r_l[i]<-min(11,tau_r_l_UT[i])
-	tau_r_l_UT[i]~dnorm(sigma_r,phi_r)
+tau_K_l[i]~dnorm(sigma_K,phi_K)
+tau_r_l[i]~dnorm(sigma_r,phi_r)
 	}
 
 K_p ~ dnorm(K_mu,eta_K_p)
@@ -68,6 +66,12 @@ filename="RCode_SHM"
  ),
                     n.chains = 1,
                     n.adapt = 100)
+samp<-coda.samples(jags,
+ c('K_o_l[18]'),
+              100,thin=10)
+
+exp(samp[[1]])
+
 ll<-date()
 
 samp<-coda.samples(jags,

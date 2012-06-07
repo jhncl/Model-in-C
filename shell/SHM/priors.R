@@ -48,7 +48,7 @@ for (i in 1:QFA.I$N){
 }
 r_lm=l
 r_lm[is.nan(r_lm)]=2.5
-r_lm[r_lm<0.01][K_lm[r_lm<0.01]>(P)]=2.5
+r_lm[r_lm<0.01][K_lm[r_lm<0.01]>(P)]=0.01
 r_lm[r_lm<0.01]=0.01
 
 #r_l#
