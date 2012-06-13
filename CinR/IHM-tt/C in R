@@ -1,0 +1,68 @@
+rm *.so
+rm *.o
+PKG_LIBS="-lgsl -lblas" R CMD SHLIB main.c functions.c datain.c print.c
+
+R
+dyn.load("main.so")
+main <- function(a,b,c) {
+aa<-read.table("LMNmaxdataA1.txt",header=T)
+QFA.IA=as.integer((aa)[[1]])
+aa<-read.table("dataA2.txt",header=T)
+QFA.yA=as.double((aa)[[1]])
+aa<-read.table("NoORFdataA1.txt",header=T)
+QFA.NoORFA=as.integer((aa)[[1]])
+aa<-read.table("LMNmaxdataB1.txt",header=T)
+QFA.IB=as.integer((aa)[[1]])
+aa<-read.table("dataB2.txt",header=T)
+QFA.yB=as.double((aa)[[1]])
+aa<-read.table("NoORFdataB1.txt",header=T)
+QFA.NoORFB=as.integer((aa)[[1]])
+aa=read.table("priors_IHM.txt",header=T)
+PRIORS=as.double((aa)[[1]])
+
+aa<-read.table("NoORFdataA1.txt",header=T)
+bb<-read.table("NoORFdataB1.txt",header=T)
+if(!(nrow(aa)==nrow(bb))){stop()}
+L=nrow(aa)
+NCOL=
+L+
+1+
+1+
+L+
+1+
+1+
+1+
+L+
+L+
+1+
+1+
+1
+tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+QFAIA=QFA.IA,QFAy=QFA.yA,QFANoORFA=QFA.NoORFA,
+QFAIB=QFA.IB,QFAy=QFA.yB,QFANoORFB=QFA.NoORFB,
+PRIORS=PRIORS
+)
+#mat=matrix((tmp$OUT),nrow=b,byrow=T)
+#tmp$HEADER
+tmp
+}
+l<-main(1,1,1)
+
+
+rm *.so
+rm *.o
+PKG_LIBS="-lgsl -lblas" R CMD SHLIB main.c functions.c datain.c print.c
+
+M=8
+L=2
+R
+NCOL=17184
+b=1
+inputfile<-read.table("dataA2.txt")
+inputfile<-c(inputfile,read.table("dataB2.txt"))
+dyn.load("main.so")
+tmp <- .C("main", as.integer(1),as.integer(1),as.integer(1),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULL",NCOL)))
+
+#inputfile=as.double(inputfile[[1]])
+
+

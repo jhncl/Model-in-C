@@ -1,0 +1,56 @@
+rm *.so
+rm *.o
+PKG_LIBS="-lgsl -lblas" R CMD SHLIB main.c functions.c datain.c print.c
+
+R
+
+ aa<-read.table("LMNmaxdata.txt",header=T)
+QFA.I=as.integer((aa)[[1]])
+aa<-read.table("ydata.txt",header=T)
+QFA.y=as.double((aa)[[1]])
+aa<-read.table("xdata.txt",header=T)
+QFA.x=as.double((aa)[[1]])
+aa<-read.table("NoORFdata.txt",header=T)
+QFA.NoORF=as.integer((aa)[[1]])
+aa<-read.table("NoTIMEdata.txt",header=T)
+QFA.NoTIME=as.integer((aa)[[1]])
+aa=read.table("priors.txt",header=T)
+PRIORS=as.double((aa)[[1]])[1:18]
+dyn.load("main.so")
+main <- function(a,b,c,d) {
+aa<-read.table("NoORFdata.txt",header=T)
+L=min(d,nrow(aa))
+LM<-sum(aa[1:L,])
+NCOL=
+LM+
+L+
+L+
+1+
+1+
+1+
+LM+
+L+
+L+
+1+
+1+
+L+
+1+
+1+
+1+
+1+
+1+
+1
+tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),as.integer(d),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULL",NCOL)),
+QFAI=QFA.I,QFAy=QFA.y,QFAx=QFA.x,QFANoORF=QFA.NoORF,QFANoTIME=QFA.NoTIME,
+PRIORS=PRIORS
+)
+mat=matrix(c(tmp$OUT),nrow=b,byrow=T)
+mat=data.frame(mat)
+names(mat)=tmp$HEADER
+mat
+}
+l<-main(1,2,1,1)
+l
+M=8
+L=2
+
