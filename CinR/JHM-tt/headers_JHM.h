@@ -7,24 +7,26 @@
 #include <gsl/gsl_sf_log.h>      
 #include <unistd.h>
 #include <time.h>
-#include <gsl/gsl_sf_gamma.h>
-#include <string.h>
 #include <R.h>
 #include <Rmath.h>
 
-typedef struct struct_data {
+typedef struct struct_data_JHM {
   double *y, *x;
-  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,maxy,maxNoTIME;
-} struct_data;
+  int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,SHIFTmn, maxy,maxTIMEa,maxTIMEb;
+} struct_data_JHM;
 
-typedef struct struct_MH {
-  double hP,hnu,hK,hr,accept_P,accept_nu,accept_K,accept_r;
-} struct_MH;
 
-typedef struct struct_para {
+typedef struct struct_para_JHM {
   double
-    *K_lm,            *tau_K_l,
-    *r_lm,            *tau_r_l,
+    *alpha_c,
+    *beta_c,
+    *delta_l,
+    *gamma_cl,	        sigma_gamma,
+    *omega_cl,            sigma_omega,
+    *upsilon_c,       sigma_upsilon,
+ 
+    *K_clm,            *tau_K_cl,
+    *r_clm,            *tau_r_cl,
 
     *K_o_l,            sigma_K_o,
     *r_o_l,            sigma_r_o,
@@ -34,14 +36,21 @@ typedef struct struct_para {
     r_p,
     nu_p,
     P,
-  mix,
-  sigma_K_o_b,
-    tau_K_p, sigma_tau_K,tau_r_p,sigma_tau_r,
+    *tau_K_p,*tau_r_p,*sigma_tau_K,*sigma_tau_r,
     A,B;
-} struct_para;
+} struct_para_JHM;
 
-typedef struct struct_priors {
+
+typedef struct struct_priors_JHM {
   double
+    alpha_mu,               eta_alpha,
+    beta_mu,                eta_beta,
+    p,    
+    eta_gamma,              psi_gamma,
+    eta_omega,              psi_omega,
+    eta_upsilon,	    psi_upsilon,	    
+    upsilon_mu,		   
+
     sigma_K,                phi_K,
     sigma_r,                phi_r,
 
@@ -54,12 +63,21 @@ typedef struct struct_priors {
     nu_mu,                  eta_nu_p,
     P_mu,                   eta_P,
     df,df2,
+
     tau_K_mu,tau_r_mu,
     eta_tau_K,eta_tau_r,
     psi_tau_r_p,psi_tau_K_p,
     eta_tau_K_p,eta_tau_r_p,
     psi_tau_K,psi_tau_r;
+} struct_priors_JHM;
 
-} struct_priors;
-
+typedef struct struct_MH_JHM {
+  double 
+    hP,
+    hnu,
+    hK,
+    hr,
+    halpha,
+accept_P,accept_nu,accept_K,accept_r;
+} struct_MH_JHM;
 

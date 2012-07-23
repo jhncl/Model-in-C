@@ -1,9 +1,9 @@
 rm *.so
 rm *.o
-PKG_LIBS="-lgsl -lblas" R CMD SHLIB main.c functions.c datain.c print.c
+PKG_LIBS="-lgsl -lblas" R CMD SHLIB main_IHM.c functions_IHM.c datain_IHM.c print_IHM.c
 
 R
-dyn.load("main.so")
+dyn.load("main_IHM.so")
 main <- function(a,b,c) {
 aa<-read.table("LMNmaxdataA1.txt",header=T)
 QFA.IA=as.integer((aa)[[1]])
@@ -37,7 +37,7 @@ L+
 1+
 1+
 1
-tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main_IHM", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAIA=QFA.IA,QFAy=QFA.yA,QFANoORFA=QFA.NoORFA,
 QFAIB=QFA.IB,QFAy=QFA.yB,QFANoORFB=QFA.NoORFB,
 PRIORS=PRIORS
@@ -60,7 +60,7 @@ NCOL=17184
 b=1
 inputfile<-read.table("dataA2.txt")
 inputfile<-c(inputfile,read.table("dataB2.txt"))
-dyn.load("main.so")
+dyn.load("main_IHM.so")
 tmp <- .C("main", as.integer(1),as.integer(1),as.integer(1),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULL",NCOL)))
 
 #inputfile=as.double(inputfile[[1]])

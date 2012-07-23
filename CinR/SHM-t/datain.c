@@ -208,7 +208,7 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
       mm=D->NoSUM[l]+m;
       if(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_lm[mm]=D_priors->P_mu;SUM+=D_para->K_lm[mm];}
 	else{     
-	  D_para->K_lm[mm]=gsl_sf_log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);SUM+=D_para->K_lm[mm];
+	  D_para->K_lm[mm]=log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);SUM+=D_para->K_lm[mm];
 	}
     }
     D_para->K_o_l[l]=SUM/D->NoORF[l];

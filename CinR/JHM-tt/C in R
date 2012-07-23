@@ -1,9 +1,9 @@
 rm *.so
 rm *.o
-PKG_LIBS="-lgsl -lblas" R CMD SHLIB main.c functions.c datain.c print.c
+PKG_LIBS="-lgsl -lblas" R CMD SHLIB main_JHM.c functions_JHM.c datain_JHM.c print_JHM.c
 
 R
-dyn.load("main.so")
+dyn.load("main_JHM.so")
 main <- function(a,b,c) {
 aa<-read.table("LMNmaxdataA1.txt",header=T)
 QFA.IA=as.integer((aa)[[1]])
@@ -60,7 +60,7 @@ L+
 1+
 2*2+
 2*2
-tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main_JHM", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAIA=QFA.IA,QFAy=QFA.yA,QFAxA=QFA.xA,QFANoORFA=QFA.NoORFA,QFANoTIMEA=QFA.NoTIMEA,
 QFAIB=QFA.IB,QFAy=QFA.yB,QFAxB=QFA.xB,QFANoORFB=QFA.NoORFB,QFANoTIMEB=QFA.NoTIMEB,
 PRIORS=PRIORS

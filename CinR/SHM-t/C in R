@@ -40,7 +40,7 @@ L+
 1+
 1+
 1
-tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),as.integer(d),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULL",NCOL)),
+tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),as.integer(d),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAI=QFA.I,QFAy=QFA.y,QFAx=QFA.x,QFANoORF=QFA.NoORF,QFANoTIME=QFA.NoTIME,
 PRIORS=PRIORS
 )

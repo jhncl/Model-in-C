@@ -11,18 +11,9 @@
 	struct_MH *MH = malloc(sizeof(struct_MH));
 
 	int burn,iters,thin, CAPL;
-	long seed;
-	const gsl_rng_type * T;
-	gsl_rng * RNG;
-
 
 	/*testargc(argc);*//********/
-
-	gsl_rng_env_setup ();
-	T = gsl_rng_default;
-	RNG = gsl_rng_alloc (T);
-	seed = time (NULL) * getpid();    
-  	gsl_rng_set (RNG, seed); 
+   
 	burn=*arga;   /**********/
 	iters=*argb;  /**************/
 	thin=*argc;       /**************/
@@ -33,8 +24,8 @@
 	inzstruct_priors(priors,PRIORS);
 	inzstruct_para(para,data,priors);
 	inzstruct_MH(MH);
-	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,CAPL,0,OUT,HEADER);/***/
-	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,CAPL,1,OUT,HEADER);/****/
-       	gsl_rng_free(RNG);
+	gibbsandMHloop(burn,1,data,para,priors,MH,CAPL,0,OUT,HEADER);
+	gibbsandMHloop(iters,thin,data,para,priors,MH,CAPL,1,OUT,HEADER);
+
 	return 0;
 }
