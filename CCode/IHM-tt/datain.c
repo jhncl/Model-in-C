@@ -56,7 +56,7 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	fclose(file);
 
         for (i=0;i<D->SHIFTmn;i++){
-	  if(K_lm[i]<=2*P_a){K_lm[i]=2*P_a;}
+	  if(K_lm[i]<=2*P_a){K_lm[i]=2*P_a;r_lm[i]=0;}
         }
 
 	for (i=0;i<D->SHIFTmn;i++){
@@ -72,15 +72,15 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 			fscanf(file, "%c %s",number,number);
 			}*/
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 		}
 		P_b=exp(data);  
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 			r_lm[i]=exp(data);   
 		}
 	}
@@ -88,7 +88,7 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	fclose(file2);
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
-          if(K_lm[i]<=2*P_b){K_lm[i]=2*P_b;}
+          if(K_lm[i]<=2*P_b){K_lm[i]=2*P_b;r_lm[i]=0;}
         }
 
 
@@ -206,6 +206,7 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 	para->delta_l=malloc(size*sizeof(double));
 	para->gamma_cl=malloc(size*sizeof(double));
 	para->Z_l=malloc(size*sizeof(double));
+	size=data->L*2;/***/
 	para->nu_l=malloc(size*sizeof(double));
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
@@ -277,7 +278,7 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	D_para->sigma_Z=D_priors->eta_Z;     
 
 
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
+	for (l=0;l<2*D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
 	D_para->sigma_nu=D_priors->eta_nu;   
   
 	D_para->nu_p=D_priors->nu_mu;    
@@ -288,8 +289,9 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 
 	D_para->alpha_c[0]=0;/**/
 	
+	SUMa=SUMb=0;
 	for (l=0;l<D->L;l++){
-	  SUMa+=D_para->Z_l[l];
+	  SUMa+=exp(D_para->Z_l[l]);
 	  ll=l+D->L;
 	  for (m=0;m<D->NoORF[ll];m++){
 	    mm=D->NoSUM[ll]+m;
@@ -299,12 +301,11 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	    SUMb+=0;
 	  }
 	  else{
-	    SUMb+=gsl_sf_log(SUM/D->NoORF[ll]);
+	    SUMb+=(SUM/D->NoORF[ll]);
 	  }
 	  SUM=0;
 	}
-
-	D_para->alpha_c[1]=gsl_sf_log(SUMb/SUMa);
+	D_para->alpha_c[1]=log(SUMb/SUMa);
 	D_para->sigma_gamma=D_priors->eta_gamma;
 	D_para->upsilon_c[0]=0; /**/
 	D_para->upsilon_c[1]=0;	

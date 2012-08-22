@@ -4,7 +4,7 @@ PKG_LIBS="-lgsl -lblas" R CMD SHLIB main_JHM.c functions_JHM.c datain_JHM.c prin
 
 R
 dyn.load("main_JHM.so")
-main <- function(a,b,c) {
+main <- function(burn,iters,thin) {
 aa<-read.table("LMNmaxdataA1.txt",header=T)
 QFA.IA=as.integer((aa)[[1]])
 aa<-read.table("ydataA1.txt",header=T)
@@ -60,7 +60,7 @@ L+
 1+
 2*2+
 2*2
-tmp <- .C("main_JHM", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main_JHM", as.integer(burn),as.integer(iters),as.integer(thin),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAIA=QFA.IA,QFAy=QFA.yA,QFAxA=QFA.xA,QFANoORFA=QFA.NoORFA,QFANoTIMEA=QFA.NoTIMEA,
 QFAIB=QFA.IB,QFAy=QFA.yB,QFAxB=QFA.xB,QFANoORFB=QFA.NoORFB,QFANoTIMEB=QFA.NoTIMEB,
 PRIORS=PRIORS

@@ -4,7 +4,7 @@ PKG_LIBS="-lgsl -lblas" R CMD SHLIB main_IHM.c functions_IHM.c datain_IHM.c prin
 
 R
 dyn.load("main_IHM.so")
-main <- function(a,b,c) {
+main <- function(burn,iters,thin) {
 aa<-read.table("LMNmaxdataA1.txt",header=T)
 QFA.IA=as.integer((aa)[[1]])
 aa<-read.table("dataA2.txt",header=T)
@@ -37,14 +37,17 @@ L+
 1+
 1+
 1
-tmp <- .C("main_IHM", as.integer(a),as.integer(b),as.integer(c),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main_IHM", as.integer(burn),as.integer(iters),as.integer(thin),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAIA=QFA.IA,QFAy=QFA.yA,QFANoORFA=QFA.NoORFA,
 QFAIB=QFA.IB,QFAy=QFA.yB,QFANoORFB=QFA.NoORFB,
 PRIORS=PRIORS
 )
-#mat=matrix((tmp$OUT),nrow=b,byrow=T)
+mat=matrix((tmp$OUT),nrow=b,byrow=T)
+mat=data.frame(mat)
+names(mat)=tmp$HEADER
 #tmp$HEADER
-tmp
+#tmp
+mat
 }
 l<-main(1,1,1)
 

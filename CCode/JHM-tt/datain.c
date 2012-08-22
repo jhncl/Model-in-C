@@ -190,6 +190,7 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 {
 	long size;
 	size=data->L*2;
+	para->nu_l=malloc(size*sizeof(double));
 	para->tau_K_cl=malloc(size*sizeof(double));
 	para->tau_r_cl=malloc(size*sizeof(double));
 	size=data->maxTIMEa+data->maxTIMEb;/*inputfromfile*/
@@ -201,7 +202,7 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 	para->omega_cl=malloc(size*sizeof(double));
 	para->K_o_l=malloc(size*sizeof(double));
 	para->r_o_l=malloc(size*sizeof(double));
-	para->nu_l=malloc(size*sizeof(double));
+
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
 	para->beta_c=malloc(size*sizeof(double));
@@ -321,7 +322,7 @@ for (c=0;c<2;c++){
 	D_para->r_p=D_priors->r_mu;       /*LMean*/
 	
 	/*nu*/
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}                      /*LMean*/
+	for (l=0;l<2*D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}                      /*LMean*/
 	D_para->sigma_nu=D_priors->eta_nu;   /*Precision for lMean*/
 
 	D_para->nu_p=D_priors->nu_mu;   /*LMean*/

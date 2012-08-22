@@ -17,7 +17,7 @@ QFA.NoTIME=as.integer((aa)[[1]])
 aa=read.table("priors.txt",header=T)
 PRIORS=as.double((aa)[[1]])[1:18]
 dyn.load("main.so")
-main <- function(a,b,c,d) {
+main <- function(burn,iters,thin,CAPL) {
 aa<-read.table("NoORFdata.txt",header=T)
 L=min(d,nrow(aa))
 LM<-sum(aa[1:L,])
@@ -40,7 +40,7 @@ L+
 1+
 1+
 1
-tmp <- .C("main", as.integer(a),as.integer(b),as.integer(c),as.integer(d),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main", as.integer(burn),as.integer(iters),as.integer(thin),as.integer(CAPL),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAI=QFA.I,QFAy=QFA.y,QFAx=QFA.x,QFANoORF=QFA.NoORF,QFANoTIME=QFA.NoTIME,
 PRIORS=PRIORS
 )

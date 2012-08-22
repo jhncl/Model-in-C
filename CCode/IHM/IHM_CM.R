@@ -678,6 +678,9 @@ dev.off()
 setwd("~/")
 list<-read.table("FULL_cdc131_27_top.txt",header=T)
 list<-list[1:430,1]
+list<-as.character(list)
+list[176]<-"YMR169C"
+
 lORF<-ORFuni[vecorder]
 llORF<-lORF[lORF%in%list]
 llORF_not<-lORF[!(lORF%in%list)]
@@ -698,8 +701,7 @@ l<-gene[ORFuni%in%l]
 write.table(l,"IHM_not_interactions.txt")
 #Percent interactors
 #
-length(llORF)/length(list)
-length(llORF)/length(lORF)
+length(llORF)/(length(unique(c(as.character(list),lORF))))
 
 #
 stop()

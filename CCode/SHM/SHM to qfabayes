@@ -57,7 +57,7 @@ delta_tau<-QFA$delta_tau
 
 
 #########
-M=8*N
+M=36960#8*N
 K_lm=tau_K_l=K_o_l=sigma_K_o=K_p=P_l=r_lm=tau_r_l=r_o_l=sigma_r_o=r_p=nu_l=nu_p=sigma_nu=0
 aa<-samp
 #K_lm[%i]
@@ -193,6 +193,48 @@ vec=pst(K_o_l,df=3,location=K_p,scale=1/(exp(sigma_K_o)^0.5))
 hist(vec)
 dev.off()
 ########
+###RESID
+x<-(QFA.D$x[!(is.na(QFA.D$x))])
+y<-(QFA.D$y[!(is.na(QFA.D$y))])
+
+r_lm=exp(r_lm)
+K_lm=exp(K_lm)
+
+yy=numeric(0)
+t=tt=1
+for (l in 1:N){
+for (j in 1:NoORF[l]){
+K=K_lm[t]
+r=r_lm[t]
+t=t+1
+for (m in 1:NoTime[NoSum[l]+j]){
+yy=c(yy,K*P*exp(r*x[tt])/(K+P*(exp(r*x[tt])-1)))
+tt=tt+1
+}
+}
+}
+
+yyy=yy-y
+plot(yyy)
+
+####
+plot HIS3
+l=3829
+L=4294
+pdf("plot.pdf")
+plot(QFA.D$x[,,l],QFA.D$y[,,l])
+for (m in 1:NoORF_a[l]){
+tt=NoSum_a[l]+m
+K=exp(mean(aa[500:1000,tt]))
+r=exp(mean(aa[500:1000,tt+L+M]))
+P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),col=rgb(0,0,0,0.75),add=T)
+}
+K=exp(K_o_l[l])
+r=exp(r_o_l[l])
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),lwd=3,col="red",add=T)
+dev.off()
+####
 
 
 pdf("plotsJan12_12.pdf")

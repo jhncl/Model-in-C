@@ -92,11 +92,6 @@ void printheader(struct struct_data *D){
 	}
 
 
-
-	printf ("A ");
-        printf ("B ");
-
-
 	printf ("A ");
 	printf ("B ");
 	printf ("accept_K ");

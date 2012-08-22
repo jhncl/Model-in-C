@@ -17,6 +17,7 @@ SHIFT<-QFA$SHIFT
 ###
 L=N=4294
 M=2*N*8
+M=73920
 K_clm=tau_K_cl=K_o_l=sigma_K_o=K_p=P=r_clm=tau_r_cl=r_o_l=sigma_r_o=r_p=nu_l=sigma_nu=nu_p=alpha_c=beta_c=delta_l=gamma_cl=sigma_gamma=omega_cl=sigma_omega=upsilon_c=sigma_upsilon=0
 ####
 t=1
@@ -238,15 +239,17 @@ sig<-sum(rep(1,N)[delta>0.5])
 order<-order(1-delta)
 vecorder<-order(1-delta)[1:sig]
 
-K_ij=c(exp(K_o_l),A2*exp(K_o_l+gamdelt))####
+K_ij=vecK=c(exp(K_o_l),A2*exp(K_o_l+gamdelt))####
 r_ij=c(exp(r_o_l),B2*exp(r_o_l+omegadelt))####
 
 K_ij[K_ij<2*PO]=PO+0.001
 
 vecMDRa<-r_ij/log(2*(K_ij-PO)/(K_ij-2*PO)) #MDR
 vecMDPa<-log(K_ij/PO)/log(2) #MDP
-mu_a=(vecMDPa*vecMDRa)[1:N]
-mu_b=(vecMDPa*vecMDRa)[(1+N):(2*N)]
+vecMDRPMDR<-vecMDRa*vecMDPa
+vecMDRPMDR[vecK<2*PO]=0
+mu_a=(vecMDRPMDR)[1:N]
+mu_b=(vecMDRPMDR)[(1+N):(2*N)]
 #Mu=vecMDPa*vecMDRa
 
 #Mu_a<-Mu[1:sum(NoORF[,1])]
@@ -281,7 +284,7 @@ dev.off()
 ###
 
 Treat=TreatA=TreatB=27
-
+file="FINAL"
 
 
 pdf("JHM_t_plot.pdf")
@@ -289,14 +292,14 @@ pdf("JHM_t_plot.pdf")
 plot(1,type="n",ylim=c(limmin,limmax),xlim=c(limmin,limmaxx),main="",xlab="",ylab="",pch=19,col=8,cex=0.5)
 lines(c(-1000,10000),c(-1000,10000),lwd=2,col="grey",lty=4)
 
-lines(lm(mu_b~0+mu_a),col="grey",lty=2)#############
+#lines(lm(mu_b~0+mu_a),col="grey",lty=2)#############
 
 
 
 vecMDRa<-r_ij/log(2*(K_ij-PO)/(K_ij-2*PO)) #MDR
 vecMDPa<-log(K_ij/PO)/log(2) #MDP
 vecMDPa*vecMDRa
-lines(c(-1000,1000),A2*c(-1000,1000),col="grey",lty=2)########
+#lines(c(-1000,1000),A2*c(-1000,1000),col="grey",lty=2)########
 
 
 
@@ -375,6 +378,8 @@ delta_omega<-omegadelt
 setwd("~/")
 list<-read.table("FULL_cdc131_27_top.txt",header=T)
 list<-list[1:430,1]
+list<-as.character(list)
+list[176]<-"YMR169C"
 lORF<-ORFuni[vecorder]
 llORF<-lORF[lORF%in%list]
 llORF_not<-lORF[!(lORF%in%list)]
@@ -394,9 +399,9 @@ write.table(l,"JHM_not_interactions.txt")
 
 #Percent interactors
 #
-length(llORF)/length(list)
-length(llORF)/length(lORF)
+length(llORF)/(length(unique(c(as.character(list),lORF))))
 
+length(listI[listI%in%lORF])/(length(unique(c(as.character(listI),lORF))))
 stop()
 #
 
