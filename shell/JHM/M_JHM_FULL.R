@@ -1,11 +1,13 @@
+
 library(qfaBayes,lib="~/R")
  library(qfa,lib="~/R")
 library(rjags,lib="~/R")
 
 a=read.delim("dataA1.txt",header=TRUE,sep="\t",stringsAsFactors=FALSE)
 b=read.delim("dataB1.txt",header=TRUE,sep="\t",stringsAsFactors=FALSE)
+TreatA=27
+TreatB=27
 
-TreatA=TreatB=27
 filename=paste("M_JHM_FULL","_",TreatA,"_",TreatB,sep="")
 
 
@@ -31,20 +33,26 @@ if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
 
 a$ID<-paste(a$Barcode,a$MasterPlate.Number,Row,Col,sep="")
 
-ORFuni=unique(a$ORF)########
-funcIDlist<-function(x){
-a$ID[a$ORF==x]
-}
-
-funcStrip<-function(x,i){x[1:i]}
-IDstrip=sapply(ORFuni,funcIDlist)
-IDstrip=sapply(IDstrip,unique)
-IDstrip=lapply(IDstrip,i=8,funcStrip)
-IDstrip=unlist(IDstrip)
-IDstrip=na.omit(IDstrip)
-a<-a[a$ID%in%IDstrip,]
+ORFuni=unique(a$ORF)
+########
+#funcIDlist<-function(x){
+#a$ID[a$ORF==x]
+#}
+#funcStrip<-function(x,i){x[1:i]}
+#IDstrip=sapply(ORFuni,funcIDlist)
+#IDstrip=sapply(IDstrip,unique)
+#IDstrip=lapply(IDstrip,i=56,funcStrip)
+#IDstrip=unlist(IDstrip)
+#IDstrip=na.omit(IDstrip)
+#a<-a[a$ID%in%IDstrip,]
 #########
 ######################
+if(file.exists("strip_list.txt")){
+strip_list<-read.delim("strip_list.txt",header=T)
+a<-a[!a$ORF%in%strip_list[,1],]
+ORFuni<-unique(a$ORF)
+}
+
 
 
 a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
@@ -71,32 +79,41 @@ if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
 b$ID<-paste(b$Barcode,b$MasterPlate.Number,Row,Col,sep="")
 ORFuni_b<-unique(b$ORF)
 ####
-
+sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
 ####
 
 ########
-funcIDlist<-function(x){
-b$ID[b$ORF==x]
-}
-
-funcStrip<-function(x,i){x[1:i]}
-IDstrip=sapply(ORFuni_b,funcIDlist)
-IDstrip=sapply(IDstrip,unique)
-IDstrip=lapply(IDstrip,i=8,funcStrip)
-IDstrip=unlist(IDstrip)
-IDstrip=na.omit(IDstrip)
-b<-b[b$ID%in%IDstrip,]
+#funcIDlist<-function(x){
+#b$ID[b$ORF==x]
+#}
+#funcStrip<-function(x,i){x[1:i]}
+#IDstrip=sapply(ORFuni,funcIDlist)
+#IDstrip=sapply(IDstrip,unique)
+#IDstrip=lapply(IDstrip,i=56,funcStrip)
+#IDstrip=unlist(IDstrip)
+#IDstrip=na.omit(IDstrip)
+#b<-b[b$ID%in%IDstrip,]
 #########
+
+if(file.exists("strip_list.txt")){
+strip_list<-read.delim("strip_list.txt",header=T)
+b<-b[!b$ORF%in%strip_list[,1],]
+ORFuni_b<-unique(a$ORF)
+}
+sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
+
 #####################################
 b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
-ORFuni_b<-unique(b$ORF)
-
-sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
+ORFuni<-unique(b$ORF)
 
 #a<-funcIDORDER(a)
 IDuni<-unique(a$ID)
 gene<-unlist(lapply(ORFuni,funcGENE,data=a))#?
-N<-length(ORFuni);M<-length(IDuni)
+if(sum(gene=="0")){
+gene[gene=="0"]=ORFuni[gene=="0"]
+}
+
+N<-length(ORFuni);M=Ma=length(IDuni)
 NoORF_a<-unlist(lapply(ORFuni,funcNoORF,data=a))#no of repeats each orf
 NoTime_a<-c(0,unlist(lapply(IDuni,funcNoTime,data=a)))# 0+ no of time each repeat
 NoSum_a<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_a)))
@@ -108,19 +125,13 @@ IDuni<-unique(b$ID)
 
 
 #gene<-unlist(lapply(ORFuni,funcGENE,data=a))#?
-N<-length(ORFuni);#?
+N<-length(ORFuni);M=Mb=length(IDuni)#?
 NoORF_b<-unlist(lapply(ORFuni,funcNoORF,data=b))#no of repeats each orf
 NoTime_b<-c(0,unlist(lapply(IDuni,funcNoTime,data=b)))# 0+ no of time each repeat
 NoSum_b<-c(0,unlist(lapply(1:N,funcNoSum,NoORF_vec=NoORF_b)))
 
 
 dimr<-max(NoORF_a,NoORF_b);dimc<-max(NoTime_a,NoTime_b)
-
-
-
-Ma<-length(unique(a$ID))
-Mb<-length(unique(b$ID))
-M<-max(Ma,Mb)
 
 funcXY_J<-function(data,data_b,Ma,Mb,N,NoTime_vec,NoSum_vec,NoTime_vec_b,NoSum_vec_b,dimr,dimc){
 XY<-unlist(lapply(1:Ma,funcRowRep,NoTime_vec=NoTime_vec,data_vec=data,dimr,dimc))
@@ -132,11 +143,10 @@ XY<-funcARRAYTRANS_J(c(XY,XY_b),dim)
 XY
 }
 
-
 y<-funcXY_J(a$Growth,b$Growth,Ma,Mb,N,NoTime_a,NoSum_a,NoTime_b,NoSum_b,dimr,dimc)
 x<-funcXY_J(a$Expt.Time,b$Expt.Time,Ma,Mb,N,NoTime_a,NoSum_a,NoTime_b,NoSum_b,dimr,dimc)
 
-QFA.I<-list("NoORF"=cbind(NoORF_a,NoORF_b),"NoTime"=cbind(NoTime_a,NoTime_b)[-1,],"NoSum"=cbind(NoSum_a,NoSum_b),"N"=N,"M"=M,"gene"=gene,SHIFT=c(0,max(NoSum_a,NoSum_b))
+QFA.I<-list("NoORF"=cbind(NoORF_a,NoORF_b),"NoTime"=cbind(NoTime_a,NoTime_b)[-1,],"NoSum"=cbind(NoSum_a,NoSum_b),"N"=N,"Ma"=Ma,"Mb"=Mb,"gene"=gene,SHIFT=c(0,max(NoSum_a,NoSum_b))
 )
 Scaling=FALSE######
 if (Scaling==TRUE){y<-funcSCALING(rbind(a,b),y)}
@@ -164,3 +174,4 @@ write.table(file="NoTIMEdataB1.txt",c(NoTime_b)[-1])
 write.table(file="LMNmaxdataB1.txt",c(N,max(NoORF_b),max(NoTime_b),length(y)/2,length(NoTime_b[-1])))
 
 save.image(paste(filename,".RData",sep=""))
+stop()

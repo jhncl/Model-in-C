@@ -26,6 +26,8 @@ a<-a[!a$Row==16,]
 a<-a[!a$Col==1,]
 a<-a[!a$Col==24,]
 
+
+
 Row<-paste(a$Row)
 Col<-paste(a$Col)
 for (i in 1:nrow(a)){
@@ -35,28 +37,36 @@ if (nchar(Col[i])<2){Col[i]=paste(0,Col[i],sep="")}
 
 a$ID<-paste(a$Barcode,a$MasterPlate.Number,Row,Col,sep="")
 
-ORFuni=unique(a$ORF)########
-funcIDlist<-function(x){
-a$ID[a$ORF==x]
-}
-funcStrip<-function(x,i){x[1:i]}
-IDstrip=sapply(ORFuni,funcIDlist)
-IDstrip=lapply(IDstrip,unique)
-IDstrip=lapply(IDstrip,i=8,funcStrip)
-IDstrip=unlist(IDstrip)
-IDstrip=na.omit(IDstrip)
-a<-a[a$ID%in%IDstrip,]
+ORFuni=unique(a$ORF)
+########
+#funcIDlist<-function(x){
+#a$ID[a$ORF==x]
+#}
+#funcStrip<-function(x,i){x[1:i]}
+#IDstrip=sapply(ORFuni,funcIDlist)
+#IDstrip=lapply(IDstrip,unique)
+#IDstrip=lapply(IDstrip,i=8,funcStrip)
+#IDstrip=unlist(IDstrip)
+#IDstrip=na.omit(IDstrip)
+#a<-a[a$ID%in%IDstrip,]
 #########
 
-a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
+if(file.exists("strip_list.txt")){
+strip_list<-read.delim("strip_list.txt",header=T)
+a<-a[!a$ORF%in%strip_list[,1],]
+ORFuni<-unique(a$ORF)
+}
 
+a<-a[order(a$ORF,a$ID,a$Expt.Time), ]
 
 Scaling=FALSE
 IDuni<-unique(a$ID)
 ORFuni=unique(a$ORF)########
 
-
 gene<-unlist(lapply(ORFuni,funcGENE,data=a))
+if(sum(gene=="0")){
+gene[gene=="0"]=ORFuni[gene=="0"]
+}
 N<-length(ORFuni);M<-length(IDuni)
 NoORF_a<-unlist(lapply(ORFuni,funcNoORF,data=a))#no of repeats each orf
 NoTime_a<-c(0,unlist(lapply(IDuni,funcNoTime,data=a)))# 0+ no of
@@ -140,10 +150,9 @@ model {
 	K_o_l[i] ~ dnorm( K_p, exp(sigma_K_o) )
 	r_o_l[i] ~ dnorm( r_p, exp(sigma_r_o) )
 	nu_l[i] ~ dnorm(nu_p,  exp(sigma_nu) )
-tau_K_l[i]<-min(7,tau_K_l_UT[i])
-	tau_K_l_UT[i]~dnorm(sigma_K,phi_K)
-tau_K_l[i]<-min(11,tau_K_l_UT[i])
-	tau_r_l_UT[i]~dnorm(sigma_r,phi_r)
+
+	tau_K_l[i]~dnorm(sigma_K,phi_K)
+	tau_r_l[i]~dnorm(sigma_r,phi_r)
 	}
 
 K_p ~ dnorm(K_mu,eta_K_p)
