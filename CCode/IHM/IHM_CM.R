@@ -436,29 +436,27 @@ save(samp,file=paste(filename,"_F2.R",sep=""))
 
 stop()
 
-
-samp<-aa
+samp<-samp[[1]]
 if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
 namesamp<-names(vecsamp)
 #write.table(samp,"backup.txt")
 #write.table(vecsamp,"backup2.txt")
-Z_l<-exp(vecsamp[1:(N)])
-Z<-exp(vecsamp[N+1])
+Z_l<-(vecsamp[1:(N)])
+Z<-(vecsamp[N+1])
 
 A1<-exp(0)
 A2<-exp(vecsamp[N+3])
 delta<-vecsamp[(2*N+4):(3*N+3)]
-gamma<-vecsamp[(4*N+4):(5*N+3)]
-nu_l<-exp(vecsamp[(5*N+4):(6*N+3)])
-nu<-exp(vecsamp[(6*N+4)])
+gamma<-log(vecsamp[(4*N+4):(5*N+3)])
+nu_l<-exp(vecsamp[(5*N+4):(7*N+3)])
 
-sigma_Z<-exp(vecsamp[6*N+5])
-sigma_gamma<-exp(vecsamp[(6*N+6)])
-sigma_nu<-exp(vecsamp[6*N+7])
-sigma_upsilon<-exp(vecsamp[(6*N+8)])
-upsilon_c <-exp(vecsamp[(6*N+10)])
+nu<-exp(vecsamp[(7*N+4)])
 
-if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+4):(3*N+3)]*samp[,(4*N+4):(5*N+3)])} else {delta_gamma<-(samp[,(2*N+4):(3*N+3)]*samp[,(4*N+4):(5*N+3)])}
+sigma_Z<-exp(vecsamp[7*N+5])
+sigma_gamma<-exp(vecsamp[(7*N+6)])
+sigma_nu<-exp(vecsamp[7*N+7])
+
+if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+4):(3*N+3)]*log(samp[,(4*N+4):(5*N+3)]))} else {delta_gamma<-(samp[,(2*N+4):(3*N+3)]*log(samp[,(4*N+4):(5*N+3)]))}
 delta_gamma=exp(delta_gamma)
 
 ##########################################
@@ -609,6 +607,7 @@ gene
 file=""
 samp<-read.table(file,header=T)
 
+load("M_SHM_FULL_27.RData")
 samp=aa
 if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
 namesamp<-names(vecsamp)
@@ -625,19 +624,32 @@ A2<-exp(vecsamp[2*N+5])
 delta<-vecsamp[(2*N+6):(3*N+5)]
 gamma<-vecsamp[(3*N+6):(4*N+5)]
 sigma_gamma<-exp(vecsamp[(4*N+6)])
-upsilon_c <-exp(vecsamp[(4*N+7)])
-sigma_upsilon<-exp(vecsamp[(4*N+8)])
-if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])} else {delta_gamma<-(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])}
+if(nrow(samp)>1) {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*samp[,(3*N+6):(4*N+5)])} else {delta_gamma<-colMeans(samp[,(2*N+6):(3*N+5)]*(samp[,(3*N+6):(4*N+5)]))}
 delta_gamma=exp(delta_gamma)
+
+########strip 
+strip=TRUE
+if(strip==TRUE){
+strip_ORF<-read.delim("~/strip_list.txt",header=T,sep="\t")$orf
+Z_l<-Z_l[!ORFuni%in%strip_ORF]
+delta<-delta[!ORFuni%in%strip_ORF]
+delta_gamma<-delta_gamma[!ORFuni%in%strip_ORF]
+gene<-gene[!ORFuni%in%strip_ORF]
+ORFuni<-ORFuni[!ORFuni%in%strip_ORF]
+N<-length(ORFuni)}
+############
 
 sig<-sum(rep(1,N)[delta>0.5])
 order<-order(1-delta)
 vecorder<-order(1-delta)[1:sig]
 ####PIT
 library(sn)
-vec=pst(vecsamp[1:(N)],df=3,location=(vecsamp[N+2]),scale=1/((sigma_Z)^0.5))
+vec=pst(exp(vecsamp[1:(QFA.I$N)]),df=3,location=exp(vecsamp[QFA.I$N+2]),scale=1/((sigma_Z)^0.5))
+vec=vec-pst(0,df=3,location=exp(vecsamp[QFA.I$N+2]),scale=1/((sigma_Z)^0.5))
+vec=vec/(1-pst(0,df=3,location=exp(vecsamp[QFA.I$N+2]),scale=1/((sigma_Z)^0.5)))
+
 #vec=pnorm(vecsamp[1:(N)],vecsamp[N+2],1/((sigma_Z)^0.5))
-pdf("IHM_hist.pdf")
+pdf("IHM_PIT.pdf")
 hist(vec)
 dev.off()
 ####
@@ -651,8 +663,9 @@ pdf("plot3.pdf")
 plot(Z_l-colMeans(a))
 plot(A2*Z_l*delta_gamma-colMeans(b))
 dev.off()
-#
-pdf(paste("IHM_plot_",file,".pdf",sep=""))
+file="4oct"#
+
+pdf(paste("IHM_plot_",file,".pdf",sep=""),useDingbats=F)
 
 limmin<-0
 limmax<-max(A2*Z_l*delta_gamma)
@@ -675,11 +688,25 @@ text(A1*Z_l[i],A2*(Z_l[i]*delta_gamma[i]),gene[i],pos=4,offset=0.1,cex=0.4)
 dev.off()
 
 #
+gene[gene==0]=ORFuni[gene==0]
 setwd("~/")
-list<-read.table("FULL_cdc131_27_top.txt",header=T)
-list<-list[1:430,1]
-list<-as.character(list)
-list[176]<-"YMR169C"
+list<-read.table("Addinall_all.txt",header=T)
+list[,1]<-as.character(list[,1])
+list[,1][list[,1]=="YMR169c"]="YMR169C"
+list[,1][list[,1]=="YMR175w"]="YMR175W"
+list[,1][list[,1]=="YML009c"]="YML009C"
+list$qvalue[is.na(list$qvalue)]=1
+strip_ORF<-read.delim("strip_list.txt",header=T,sep="\t")$orf
+list<-list[!(list[,1]%in%strip_ORF),]
+list<-list[order(list[,1]),]
+list$gene<-as.character(list$gene)
+list[,5][is.na(list[,5])]=1
+list[,6][is.na(list[,6])]=1
+list$gene[is.na(list$gene)]<-list[,1][is.na(list$gene)]
+#list<-list[abs(list[,2])>0.5,]##########
+list2<-list
+list<-unique(as.character(list[list[,6]<0.05,1]))
+
 
 lORF<-ORFuni[vecorder]
 llORF<-lORF[lORF%in%list]
@@ -688,10 +715,14 @@ lgene<-cbind(gene[ORFuni%in%llORF],as.numeric(delta[ORFuni%in%llORF]),as.numeric
 lgene_not<-cbind(gene[ORFuni%in%llORF_not],as.numeric(delta[ORFuni%in%llORF_not]),as.numeric(delta_gamma[ORFuni%in%llORF_not]))
 
 
+list2<-list2[order(abs(list2[,4]),decreasing=T),]
+list2<-cbind(list2,1:nrow(list2))
+list2<-list2[order(list2[,1]),]
+ADD_position<-list2[,8]
 
-l<-rep("new",length(vecorder))
-l[lORF%in%llORF]="new and old"
-ORDER<-cbind(gene[vecorder],as.numeric(delta[vecorder]),as.numeric(delta_gamma[vecorder]),l)
+
+
+ORDER<-cbind(gene[vecorder],as.numeric(delta[vecorder]),as.numeric(delta_gamma[vecorder]),ADD_position[vecorder])
 write.table(file="IHM_interactions.txt",ORDER)
 
 ORDER[,4][order(abs(as.numeric(ORDER[,3])),decreasing=T)]
@@ -699,6 +730,10 @@ ORDER[,4][order(abs(as.numeric(ORDER[,3])),decreasing=T)]
 l<-list[!(list%in%lORF)]
 l<-gene[ORFuni%in%l]
 write.table(l,"IHM_not_interactions.txt")
+
+write.table(cbind(gene[order],ORFuni[order],delta[order],delta_gamma[order],ADD_position[order]),"IHM_all.txt")
+
+save.image(file="IHM_4oct_8k_8k_8k.RData")
 #Percent interactors
 #
 length(llORF)/(length(unique(c(as.character(list),lORF))))
@@ -746,3 +781,27 @@ plot(data)
 plot(vec-data)
 dev.off()
 
+
+
+###rjags
+
+samp=samp[[1]]
+if(nrow(samp)>1) {vecsamp<-colMeans(samp)} else {vecsamp<-samp}
+namesamp<-names(vecsamp)
+Z_l2<-(vecsamp[1:(N)])
+Z2<-exp(vecsamp[N+1])
+
+A12<-exp(0)
+A22<-exp(vecsamp[N+3])
+delta2<-vecsamp[(2*N+4):(3*N+3)]
+gamma2<-log(vecsamp[(4*N+4):(5*N+3)])
+nu_l2<-exp(vecsamp[(5*N+4):(7*N+3)])
+
+nu2<-exp(vecsamp[(7*N+4)])
+
+sigma_Z2<-(vecsamp[7*N+5])
+sigma_gamma2<-exp(vecsamp[(7*N+6)])
+sigma_nu2<-exp(vecsamp[7*N+7])
+
+if(nrow(samp)>1) {delta_gamma2<-colMeans(samp[,(2*N+4):(3*N+3)]*log(samp[,(4*N+4):(5*N+3)]))} else {delta_gamma2<-(samp[,(2*N+4):(3*N+3)]*log(samp[,(4*N+4):(5*N+3)]))}
+delta_gamma2=exp(delta_gamma2)

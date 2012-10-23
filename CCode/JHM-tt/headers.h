@@ -7,7 +7,7 @@
 #include <gsl/gsl_sf_log.h>      
 #include <unistd.h>
 #include <time.h>
-
+#include <gsl/gsl_cdf.h>
 typedef struct struct_data {
   double *y, *x;
   int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,SHIFTmn, maxy,maxTIMEa,maxTIMEb;
@@ -21,8 +21,7 @@ typedef struct struct_para {
     *delta_l,
     *gamma_cl,	        sigma_gamma,
     *omega_cl,            sigma_omega,
-    *upsilon_c,       sigma_upsilon,
- 
+     
     *K_clm,            *tau_K_cl,
     *r_clm,            *tau_r_cl,
 
@@ -34,8 +33,7 @@ typedef struct struct_para {
     r_p,
     nu_p,
     P,
-    *tau_K_p,*tau_r_p,*sigma_tau_K,*sigma_tau_r,
-    A,B;
+    *tau_K_p,*tau_r_p,*sigma_tau_K,*sigma_tau_r;
 } struct_para;
 
 
@@ -45,9 +43,7 @@ typedef struct struct_priors {
     beta_mu,                eta_beta,
     p,    
     eta_gamma,              psi_gamma,
-    eta_omega,              psi_omega,
-    eta_upsilon,	    psi_upsilon,	    
-    upsilon_mu,		   
+    eta_omega,              psi_omega,  
 
     sigma_K,                phi_K,
     sigma_r,                phi_r,

@@ -100,11 +100,12 @@ strip_list<-read.delim("strip_list.txt",header=T)
 b<-b[!b$ORF%in%strip_list[,1],]
 ORFuni_b<-unique(a$ORF)
 }
-sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
 
 #####################################
 b<-b[order(b$ORF,b$ID,b$Expt.Time), ]
-ORFuni<-unique(b$ORF)
+ORFuni_b<-unique(b$ORF)
+sum(rep(1,length(ORFuni))[ORFuni==ORFuni_b])/length(ORFuni)
+
 
 #a<-funcIDORDER(a)
 IDuni<-unique(a$ID)

@@ -10,79 +10,63 @@
 \usepackage{color}
 
 \begin{document}
-
 \begin{align*}
-c&=1,2 \qquad & \text{(Condition)}\\
-l&=1,...,L_{c}  \qquad & \text{(ORF)}\\
-m&=1,...,M_{cl}      \qquad & \text{(Repeat)}\\
-n&=1,...,N_{clm}     \qquad & \text{(Time Point)}\\
-\\
-y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},(e^{ \upsilon_{l}+\nu_{c}  })^{-1} ) \\
-\hat{y}_{clmn} &= f(x_{clmn};e^{ K_{clm} } ,e^{ r_{clm} } , e^{ P })\\
-\end{align*}
-
-\begin{align*}
-K_{clm} &\sim \operatorname{N}(e^{\alpha_{c}}(K_{l}^o+\delta_{l}\gamma_{cl}),(e^{ \tau_{cl}^K })^{-1})\qquad &\tau_{cl}^K &\sim \operatorname{N}(\sigma^{K}, (\phi^{K})^{-1} )\\
-r_{clm} &\sim \operatorname{N}(e^{\beta_{c}}(r_{l}^o+\delta_{l}\omega_{cl}),(e^{ \tau_{cl}^r })^{-1})\qquad &\tau_{cl}^r &\sim \operatorname{N}(\sigma^{r}, (\phi^{r})^{-1} )\\
-\\
-K_{l}^o &\sim \operatorname{N}(K^p, (e^{ \sigma^{K,o} })^{-1} )\qquad &\sigma^{K,o} &\sim \operatorname{N}(\eta^{K,o}, (\psi^{K,o})^{-1} )\\
-r_{l}^o &\sim \operatorname{N}(r^p, (e^{ \sigma^{r,o} })^{-1} )\qquad &\sigma^{r,o} &\sim \operatorname{N}(\eta^{r,o}, (\psi^{r,o})^{-1} )\\
-\nu_{l} &\sim \operatorname{N}(\nu_{p},(e^{ \sigma^{\nu} })^{-1})\qquad&\sigma^{\nu} &\sim \operatorname{N}(\eta^{\nu}, (\psi^{\nu})^{-1} )\\
+c&=1,2  &&\;\;\;\; \text{(Condition)}\\
+l&=1,...,L_{c}   &&\;\;\;\; \text{(ORF)}\\
+m&=1,...,M_{cl}       &&\;\;\;\; \text{(Repeat)}\\
+n&=1,...,N_{clm}      &&\;\;\;\; \text{(Time point)}\\
+\intertext{Time point level}
+y_{clmn} &\sim \operatorname{N}(\hat{y}_{clmn},({\nu_{cl}})^{-1} )\quad
+&\hat{y}_{clmn} &= f(x_{clmn};{ K_{clm} } ,{ r_{clm} } , { P })\\
+K_{clm}&=e^{(Log~K^{*}_{clm}+K^{batch}_{b})} \qquad & r_{clm}&=e^{(Log~r^{*}_{clm}+r^{batch}_{b})} \\
+\nu_{cl} &=e^{(Log~\nu^{*}_{cl}+\nu^{batch}_{b})} \\
+\intertext{Repeat level}
+Log~K^{*}_{clm} &\sim \operatorname{N}(\alpha_{c}+K_{l}^o+\delta_{l}\gamma_{cl},({ \tau_{cl}^K })^{-1})I_{(-\infty,0]}
+\qquad & Log~\tau_{cl}^K &\sim \operatorname{N}(\tau^{K,p}_{c}, ({\sigma^{\tau,K}_{c}})^{-1} )I_{[0,\infty)}\\
+Log~r^{*}_{clm} &\sim \operatorname{N}(\beta_{c}+r_{l}^o+\delta_{l}\omega_{cl},({ \tau_{cl}^r })^{-1})I_{(-\infty,3.5]}
+\qquad &Log~\tau_{cl}^r &\sim \operatorname{N}(\tau^{r,p}_{c}, ({\sigma^{\tau,r}_{c}})^{-1} )\\
+\intertext{ORF level}
+e^{K_{l}^o} &\sim t(K^p, ({ \sigma^{K,o} })^{-1},3 )I_{[0,\infty)}\qquad &Log~\sigma^{K,o} &\sim \operatorname{N}(\eta^{K,o}, (\psi^{K,o})^{-1} )\\
+e^{r_{l}^o} &\sim t(r^p, ({ \sigma^{r,o} })^{-1},3 )I_{[0,\infty)}\qquad &Log~\sigma^{r,o} &\sim \operatorname{N}(\eta^{r,o}, (\psi^{r,o})^{-1} )\\
+Log~\nu^{*}_{cl} &\sim \operatorname{N}(\nu_{\mu},({ \sigma^{\nu} })^{-1})\qquad& Log~\sigma^{\nu} &\sim \operatorname{N}(\eta^{\nu}, (\psi^{\nu})^{-1} )\\
 \delta_{l} &\sim Bern(p)\\
-\\
-\gamma_{cl}&= \begin{cases}
-0  & \text{if } c=0;\\
-\operatorname{N}(0,{(e^{\sigma^{\gamma}})}^{-1}) & \text{if } c=1.
+e^{\gamma_{cl}}&=\begin{cases}
+1  & \text{if } c=0;\\
+t(1,{({\sigma^{\gamma}})}^{-1},3)I_{[0,\infty)} & \text{if } c=1.
 \end{cases}
 \qquad
-&\sigma^{\gamma}&\sim \operatorname{N}(\eta^{\gamma},\psi^{\gamma})
+&Log~\sigma^{\gamma}&\sim
+\operatorname{N}(\eta^{\gamma},\psi^{\gamma})  
 \\
-\omega_{cl}&= \begin{cases}
-0  & \text{if } c=0;\\
-\operatorname{N}(0,({e^{\sigma^{\omega}})}^{-1}) & \text{if } c=1.
+e^{\omega_{cl}}&=\begin{cases}
+1  & \text{if } c=0;\\
+t(1,({{\sigma^{\omega}})}^{-1},3)I_{[0,\infty)} & \text{if } c=1.
 \end{cases}
 \qquad
-&\sigma^{\omega}&\sim \operatorname{N}(\eta^{\omega},\psi^{\omega})
-\end{align*}
-
-
-\begin{align*}
+&Log~\sigma^{\omega}&\sim
+\operatorname{N}(\eta^{\omega},\psi^{\omega})
+\\
+\intertext{Condition level}
 \alpha_{c}&=\begin{cases}
 0  & \text{if } c=0;\\
 \operatorname{N}(\alpha^{\mu},\eta^{\alpha})  & \text{if } c=1.
 \end{cases}
-\\
-\beta_{c}&=\begin{cases}
+&\beta_{c}&=\begin{cases}
 0  & \text{if } c=0;\\
 \operatorname{N}(\beta^{\mu},\eta^{\beta}) & \text{if } c=1.
 \end{cases}
 \\
-\upsilon_{c}&=\begin{cases}
-0  & \text{if } c=0;\\
-\operatorname{N}(\upsilon^{\mu},({e^{\sigma^{\upsilon}}})^{-1}) & \text{if } c=1.
-\end{cases}
-&\sigma^{\upsilon} &\sim \operatorname{N}(\eta^{\upsilon}, (\psi^{\upsilon})^{-1} )\\
+\tau^{K,p}_{c} &\sim \operatorname{N}(\tau^{K,\mu}, ({\eta^{\tau,K,p}})^{-1} )
+& Log~\sigma^{\tau,K}_{c} &\sim \operatorname{N}(\eta^{\tau,K}, (\psi^{\tau,K})^{-1} )\\
+\tau^{r,p}_{c} &\sim \operatorname{N}(\tau^{r,\mu}, ({\eta^{r,p}})^{-1} )
+& Log~\sigma^{\tau,r}_{c} &\sim \operatorname{N}(\eta^{\tau,r}, (\psi^{\tau,r})^{-1} )\\
+\intertext{Population level}
+Log~K^p &\sim \operatorname{N}(K^\mu, ({\eta^{K,p}})^{-1} )
+& Log~r^p &\sim \operatorname{N}(r^\mu, ({\eta^{r,p}})^{-1} )\\
+\nu^p &\sim \operatorname{N}(\nu^\mu, ({\eta}^{\nu,p})^{-1} )
+& Log~P &\sim \operatorname{N}(P^\mu, ({\eta^{P}})^{-1} )\\
+\intertext{Batch level}
+K^{batch}_{b}&\sim \operatorname{N}(0, ({\eta^{K,p}})^{-1} )
+& r^{batch}_{b}&\sim  \operatorname{N}(0, ({\eta^{r,p}})^{-1} )\\
 \end{align*}
-
-\begin{align*}
-K^p &\sim \operatorname{N}(K^\mu, ({\eta^{K,p}})^{-1} )\\
-r^p &\sim \operatorname{N}(r^\mu, ({\eta^{r,p}})^{-1} )\\
-\nu^p &\sim \operatorname{N}(\nu^\mu, ({\eta}^{\nu,p})^{-1} )\\
-P &\sim \operatorname{N}(P^\mu, ({\eta^{P}})^{-1} )\\
-\end{align*}
-
-\newpage
-
-\include{Kclm_rclm}
-\include{K_l_r_l}
-\include{cl}
-\include{K_p_r_p}
 \end{document}
-
-
-\sqrt{\frac{}{2\pi}} e^{-\frac{1}{2}()^{2} }
-
-\prod_{l=1}^{L}\prod_{m=1}^{m_{l}}\prod_{n=1}^{n_{lm}}
-
-\sum_{l=1}^{L}\sum_{m=1}^{M_{l}}\sum_{n=1}^{N_{lm}}
-

@@ -78,9 +78,9 @@ void printheader(struct struct_data *D){
 
 	printf("sigma_omega ");
 
-	printf("upsilon_c ");
+	/*printf("upsilon_c ");
 
-	printf("sigma_upsilon ");
+	  printf("sigma_upsilon ");*/
 
 	for (c=0;c<2;c++){
 	printf ("tau_K_p[%i] ",c);
@@ -90,10 +90,6 @@ void printheader(struct struct_data *D){
 	  printf ("tau_r_p[%i] ",c);
 	  printf ("sigma_tau_r[%i] ",c);
 	}
-
-
-	printf ("A ");
-	printf ("B ");
 	printf ("accept_K ");
 	printf ("accept_r ");
 	printf ("accept_nu ");
@@ -178,11 +174,11 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	}
 
 	printf ("%g ",D_para->sigma_omega);
-
+	/*
 	printf ("%g ",D_para->upsilon_c[1]);
 
 	printf ("%g ",D_para->sigma_upsilon);
-
+*/
 	for (c=0;c<2;c++){
 	  printf ("%g ", D_para->tau_K_p[c]);
 	  printf ("%g ",D_para->sigma_tau_K[c]);
@@ -192,9 +188,6 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
           printf ("%g ",D_para->sigma_tau_r[c]);
         }
  
-	printf ("%g ",D_para->A);
-	printf ("%g ",D_para->B);
-
 	printf ("%g ",D_MH->accept_K);
 	printf ("%g ",D_MH->accept_r);
 	printf ("%g ",D_MH->accept_nu);

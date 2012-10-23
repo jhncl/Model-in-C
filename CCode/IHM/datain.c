@@ -56,11 +56,13 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	fclose(file);
 
         for (i=0;i<D->SHIFTmn;i++){
-	  if(K_lm[i]<=P_a){K_lm[i]=2*P_a;}
+	  if(K_lm[i]<=2*P_a){K_lm[i]=2*P_a;r_lm[i]=0;}
         }
 
 	for (i=0;i<D->SHIFTmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
+		
+		/*printf("%g\n",D->y[i]);*/
 	}
 
 	file2=fopen(filename2, "r");
@@ -70,15 +72,15 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 			fscanf(file, "%c %s",number,number);
 			}*/
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 			K_lm[i]=exp(data);   
 		}
 		for (i=0;i<2*D->L+3;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 		}
 		P_b=exp(data);  
 		for (i=D->SHIFTmn;i<D->MAXmn;i++){
-			fscanf(file, "%lf",&data);
+			fscanf(file2, "%lf",&data);
 			r_lm[i]=exp(data);   
 		}
 	}
@@ -86,12 +88,16 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 	fclose(file2);
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
-          if(K_lm[i]<=P_b){K_lm[i]=2*P_b;}
+          if(K_lm[i]<=2*P_b){K_lm[i]=2*P_b;r_lm[i]=0;}
         }
 
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));
+	       
+		/*printf("%g\n",D->y[i]);*/
+
+	
 	}
 return 0;
 }
@@ -200,10 +206,10 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 	para->delta_l=malloc(size*sizeof(double));
 	para->gamma_cl=malloc(size*sizeof(double));
 	para->Z_l=malloc(size*sizeof(double));
+	size=data->L*2;/***/
 	para->nu_l=malloc(size*sizeof(double));
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
-	para->upsilon_c=malloc(size*sizeof(double));
 	fillpara(para,data,priors);
 return 0;
 }
@@ -212,15 +218,13 @@ return 0;
 
 int fillMH(struct_MH *MH)
 {
-	MH->halpha_c=0.5;
+	MH->halpha_c=0.008;
 	MH->hsigma_gamma=0.5;
-	MH->hupsilon_c=0.5;
-	MH->hsigma_upsilon=0.5;
-	MH->hsigma_nu=0.5;
+     	MH->hsigma_nu=0.5;
 	MH->hsigma_Z=0.5;
 	MH->hnu_p=0.5;
 	MH->hgamma_cl=0.5;
-	MH->hZ_l=0.5;
+	MH->hZ_l=0.2;
 	MH->hnu_l=0.5;
 	MH->accept_Z=0;
 	MH->accept_up=0;
@@ -249,28 +253,29 @@ return 0;
 
 int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 {
-  int l,m,mm;
-  double SUM=0,SUMa=0;
+  int l,m,mm,ll;
+  double SUM=0,SUMa=0,SUMb=0;
 	/*initials*/
-	/*for (l=0;l<D->L;l++){D_para->Z_l[l]=D_priors->Z_mu;}*/
 	for (l=0;l<D->L;l++){
 	  for (m=0;m<D->NoORF[l];m++){
 	    mm=D->NoSUM[l]+m;
 	    SUM += D->y[mm];
 	  }
-	  if ((SUM/D->NoORF[l])<1){
+	  /*  if ((SUM/D->NoORF[l])<1){
 	    D_para->Z_l[l]=0;
 	  }
-	  else{
-	    D_para->Z_l[l]=gsl_sf_log(SUM/D->NoORF[l]);
-	  }
+	  else{*/
+	    D_para->Z_l[l]=log(SUM/D->NoORF[l]);
+	    /* }*/
+	    SUMa+=SUM/D->NoORF[l];
 	  SUM=0;
-	  SUMa+=D_para->Z_l[l];
 	}
-	D_para->Z_p=SUMa/D->L;
-	D_para->sigma_Z=D_priors->eta_Z;       
+	D_para->Z_p=log(SUMa/D->L);
 
-	for (l=0;l<D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
+	D_para->sigma_Z=D_priors->eta_Z;     
+
+
+	for (l=0;l<2*D->L;l++)          {D_para->nu_l[l]=D_priors->nu_mu;}          
 	D_para->sigma_nu=D_priors->eta_nu;   
   
 	D_para->nu_p=D_priors->nu_mu;    
@@ -280,12 +285,26 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	for (l=0;l<D->L;l++)          {D_para->delta_l[l]=1;}/*!*/  
 
 	D_para->alpha_c[0]=0;/**/
-	D_para->alpha_c[1]=D_priors->alpha_mu;
+	
+	SUMa=SUMb=0;
+	for (l=0;l<D->L;l++){
+	  SUMa+=exp(D_para->Z_l[l]);
+	  ll=l+D->L;
+	  for (m=0;m<D->NoORF[ll];m++){
+	    mm=D->NoSUM[ll]+m;
+	      SUM+=D->y[mm];
+	  }
+	  if ((SUM/D->NoORF[ll])<1){
+	    SUMb+=0;
+	  }
+	  else{
+	    SUMb+=(SUM/D->NoORF[ll]);
+	  }
+	  SUM=0;
+	}
+	D_para->alpha_c[1]=log(SUMb/SUMa);
 	D_para->sigma_gamma=D_priors->eta_gamma;
-	D_para->upsilon_c[0]=0; /**/
-	D_para->upsilon_c[1]=0;	
-	D_para->sigma_upsilon=D_priors->eta_upsilon;
-
+	
 return 0;
 }
 
@@ -298,7 +317,7 @@ int fillpriors(struct_priors *D_priors)
   if ( file != NULL ){  
     fscanf(file, "%s %lf",number,&data);
     fscanf(file, "%s %lf",number,&data);
-	D_priors->Z_mu=data;	
+    D_priors->Z_mu=data;	
     fscanf(file, "%s %lf",number,&data);
 	D_priors->eta_Z_p=data;      
     fscanf(file, "%s %lf",number,&data);
@@ -324,11 +343,12 @@ int fillpriors(struct_priors *D_priors)
     fscanf(file, "%s %lf",number,&data);
 	D_priors->psi_gamma=data;
     fscanf(file, "%s %lf",number,&data);
-	D_priors->eta_upsilon=data;	
+    /*D_priors->eta_upsilon=data;	
     fscanf(file, "%s %lf",number,&data);
 	D_priors->psi_upsilon=data;
     fscanf(file, "%s %lf",number,&data);
-	D_priors->upsilon_mu=data;			
+	D_priors->upsilon_mu=data;*/			
+	D_priors->df=3;
   }
   else{perror("Priors");}  
   fclose(file);

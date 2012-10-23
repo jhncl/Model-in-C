@@ -1,4 +1,4 @@
-filename="M_IHM_100"
+filename="RCode_IHM"
 CAPORF=6000
 #library(qfaBayes)
 # library(qfa)
@@ -52,7 +52,8 @@ P=exp((a[M+2*N+3]))
 K<-exp((a[1:M]))
 r<-exp((a[M+2*N+4-1+c(1:M)]))
 
-K[K<=P]=2*P
+r[K<=2*P]=0
+K[K<=2*P]=2*P
 
 vecMDR=vecMDP=0
 for (i in 1:M){
@@ -67,7 +68,8 @@ P=exp((b[M+2*N+3]))
 K<-exp((b[1:M]))
 r<-exp((b[M+2*N+4-1+c(1:M)]))
 
-K[K<=P]=2*P
+r[K<=2*P]=0
+K[K<=2*P]=2*P
 
 vecMDR=vecMDP=0
 for (i in 1:M){
@@ -110,32 +112,29 @@ model {
 	for (i in 1:N){
 		for (j in 1:2){
 			for (k in 1:NoORF[i,j]){
-				y[k,j,i]~ dnorm(Z_l[i]*exp(alpha_c[j]+delta_l[i,j]*gamma_cl_LOG[i,j]),exp(nu_l[i]+upsilon_c[j]))
+				y[k,j,i]~ dnorm(Z_l[i]*exp(alpha_c[j]+delta_l[i,j]*log(gamma_cl[i,j])),exp(nu_l[i,j]))
 			}
+			nu_l[i,j]~dnorm(nu_p,exp(sigma_nu))
+
 		}
-		Z_l[i]~dt(exp(Z_p),exp(sigma_Z),3)I(0,)
-		nu_l[i]~dnorm(nu_p,exp(sigma_nu))
+		Z_l[i]~dt(exp(Z_p),exp(sigma_Z),3)T(0,)
+
 		delta_l[i,1]<-0
 		delta_l[i,2]~dbern(p)
 
 		gamma_cl[i,1]<-1
-		gamma_cl[i,2]~dt(1,exp(sigma_gamma),3)I(0,)
-gamma_cl_LOG[i,1]<-log(gamma_cl[i,1])
-gamma_cl_LOG[i,2]<-log(gamma_cl[i,2])
+		gamma_cl[i,2]~dt(1,exp(sigma_gamma),3)T(0,)
 
 	}
 
 	alpha_c[1]<-0
 	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
-	upsilon_c[1]<-0
-	upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
 
 	Z_p~dnorm(Z_mu,eta_Z_p)
 	nu_p~dnorm(nu_mu,eta_nu_p)
 	sigma_Z~dnorm(eta_Z,psi_Z)
 	sigma_nu~dnorm(eta_nu,psi_nu)
 	sigma_gamma~dnorm(eta_gamma,psi_gamma)
-	sigma_upsilon~dnorm(eta_upsilon,psi_upsilon)
 }
 ","model1.bug")
 
@@ -151,12 +150,9 @@ QFA.P=list('Z_mu'=log(50),'eta_Z_p'=1/(6*6),
 'nu_mu'=10.59663,	'eta_nu_p'=1/(5*5), 
 'alpha_mu'=0,		'eta_alpha'=1/(1.5*1.5),
 'p'=0.05,
-'eta_gamma'=-3.583519,          'psi_gamma'=1/(4*4),
-'eta_upsilon'=-3.218,		'psi_upsilon'=1,   
-'upsilon_mu'=0)
-QFA.P[1:16]=priors[1:16,1]
-
-filename="RCode_IHM"
+'eta_gamma'=-3.583519,          'psi_gamma'=1/(4*4)
+)
+QFA.P[1:13]=priors[1:13,1]
 
 library("rjags")
 l<-date()
@@ -170,17 +166,16 @@ data = list('y'=y,
 'nu_mu'=QFA.P$nu_mu,	'eta_nu_p'=QFA.P$eta_nu_p, 
 'alpha_mu'=QFA.P$alpha_mu,		'eta_alpha'=QFA.P$eta_alpha,
 'p'=QFA.P$p,
-'eta_gamma'=QFA.P$eta_gamma,          'psi_gamma'=QFA.P$psi_gamma,
-'eta_upsilon'=QFA.P$eta_upsilon,		'psi_upsilon'=QFA.P$psi_upsilon,   
-'upsilon_mu'=QFA.P$upsilon_mu),
+'eta_gamma'=QFA.P$eta_gamma,          'psi_gamma'=QFA.P$psi_gamma
+),
 n.chains = 1,n.adapt = 100)
 
 ###################################
 print("Fit Model/UPDATE")
 ###################################
-ll<-date()
-update(jags,100000)
-lll<-date()
+l<-date()
+write.table(l,file=paste(filename,"_F",0,"_time.txt",sep=""))
+for (i in 1:10){
 samp<-coda.samples(jags,
           c(
         'Z_l',
@@ -192,16 +187,20 @@ samp<-coda.samples(jags,
         'gamma_cl',
         'delta_l',
         'alpha_c',
-        'sigma_gamma',
-        'upsilon_c',
-        'sigma_upsilon'
+        'sigma_gamma'
 ),
             100000,thin=10)
+l<-date()
+write.table(l,file=paste(filename,"_F",i,"_time.txt",sep=""))
+save(samp,file=paste(filename,"_F",i,".R",sep=""))
+}
+stop()
+
 print("1")
 llll<-date()
-write.table("RJobtime.txt",c(lll,llll))
+write.table(file="RJobtime.txt",c(lll,llll))
 save(samp,file=paste(filename,"_F0.R",sep=""))
-update(jags,100000)
+update(jags,300000)
 print("2")
 print("3")
 lllll<-date()
@@ -216,9 +215,7 @@ samp<-coda.samples(jags,
 	'gamma_cl', 
 	'delta_l',  
 	'alpha_c',
-	'sigma_gamma',
-	'upsilon_c', 
-	'sigma_upsilon'
+	'sigma_gamma'
 ),
             100000,thin=10)
 llllll<-date()
@@ -236,9 +233,7 @@ samp<-coda.samples(jags,
         'gamma_cl',
         'delta_l',
         'alpha_c',
-        'sigma_gamma',
-        'upsilon_c',
-        'sigma_upsilon'
+        'sigma_gamma'
 ),
             1000000,thin=10)
 lllllll<-date()

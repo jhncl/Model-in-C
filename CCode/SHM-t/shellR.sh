@@ -28,7 +28,7 @@ Output = hello_condor.out
 
 Log = hello_condor.log
 
-transfer_input_files = $1, priors.txt, M_SHM_FULL_27.RData
+transfer_input_files = $1, priors.txt, M_SHM_27_FULL_L.RData
 
 transfer_files = ALWAYS
 

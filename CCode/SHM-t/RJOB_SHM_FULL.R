@@ -1,5 +1,6 @@
+filename="RCode_SHM"
 CAPN=6000
-load("M_SHM_FULL_27.RData")
+load("M_SHM_27_FULL_L.RData")
 library(rjags)
 #library(qfa,lib="~/R")
 #library(qfaBayes,lib="~/R")
@@ -9,7 +10,25 @@ library(qfaBayes,lib="/home/b0919573/R")
 #################################################
 priors<-read.table("priors.txt",header=T)
 
+ QFA.P<-list(
+
+sigma_K=3,            phi_K=0.5, 
+eta_K_o=0.5,          psi_K_o=1, 
+
+ sigma_r=-1,               phi_r=0.1,
+ eta_r_o=1,               psi_r_o=1,
+
+ eta_nu=-1,              psi_nu=1,
+
+ K_mu=log(0.2192928),     eta_K_p=1,
+ r_mu=log(2.5),            eta_r_p=1,
+ nu_mu=log(31),           eta_nu_p=1,
+ P_mu=log(0.0002),        eta_P=1/0.01
+)
+
 QFA.P[1:18]=priors[1:18,1]
+
+
 
 
 write("
@@ -17,20 +36,20 @@ model {
       for (i in 1:N){
       	  for (j in 1:NoORF[i]){
 	      	 for (l in 1:NoTime[(NoSum[i]+j)]){
-			y[j,l,i] ~ dt(y.hat[j,l,i], exp(nu_l[i]),5)
+			y[j,l,i] ~ dnorm(y.hat[j,l,i], exp(nu_l[i]))
  			y.hat[j,l,i] <- (K_lm[(NoSum[i]+j)]*P*exp(r_lm[(NoSum[i]+j)]*x[j,l,i]))/(K_lm[(NoSum[i]+j)]+P*(exp(r_lm[(NoSum[i]+j)]*x[j,l,i])-1))
 			}
 		K_lm[(NoSum[i]+j)]<- exp(K_lm_L[(NoSum[i]+j)])
-		K_lm_L[(NoSum[i]+j)] ~ dnorm(K_o_l[i],exp(tau_K_l[i])) I(,0)
+		K_lm_L[(NoSum[i]+j)] ~ dnorm(log(K_o_l[i]),exp(tau_K_l[i]))T(,0)
 		r_lm[(NoSum[i]+j)]<- exp(r_lm_L[(NoSum[i]+j)])
-		r_lm_L[(NoSum[i]+j)] ~ dnorm(r_o_l[i],exp(tau_r_l[i]))I(,3.5)
+		r_lm_L[(NoSum[i]+j)] ~ dnorm(log(r_o_l[i]),exp(tau_r_l[i]))T(,3.5)
 		}
-	K_o_l[i] ~ dt( exp(K_p), exp(sigma_K_o),3 ) I(0,)
-	r_o_l[i] ~ dt( exp(r_p), exp(sigma_r_o),3 ) I(0,)
+	K_o_l[i] ~ dt( exp(K_p), exp(sigma_K_o),3 )T(0,)
+	r_o_l[i] ~ dt( exp(r_p), exp(sigma_r_o),3 )T(0,)
 	nu_l[i] ~ dnorm(nu_p,  exp(sigma_nu) )
 
-	tau_K_l[i]~dnorm(tau_K_p,sigma_tau_K)I(0,)
-	tau_r_l[i]~dnorm(tau_r_p,sigma_tau_r)
+	tau_K_l[i]~dnorm(tau_K_p,exp(sigma_tau_K))T(0,)
+	tau_r_l[i]~dnorm(tau_r_p,exp(sigma_tau_r))
 	}
 
 K_p ~ dnorm(K_mu,eta_K_p)
@@ -52,7 +71,7 @@ sigma_tau_r ~ dnorm(eta_tau_r,psi_tau_r)
 ","model1.bug")
 QFA.I$N=min(QFA.I$N,CAPN)
 l<-date()
-filename="RCode_SHM"
+
  jags <- jags.model('model1.bug',
                     data = list('x' = QFA.D$x,
                                 'y' = QFA.D$y,
@@ -74,8 +93,9 @@ filename="RCode_SHM"
  ),
                     n.chains = 1,
                     n.adapt = 100)
-ll<-date()
-
+l<-date()
+write.table(l,file=paste(filename,"_F",0,"_time.txt",sep=""))
+for (i in 1:10){
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
     'K_o_l',            'sigma_K_o',  
@@ -85,11 +105,18 @@ samp<-coda.samples(jags,
     'r_o_l',            'sigma_r_o',
     'r_p',
     'nu_l',             'sigma_nu',
-    'nu_p'),
+    'nu_p'
+,'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
+),
               10000,thin=10)
-lll<-date()
-save(samp,file=paste(filename,"_F0.R",sep=""))
-
+l<-date()
+write.table(l,file=paste(filename,"_F",i,"_time.txt",sep=""))
+save(samp,file=paste(filename,"_F",i,".R",sep=""))
+}
+stop()
 samp<-coda.samples(jags,
  c('K_lm_L',            'tau_K_l',
     'K_o_l',            'sigma_K_o',
@@ -99,7 +126,12 @@ samp<-coda.samples(jags,
     'r_o_l',            'sigma_r_o',
     'r_p',
     'nu_l',             'sigma_nu',
-    'nu_p'),
+    'nu_p'
+,'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
+),
               10000,thin=10)
 
 save(samp,file=paste(filename,"_F1.R",sep=""))
@@ -114,10 +146,53 @@ samp<-coda.samples(jags,
     'r_o_l',            'sigma_r_o',
     'r_p',
     'nu_l',             'sigma_nu',
-    'nu_p'),
+    'nu_p'
+,'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
+),
               10000,thin=10)
 lllll<-date()
 save(samp,file=paste(filename,"_F2.R",sep=""))
+
+samp<-coda.samples(jags,
+ c('K_lm_L',            'tau_K_l',
+    'K_o_l',            'sigma_K_o',
+    'K_p',
+    'P_L',
+    'r_lm_L',            'tau_r_l',
+    'r_o_l',            'sigma_r_o',
+    'r_p',
+    'nu_l',             'sigma_nu',
+    'nu_p'
+,'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
+),
+              10000,thin=10)
+lllll<-date()
+save(samp,file=paste(filename,"_F3.R",sep=""))
+
+samp<-coda.samples(jags,
+ c('K_lm_L',            'tau_K_l',
+    'K_o_l',            'sigma_K_o',
+    'K_p',
+    'P_L',
+    'r_lm_L',            'tau_r_l',
+    'r_o_l',            'sigma_r_o',
+    'r_p',
+    'nu_l',             'sigma_nu',
+    'nu_p'
+,'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
+),
+              10000,thin=10)
+lllll<-date()
+save(samp,file=paste(filename,"_F4.R",sep=""))
 
 
 stop()

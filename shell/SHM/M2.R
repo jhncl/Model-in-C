@@ -3,10 +3,13 @@ t=1
 folder_list=dir()[file.info(dir())$isdir]
 folder_list=folder_list[!is.na(folder_list)]
 for (i in 1:length(folder_list)){
+print(i)
+print(folder_list[i])
 setwd(paste("~/QFADatasets/SHM/",folder_list[i],sep=""))
 folder_list_inner=dir()[file.info(dir())$isdir]
 folder_list_inner=folder_list_inner[!is.na(folder_list_inner)]
 for (j in 1:length(folder_list_inner)){
+print(j)
 setwd(paste("~/QFADatasets/SHM/",folder_list[i],"/",folder_list_inner[j],sep=""))
 list=list.files()
 list=list[grepl("^priors.*\\.txt", list)]
@@ -56,7 +59,7 @@ vec3[i+1]=1/( (max(vec2[i,5]-vec2[i,3],vec2[i,3]-vec2[i,1])*1.1)/2 )^2
 
 l=numeric(0)
 for (i in 1:LEN){
-l=c(l,log(aa[[i]][,1]/2))}### t dist only df =4 ###########################
+l=c(l,log(aa[[i]][,1]))}### t dist only df =4 ###########################
 
 ll=numeric(0)
 for (i in 1:LEN){

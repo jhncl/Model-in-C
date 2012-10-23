@@ -4,9 +4,9 @@ data="`basename $step1`"
 step2="`dirname $step1`"
 step3="`basename $step2`"
 data=$step3_$data
-model="JHM-tt-df3_31MAY_THELASTdf5"
+model="JHM-tt-L_sept5"
 burn=$1
-iter="2000"
+iter="5000"
 thin="10"
 
 

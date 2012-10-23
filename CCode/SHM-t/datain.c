@@ -187,15 +187,13 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
   double SUM=0,SUMa=0;
   /*initials*/
   /*K*/
-  D_para->A=0;
-  D_para->B=0;
 
  for (l=0;l<D->L;l++){
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
       if(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_lm[mm]=D_priors->P_mu;SUM+=D_para->K_lm[mm];}
 	else{     
-	  D_para->K_lm[mm]=gsl_sf_log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);SUM+=D_para->K_lm[mm];
+	  D_para->K_lm[mm]=log(D->y[l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);SUM+=D_para->K_lm[mm];
 	}
     }
     D_para->K_o_l[l]=SUM/D->NoORF[l];
@@ -287,7 +285,6 @@ int fillpriors(struct_priors *D_priors)
     fscanf(file, "%s %lf",number,&data);
     D_priors->eta_P=data;   /*Normal  LMean; Precisions */
     D_priors->df=3;
-    D_priors->df2=5;
     D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors ->eta_tau_K_p;
     D_priors->eta_tau_r=D_priors->eta_tau_r_p;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
 

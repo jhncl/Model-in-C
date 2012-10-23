@@ -206,7 +206,6 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
 	para->beta_c=malloc(size*sizeof(double));
-	para->upsilon_c=malloc(size*sizeof(double));
 
 	para->tau_K_p=malloc(size*sizeof(double));
 	  para->tau_r_p=malloc(size*sizeof(double));
@@ -252,8 +251,6 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 int c,l,m,ll,mm;
  double SUM=0,SUMa=0,SUMb=0;
 	/*initials*/
- D_para->A=0;
- D_para->B=0;
   /*K*/
 for (c=0;c<2;c++){
     for (l=0;l<D->L;l++){
@@ -338,9 +335,7 @@ for (c=0;c<2;c++){
 	D_para->beta_c[0]=0;
 	D_para->sigma_gamma=D_priors->eta_gamma;
 	D_para->sigma_omega=D_priors->eta_omega;
-	D_para->upsilon_c[0]=0; 
-	D_para->upsilon_c[1]=D_priors->upsilon_mu;      
-        D_para->sigma_upsilon=D_priors->eta_upsilon;
+ 
 	for (c=0;c<2;c++){
 	D_para->tau_K_p[c]=D_priors->tau_K_mu;
 	D_para->sigma_tau_K[c]=D_priors->eta_tau_K;
@@ -419,12 +414,12 @@ fscanf(file, "%s %lf",number,&data);
 	D_priors->eta_omega=data;	
 fscanf(file, "%s %lf",number,&data);
 D_priors->psi_omega=data;
-fscanf(file, "%s %lf",number,&data);
+/*fscanf(file, "%s %lf",number,&data);
 	D_priors->eta_upsilon=data;	
 fscanf(file, "%s %lf",number,&data);
  	   D_priors->psi_upsilon=data;	    
 fscanf(file, "%s %lf",number,&data);
-	D_priors->upsilon_mu=data;	
+D_priors->upsilon_mu=data;	*/
 	D_priors->df=3;
 	D_priors->df2=5;
 	D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors->eta_tau_K_p;

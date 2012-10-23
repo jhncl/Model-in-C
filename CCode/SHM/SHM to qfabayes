@@ -1,3 +1,6 @@
+bkbk<-aa
+load("M_SHM_FULL_27.RData")
+
 QFA<-c(QFA.I,QFA.P,QFA.D)
 samp<-aa
 
@@ -175,7 +178,7 @@ K_i_tau<-exp(sigma_K_o)
 r_i_tau<-exp(sigma_r_o)
 K_ij_tau<-exp(tau_K_l)
 r_ij_tau<-exp(tau_r_l)
-#########
+#########paper
 #####PIT
 t=1
 vec=numeric(0)
@@ -183,13 +186,16 @@ for (i in 1:N){
 for (j in 1:NoORF[i])
 {
 vec[t]=pnorm(K_lm[t],K_o_l[i],1/(exp(tau_K_l[i])^0.5))
+vec[t]=vec[t]/pnorm(0,K_o_l[i],1/(exp(tau_K_l[i])^0.5))
 t=t+1
 }
 }
-pdf("SHM_hist.pdf")
+pdf("SHM_PIT.pdf")
 hist(vec)
 library(sn)
-vec=pst(K_o_l,df=3,location=K_p,scale=1/(exp(sigma_K_o)^0.5))
+vec=pst(exp(K_o_l),df=3,location=exp(K_p),scale=1/(exp(sigma_K_o)^0.5))
+vec<-vec-pst(0,df=3,location=exp(K_p),scale=1/(exp(sigma_K_o)^0.5))
+vec<-vec/(1-pst(0,df=3,location=exp(K_p),scale=1/(exp(sigma_K_o)^0.5)))
 hist(vec)
 dev.off()
 ########
@@ -221,14 +227,40 @@ plot(yyy)
 plot HIS3
 l=3829
 L=4294
-pdf("plot.pdf")
+#paper
+l=(1:L)[gene=="HIS3"]
+pdf("diagABC.pdf",useDingbats=F)
 plot(QFA.D$x[,,l],QFA.D$y[,,l])
 for (m in 1:NoORF_a[l]){
 tt=NoSum_a[l]+m
 K=exp(mean(aa[500:1000,tt]))
 r=exp(mean(aa[500:1000,tt+L+M]))
 P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
-curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),col=rgb(0,0,0,0.75),add=T)
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),add=T)
+}
+K=exp(K_o_l[l])
+r=exp(r_o_l[l])
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),lwd=3,col="red",add=T)
+l=(1:L)[gene=="RAD50"]
+plot(QFA.D$x[,,l],QFA.D$y[,,l])
+for (m in 1:NoORF_a[l]){
+tt=NoSum_a[l]+m
+K=exp(mean(aa[500:1000,tt]))
+r=exp(mean(aa[500:1000,tt+L+M]))
+P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),add=T)
+}
+K=exp(K_o_l[l])
+r=exp(r_o_l[l])
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),lwd=3,col="red",add=T)
+l=(1:L)[gene=="EXO1"]
+plot(QFA.D$x[,,l],QFA.D$y[,,l])
+for (m in 1:NoORF_a[l]){
+tt=NoSum_a[l]+m
+K=exp(mean(aa[500:1000,tt]))
+r=exp(mean(aa[500:1000,tt+L+M]))
+P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
+curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),add=T)
 }
 K=exp(K_o_l[l])
 r=exp(r_o_l[l])

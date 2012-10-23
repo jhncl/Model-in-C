@@ -5,7 +5,7 @@ data="`basename $step1`"
 step2="`dirname $step1`"
 step3="`basename $step2`"
 data=$step3"_"$data
-model="SHM-t-df3_31MAY_THELASTdf5"
+model="SHM-t-L-sept5"
 
 ORF="5000"
 
@@ -21,7 +21,7 @@ hostname
 date                                                                                                                                                         
 chmod 755 main                                                                                                                                               
 ./main $burn $iter $thin $ORF >${name}.R                                                                                                                             
-date                     " > ${name}.sh
+date                                                                                                                                              " > ${name}.sh
 
 echo "#####################                                                                                                                                  
                                                                                                                                                              

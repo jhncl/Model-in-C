@@ -9,7 +9,7 @@ burn=$1
 iter="10000"
 thin="10"
 
-model="IHM-tt-df3_29MAY_2K" 
+model="IHM-tt-L-sept5" 
 name="CC_${model}_${data}_${burn}_${iter}_${thin}"
 make                                                                                                                                 
 echo "#!/bin/sh                                                                                                                                              

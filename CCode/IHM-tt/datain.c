@@ -61,8 +61,8 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=0;i<D->SHIFTmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_a)/gsl_max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
-		D->y[i]=D->y[i];
-		/*		printf("%g\n",D->y[i]);*/
+		
+		/*printf("%g\n",D->y[i]);*/
 	}
 
 	file2=fopen(filename2, "r");
@@ -94,8 +94,8 @@ int datadouble(char filename[],char filename2[],struct_data *D)
 
 	for (i=D->SHIFTmn;i<D->MAXmn;i++){
 		D->y[i]=(r_lm[i]/log(2*gsl_max(0,K_lm[i]-P_b)/gsl_max(0,K_lm[i]-2*P_b)))*(log(K_lm[i]/P_b)/log(2));
-		D->y[i]=(D->y[i]);
-			
+	       
+		/*printf("%g\n",D->y[i]);*/
 
 	
 	}
@@ -210,7 +210,6 @@ int inzstruct_para(struct_para *para,struct_data *data,struct_priors *priors)
 	para->nu_l=malloc(size*sizeof(double));
 	size=2;
 	para->alpha_c=malloc(size*sizeof(double));
-	para->upsilon_c=malloc(size*sizeof(double));
 	fillpara(para,data,priors);
 return 0;
 }
@@ -221,9 +220,7 @@ int fillMH(struct_MH *MH)
 {
 	MH->halpha_c=0.008;
 	MH->hsigma_gamma=0.5;
-	MH->hupsilon_c=0.5;
-	MH->hsigma_upsilon=0.5;
-	MH->hsigma_nu=0.5;
+     	MH->hsigma_nu=0.5;
 	MH->hsigma_Z=0.5;
 	MH->hnu_p=0.5;
 	MH->hgamma_cl=0.5;
@@ -270,10 +267,10 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	  else{*/
 	    D_para->Z_l[l]=log(SUM/D->NoORF[l]);
 	    /* }*/
+	    SUMa+=SUM/D->NoORF[l];
 	  SUM=0;
-	  SUMa+=D_para->Z_l[l];
 	}
-	D_para->Z_p=(SUMa/D->L);
+	D_para->Z_p=log(SUMa/D->L);
 
 	D_para->sigma_Z=D_priors->eta_Z;     
 
@@ -307,10 +304,7 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	}
 	D_para->alpha_c[1]=log(SUMb/SUMa);
 	D_para->sigma_gamma=D_priors->eta_gamma;
-	D_para->upsilon_c[0]=0; /**/
-	D_para->upsilon_c[1]=0;	
-	D_para->sigma_upsilon=D_priors->eta_upsilon;
-
+	
 return 0;
 }
 
@@ -349,11 +343,11 @@ int fillpriors(struct_priors *D_priors)
     fscanf(file, "%s %lf",number,&data);
 	D_priors->psi_gamma=data;
     fscanf(file, "%s %lf",number,&data);
-	D_priors->eta_upsilon=data;	
+    /*D_priors->eta_upsilon=data;	
     fscanf(file, "%s %lf",number,&data);
 	D_priors->psi_upsilon=data;
     fscanf(file, "%s %lf",number,&data);
-	D_priors->upsilon_mu=data;			
+	D_priors->upsilon_mu=data;*/			
 	D_priors->df=3;
   }
   else{perror("Priors");}  

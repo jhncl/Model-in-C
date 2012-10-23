@@ -31,10 +31,6 @@ void printheader(struct struct_data *D){
 
 	printf("sigma_gamma ");
 
-	printf("upsilon_c ");
-
-	printf("sigma_upsilon ");
-
 	printf("accept_Z ");
 	printf("accept_up ");
 	printf("accept_nu ");
@@ -70,10 +66,6 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	}
 
 	printf ("%g ",D_para->sigma_gamma);
-
-	printf ("%g ",D_para->upsilon_c[1]);
-
-	printf ("%g ",D_para->sigma_upsilon);  
 
 	printf ("%g ",D_MH->accept_Z);
 	printf ("%g ",D_MH->accept_up);

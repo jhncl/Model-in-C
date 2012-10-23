@@ -1,3 +1,4 @@
+filename="RCode_JHM"
 #library(qfaBayes,lib="~/R")
 # library(qfa,lib="~/R")
 load("M_JHM_FULL_27_27.RData")
@@ -21,11 +22,10 @@ alpha_mu=0,		eta_alpha=1/(1.5*1.5),
 beta_mu=0,		eta_beta=1/(1.5*1.5),
 p=0.05,   
 eta_gamma=-3.583519,	psi_gamma=1/(4*4),
-eta_omega=-3.583519,	psi_omega=1/(4*4),
-eta_upsilon=-3.218,	psi_upsilon=1,	    
-upsilon_mu=0)
+eta_omega=-3.583519,	psi_omega=1/(4*4)
+)
 QFA.P[1:18]=priors[1:18,1]
-QFA.P[19:30]=priors[20:31,1]
+QFA.P[19:27]=priors[20:28,1]
 
 
 write("
@@ -34,43 +34,31 @@ model {
 		for (c in 1:2){
    		 	for (m in 1:NoORF[l,c]){
 	 		        for (n in 1:NoTime[NoSum[l,c]+m,c]){
-				y[m,n,l,c] ~ dt(y.hat[m,n,l,c],exp(nu_l[l]+upsilon_c[c]),5)
+				y[m,n,l,c] ~ dnorm(y.hat[m,n,l,c],exp(nu_l[l,c]))
 				y.hat[m,n,l,c] <- (K_clm[(SHIFT[c]+NoSum[l,c]+m)]*P*exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c]))/(K_clm[(SHIFT[c]+NoSum[l,c]+m)]+P*(exp(r_clm[(SHIFT[c]+NoSum[l,c]+m)]*x[m,n,l,c])-1))
 				}
 			K_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(K_clm_L[(SHIFT[c]+NoSum[l,c]+m)])
-			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(K_o_l[l]*exp(alpha_c[c]+(delta_l[l,c]*gamma_cl_LOG[l,c])),exp(tau_K_cl[l+(c-1)*N]))I(,0)
+			K_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(K_o_l[l]*exp(alpha_c[c]+(delta_l[l,c]*log(gamma_cl[l,c]))),exp(tau_K_cl[l,c]))T(,0)
          		r_clm[(SHIFT[c]+NoSum[l,c]+m)]<-exp(r_clm_L[(SHIFT[c]+NoSum[l,c]+m)])				           
-    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(r_o_l[l]*exp(beta_c[c]+(delta_l[l,c]*omega_cl_LOG[l,c])),exp(tau_r_cl[l+(c-1)*N]))I(,3.5)
+    			r_clm_L[(SHIFT[c]+NoSum[l,c]+m)] ~ dnorm(r_o_l[l]*exp(beta_c[c]+(delta_l[l,c]*log(omega_cl[l,c]))),exp(tau_r_cl[l,c]))T(,3.5)
 			}
-tau_K_cl[l+(c-1)*N]<-(tau_K_cl_UT[l+(c-1)*N])
-	tau_K_cl_UT[l+(c-1)*N]~dnorm(tau_K_p[c],sigma_tau_K[c])I(0,)
-tau_r_cl[l+(c-1)*N]<-(tau_r_cl_UT[l+(c-1)*N])
-	tau_r_cl_UT[l+(c-1)*N]~dnorm(tau_r_p[c],sigma_tau_r[c])
-	
-		}
-
-		K_o_l[l]~dt(exp(K_p),exp(sigma_K_o),3)I(0,)
-		r_o_l[l]~dt(exp(r_p),exp(sigma_r_o),3)I(0,)
-		nu_l[l]~dnorm(nu_p,exp(sigma_nu))
+			tau_K_cl[l,c]~dnorm(tau_K_p[c],exp(sigma_tau_K[c]))T(0,)
+			tau_r_cl[l,c]~dnorm(tau_r_p[c],exp(sigma_tau_r[c]))
+			nu_l[l,c]~dnorm(nu_p,exp(sigma_nu))
+			}
+		K_o_l[l]~dt(exp(K_p),exp(sigma_K_o),3)T(0,)
+		r_o_l[l]~dt(exp(r_p),exp(sigma_r_o),3)T(0,)
 		delta_l[l,1]<-0
                 delta_l[l,2]~dbern(p)
-		gamma_cl[l,1]<-0
-		gamma_cl[l,2]~dt(1,exp(sigma_gamma),3)I(0,)
-		omega_cl[l,1]<-0
-		omega_cl[l,2]~dt(1,exp(sigma_omega),3)I(0,)
-gamma_cl_LOG[l,1]<-log(gamma_cl[l,1])
-gamma_cl_LOG[l,2]<-log(gamma_cl[l,2])
-omega_cl_LOG[l,1]<-log(omega_cl[l,1])
-omega_cl_LOG[l,2]<-log(omega_cl[l,2])
-
+		gamma_cl[l,1]<-1
+		gamma_cl[l,2]~dt(1,exp(sigma_gamma),3)T(0,)
+		omega_cl[l,1]<-1
+		omega_cl[l,2]~dt(1,exp(sigma_omega),3)T(0,)
 	}
 	alpha_c[1]<-0
 	alpha_c[2]~dnorm(alpha_mu,eta_alpha)
 	beta_c[1]<-0
 	beta_c[2]~dnorm(beta_mu,eta_beta)
-	upsilon_c[1]<-0
-	upsilon_c[2]~dnorm(upsilon_mu,exp(sigma_upsilon))
-
 	
 	K_p~dnorm(K_mu,eta_K_p)
 	r_p~dnorm(r_mu,eta_r_p)
@@ -80,7 +68,6 @@ omega_cl_LOG[l,2]<-log(omega_cl[l,2])
 	sigma_K_o~dnorm(eta_K_o,psi_K_o)
 	sigma_r_o~dnorm(eta_r_o,psi_r_o)
 	sigma_nu~dnorm(eta_nu,psi_nu)
-	sigma_upsilon~dnorm(eta_upsilon,psi_upsilon)
 	sigma_gamma~dnorm(eta_gamma,psi_gamma)
 	sigma_omega~dnorm(eta_omega,psi_omega)
 
@@ -96,8 +83,6 @@ sigma_tau_r[2] ~ dnorm(eta_tau_r,psi_tau_r)
 }","model1.bug")
 
 library("rjags")
-filename="RCode_JHM"
-l<-date()
 jags <- jags.model('model1.bug',
                    data = list('x' = QFA.D$x,'y' = QFA.D$y,'SHIFT'=QFA.I$SHIFT,
 'N' = QFA.I$N,'NoTime' = QFA.I$NoTime,'NoORF' = QFA.I$NoORF,'NoSum' = QFA.I$NoSum, 
@@ -118,13 +103,12 @@ jags <- jags.model('model1.bug',
 'beta_mu'=QFA.P$beta_mu,		'eta_beta'=QFA.P$eta_beta,
 'p'=QFA.P$p,   
 'eta_gamma'=QFA.P$eta_gamma,	'psi_gamma'=QFA.P$psi_gamma,
-'eta_omega'=QFA.P$eta_omega,	'psi_omega'=QFA.P$psi_omega,
-'eta_upsilon'=QFA.P$eta_upsilon,	'psi_upsilon'=QFA.P$psi_upsilon,	    
-'upsilon_mu'=QFA.P$upsilon_mu
+'eta_omega'=QFA.P$eta_omega,	'psi_omega'=QFA.P$psi_omega
 ),
 n.chains = 1,n.adapt = 100)
-
-ll=date()
+l<-date()
+write.table(l,file=paste(filename,"_F",0,"_time.txt",sep=""))
+for (i in 1:10){
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -148,13 +132,19 @@ samp<-coda.samples(jags,
 'sigma_gamma',
 'omega_cl',
 'sigma_omega',
-'upsilon_c',
-'sigma_upsilon'
+'tau_K_p',
+'tau_r_p',
+'sigma_tau_K',
+'sigma_tau_r'
 ),
-              20000,thin=10)
-lll<-data()
+              10000,thin=10)
+l<-data()
+write.table(l,file=paste(filename,"_F",i,"_time.txt",sep=""))
+save(samp,file=paste(filename,"_F",i,".R",sep=""))
+}
+stop()
 save(samp,file=paste(filename,"_F0.R",sep=""))
-
+update(jags,200000)
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -177,16 +167,13 @@ samp<-coda.samples(jags,
 'gamma_cl',
 'sigma_gamma',
 'omega_cl',
-'sigma_omega',
-'upsilon_c',
-'sigma_upsilon'
-
+'sigma_omega'
 ),
               20000,thin=10)
 llll<-date()
-write.table("RJobtime.txt",c(lll,llll))
+write.table(file="RJobtime.txt",c(lll,llll))
 save(samp,file=paste(filename,"_F1.R",sep=""))
-
+update(jags,200000)
 samp<-coda.samples(jags,
  c(
 'K_clm_L',
@@ -209,9 +196,7 @@ samp<-coda.samples(jags,
 'gamma_cl',
 'sigma_gamma',
 'omega_cl',
-'sigma_omega',
-'upsilon_c',
-'sigma_upsilon'
+'sigma_omega'
 ),
               2000,thin=10)
 lllll<-date()

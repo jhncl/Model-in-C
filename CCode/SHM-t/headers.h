@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <gsl/gsl_sf_gamma.h>
-
+#include <gsl/gsl_cdf.h>
 
 typedef struct struct_data {
   double *y, *x;
@@ -32,10 +32,8 @@ typedef struct struct_para {
     r_p,
     nu_p,
     P,
-  mix,
   sigma_K_o_b,
-    tau_K_p, sigma_tau_K,tau_r_p,sigma_tau_r,
-    A,B;
+    tau_K_p, sigma_tau_K,tau_r_p,sigma_tau_r;
 } struct_para;
 
 typedef struct struct_priors {
@@ -51,7 +49,7 @@ typedef struct struct_priors {
     r_mu,                   eta_r_p,
     nu_mu,                  eta_nu_p,
     P_mu,                   eta_P,
-    df,df2,
+    df,
     tau_K_mu,tau_r_mu,
     eta_tau_K,eta_tau_r,
     psi_tau_r_p,psi_tau_K_p,
