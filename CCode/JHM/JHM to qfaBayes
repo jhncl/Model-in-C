@@ -925,3 +925,45 @@ lines(density(exp(samp[,j+1])),col=2)#K_lm[0]
 dev.off()
 
 
+
+#paper
+L=4294
+library("sn")
+
+j=NoSum[3672,1]
+
+ymax<-max(density(exp(samp[,j+1]))$y)
+
+pdf(file="posterior_JHM_2.pdf")
+plot(density(exp(rnorm(5000,QFA.P[[1]][11],1/QFA.P[[1]][12]^0.5))),ylim=c(0,ymax),xlim=c(0,0.3),col=1)
+t=1;
+for (s in 1:50000){
+j=M+3*L+2
+a=exp((samp[t,j]))#K_p
+j=M+3*L+1
+b=exp((samp[t,j]))#sigma_K_o
+xx[s]<-c(rst(1,location=a,scale=1/b^0.5,df=3))
+t=t+1;
+if (xx[s]<0){s=s-1;t=t-1;}
+if(t==5000){t=1}
+}
+lines(density(xx,adjust=1.2),ylim=c(0,10),xlim=c(0,0.3),col=4)
+t=1;
+for (s in 1:50000){
+j=M+2*L+1-1+3672
+a=((samp[t,j]))#K_o_l
+j=2*M+3*L+4-1+3672
+b=exp((samp[t,j]))#tau_K_l
+xx[s]<-rnorm(1,a,1/b^0.5)
+t=t+1;
+if (xx[s]>0){s=s-1;t=t-1;}
+if(t==5000){t=1}
+}
+lines(density(exp(xx)),ylim=c(0,10),xlim=c(0,0.3),col=3)
+
+j=NoSum[3672,1]
+
+lines(density(exp(samp[,j+1])),col=2)#K_lm[0]
+
+dev.off()
+

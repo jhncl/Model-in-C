@@ -19,7 +19,7 @@ PRIORS=as.double((aa)[[1]])[1:18]
 dyn.load("main.so")
 main <- function(burn,iters,thin,CAPL) {
 aa<-read.table("NoORFdata.txt",header=T)
-L=min(d,nrow(aa))
+L=min(CAPL,nrow(aa))
 LM<-sum(aa[1:L,])
 NCOL=
 LM+
@@ -40,11 +40,11 @@ L+
 1+
 1+
 1
-tmp <- .C("main", as.integer(burn),as.integer(iters),as.integer(thin),as.integer(CAPL),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main", as.integer(burn),as.integer(iters),as.integer(thin),as.integer(CAPL),OUT=as.double(1:(NCOL*iters)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAI=QFA.I,QFAy=QFA.y,QFAx=QFA.x,QFANoORF=QFA.NoORF,QFANoTIME=QFA.NoTIME,
 PRIORS=PRIORS
 )
-mat=matrix(c(tmp$OUT),nrow=b,byrow=T)
+mat=matrix(c(tmp$OUT),nrow=iters,byrow=T)
 mat=data.frame(mat)
 names(mat)=tmp$HEADER
 mat

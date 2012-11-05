@@ -22,76 +22,6 @@ int testsame(int a,int b)
   return 0;
 }
 
-
-
-/*READ IN*/
-
-
-int datadouble(char filename[], double datavec[],int length )
-{
-  int i;
-  char number[20];
-  double data;
-  FILE *file;
-  file=fopen(filename, "r");
-  i=0;
-  if ( file != NULL ){
-    fscanf(file, "%s %lf",number,&data);
-    while ( fscanf(file, "%s %lf",number,&data)!=-1){
-      datavec[i]=data;   
-      i++;
-    }
-  }
-  else{perror(filename);}
-  testsame(length,i);
-  fclose(file);
-  return 0;
-}
-
-int dataint(char filename[], int datavec[], int length)
-{
-  int i;
-  char number[20];
-  double data;
-  FILE *file;
-  file = fopen(filename, "r");
-  i=0;
-  if ( file != NULL ){
-    fscanf(file, "%s %lf",number,&data);
-    while (fscanf(file, "%s %lf",number,&data)!=-1){
-      datavec[i]=data;
-      i++;
-    }
-  }
-  else{perror(filename);}
-  testsame(length,i);
-  fclose(file);
-  return 0;
-}
-
-int dataLMN(char filename[], int *datavecL,int *datavecM,int *datavecN,int *datavecmaxy,int *datavecmaxTIME)
-{
-  char number[20];
-  double data;
-  FILE *file = fopen(filename, "r");
-  if ( file != NULL ){
-    fscanf(file, "%s %lf",number,&data);
-    fscanf(file, "%s %lf",number,&data);
-    *datavecL=data;     
-    fscanf(file, "%s %lf",number,&data);
-    *datavecM=data;
-    fscanf(file, "%s %lf",number,&data);
-    *datavecN=data;
-    fscanf(file, "%s %lf",number,&data);
-    *datavecmaxy=data;
-    fscanf(file, "%s %lf",number,&data);
-    *datavecmaxTIME=data;
-  }
-  else{perror(filename);}
-  fclose(file);
-  return 0;
-}
-
 /*INZ*/
 
 int inzstruct_MH(struct_MH *MH)
@@ -100,16 +30,63 @@ int inzstruct_MH(struct_MH *MH)
   return 0;
 }
 
-int inzstruct_priors(struct_priors *priors)
+int inzstruct_priors(struct_priors *D_priors,double *PRIORS)
 {
-  fillpriors(priors);
+   /*K*/
+    D_priors->sigma_K=D_priors->tau_K_mu=PRIORS[0];
+   
+    D_priors->phi_K=D_priors->eta_tau_K_p=PRIORS[1];          
+
+    D_priors->eta_K_o=PRIORS[2]; 
+
+    D_priors->psi_K_o=PRIORS[3];            
+    /*r*/
+
+    D_priors->sigma_r=D_priors->tau_r_mu=PRIORS[4];              
+
+    D_priors->phi_r=D_priors->eta_tau_r_p=PRIORS[5];          
+
+    D_priors->eta_r_o=PRIORS[6];              
+
+    D_priors->psi_r_o=PRIORS[7];       
+    /*nu*/
+
+    D_priors->eta_nu=PRIORS[8];         
+
+    D_priors->psi_nu=PRIORS[9];      
+    /*K*//*r*//*nu*//*P*/
+
+    D_priors->K_mu=PRIORS[10];     
+
+    D_priors->eta_K_p=PRIORS[11];      /*Normal  LMean; Precisions */
+
+    D_priors->r_mu=PRIORS[12];   
+
+    D_priors->eta_r_p=PRIORS[13];      /*Normal  LMean; Precisions */
+
+    D_priors->nu_mu=PRIORS[14];      
+
+    D_priors->eta_nu_p=PRIORS[15];     /*Normal  LMean; Precisions */
+
+    D_priors->P_mu=PRIORS[16];   
+
+    D_priors->eta_P=PRIORS[17];   /*Normal  LMean; Precisions */
+    D_priors->df=3;
+    D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors ->eta_tau_K_p;
+    D_priors->eta_tau_r=D_priors->eta_tau_r_p;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
+  /*fillpriors(priors);*/
   return 0;
 }
 
-int inzstruct_data(struct_data *data)
+int inzstruct_data(struct_data *data,int *QFAI,double *QFADy,double *QFADx,int *QFADNoORF,int *QFADNoTIME)
 {
+	int i;
   long size;
-  dataLMN("LMNmaxdata.txt",&data->L,&data->M,&data->N,&data->maxy,&data->maxNoTIME);  
+	data->L=QFAI[0];
+	data->M=QFAI[1];
+	data->N=QFAI[2];
+	data->maxy=QFAI[3];
+	data->maxNoTIME=QFAI[4];
   testsame(data->L*data->M*data->N,data->maxy);
 
   size=data->L*data->M*data->N; /*input from file*/ 
@@ -119,22 +96,23 @@ int inzstruct_data(struct_data *data)
   data->NoORF=malloc(size*sizeof(double));    /*Cycle with data->L*/
   data->NoSUM=malloc(size*sizeof(double));    /*Cycle with data->L*/
 
-  /*if (data->y==NULL||data->x==NULL||data->NoORF==NULL||data->NoSUM==NULL||data->NoTIME==NULL) {
-    perror("malloc failed");
-    exit(EXIT_FAILURE);
-    }*/
-
-  datadouble("ydata.txt",data->y,data->L*data->M*data->N);
-  datadouble("xdata.txt",data->x,data->L*data->M*data->N);
-  dataint("NoORFdata.txt",data->NoORF,data->L);
-
+ for (i=0;i<(data->L*data->M*data->N);i++){
+data->y[i]=QFADy[i];
+data->x[i]=QFADx[i];
+}
+ for (i=0;i<(data->L);i++){
+data->NoORF[i]=QFADNoORF[i];
+}
+ 
   filldata(data);
   testsame(data->maxNoTIME,data->SHIFTlmn);
 
   size=data->SHIFTlmn;/*inputfromfile*/
   data->NoTIME=malloc(size*sizeof(double));   /*Cycle with SHIFTlm*/
-  dataint("NoTIMEdata.txt",data->NoTIME,data->SHIFTlmn);
 
+ for (i=0;i<(data->SHIFTlmn);i++){
+data->NoTIME[i]=QFADNoTIME[i];
+}
 
   return 0;
 }
@@ -233,64 +211,6 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
   D_para->tau_r_p=D_priors->tau_r_mu;
   D_para->sigma_tau_r=D_priors->eta_tau_r;
 
-  return 0;
-}
-
-int fillpriors(struct_priors *D_priors)
-{
-  /*Priors*/
-  char number[20];
-  double data;
-  FILE *file = fopen("priors.txt", "r");
-  if ( file != NULL ){  
-    fscanf(file, "%s %lf",number,&data);
-    fscanf(file, "%s %lf",number,&data);
-    /*K*/
-    D_priors->sigma_K=D_priors->tau_K_mu=data;
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->phi_K=D_priors->eta_tau_K_p=data;          
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_K_o=data; 
-    fscanf(file, "%s %lf",number,&data);   
-    D_priors->psi_K_o=data;            
-    /*r*/
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->sigma_r=D_priors->tau_r_mu=data;              
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->phi_r=D_priors->eta_tau_r_p=data;          
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_r_o=data;              
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->psi_r_o=data;       
-    /*nu*/
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_nu=data;         
-    fscanf(file, "%s %lf",number,&data); 
-    D_priors->psi_nu=data;      
-    /*K*//*r*//*nu*//*P*/
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->K_mu=data;     
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_K_p=data;      /*Normal  LMean; Precisions */
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->r_mu=data;   
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_r_p=data;      /*Normal  LMean; Precisions */
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->nu_mu=data;      
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_nu_p=data;     /*Normal  LMean; Precisions */
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->P_mu=data;   
-    fscanf(file, "%s %lf",number,&data);
-    D_priors->eta_P=data;   /*Normal  LMean; Precisions */
-    D_priors->df=3;
-    D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors ->eta_tau_K_p;
-    D_priors->eta_tau_r=D_priors->eta_tau_r_p;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
-
-  }
-  else{perror("Priors");}  
-  fclose(file);
   return 0;
 }
 

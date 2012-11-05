@@ -9,13 +9,15 @@
 #include <time.h>
 #include <gsl/gsl_matrix.h>
 #include <string.h>
+#include <R.h>
+#include <Rmath.h>
 
-typedef struct struct_data {
+typedef struct struct_data_IHM {
   double *y;
   int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTmn,MAXmn;
-} struct_data;
+} struct_data_IHM;
 
-typedef struct struct_MH {
+typedef struct struct_MH_IHM {
   double 
 halpha_c,
 hsigma_gamma,
@@ -26,9 +28,9 @@ hgamma_cl,
 hZ_l,
 hnu_l,
 accept_Z,accept_nu,accept_up;
-} struct_MH;
+} struct_MH_IHM;
 
-typedef struct struct_para {
+typedef struct struct_para_IHM {
   double
     *alpha_c,
     *delta_l,
@@ -39,9 +41,9 @@ typedef struct struct_para {
     Z_p,
     nu_p;
 
-} struct_para;
+} struct_para_IHM;
 
-typedef struct struct_priors {
+typedef struct struct_priors_IHM {
   double
 	Z_mu,			eta_Z_p,
 	eta_Z,			psi_Z,
@@ -52,6 +54,6 @@ typedef struct struct_priors {
 	p,   
 	eta_gamma,		psi_gamma,
     df;
-} struct_priors;
+} struct_priors_IHM;
 
 

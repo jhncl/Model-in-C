@@ -8,13 +8,16 @@
 #include <unistd.h>
 #include <time.h>
 #include <gsl/gsl_cdf.h>
-typedef struct struct_data {
+#include <R.h>
+#include <Rmath.h>
+
+typedef struct struct_data_JHM {
   double *y, *x;
   int L, M,N,*NoORF,*NoSUM,*NoTIME,SHIFTlmn,SHIFTmn, maxy,maxTIMEa,maxTIMEb;
-} struct_data;
+} struct_data_JHM;
 
 
-typedef struct struct_para {
+typedef struct struct_para_JHM {
   double
     *alpha_c,
     *beta_c,
@@ -34,10 +37,10 @@ typedef struct struct_para {
     nu_p,
     P,
     *tau_K_p,*tau_r_p,*sigma_tau_K,*sigma_tau_r;
-} struct_para;
+} struct_para_JHM;
 
 
-typedef struct struct_priors {
+typedef struct struct_priors_JHM {
   double
     alpha_mu,               eta_alpha,
     beta_mu,                eta_beta,
@@ -63,9 +66,9 @@ typedef struct struct_priors {
     psi_tau_r_p,psi_tau_K_p,
     eta_tau_K_p,eta_tau_r_p,
     psi_tau_K,psi_tau_r;
-} struct_priors;
+} struct_priors_JHM;
 
-typedef struct struct_MH {
+typedef struct struct_MH_JHM {
   double 
     hP,
     hnu,
@@ -73,5 +76,5 @@ typedef struct struct_MH {
     hr,
     halpha,
 accept_P,accept_nu,accept_K,accept_r;
-} struct_MH;
+} struct_MH_JHM;
 

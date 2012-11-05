@@ -60,12 +60,12 @@ L+
 1+
 2*2+
 2*2
-tmp <- .C("main_JHM", as.integer(burn),as.integer(iters),as.integer(thin),OUT=as.double(1:(NCOL*b)),HEADER=as.character(rep("NULLNULL",NCOL)),
+tmp <- .C("main_JHM", as.integer(burn),as.integer(iters),as.integer(thin),OUT=as.double(1:(NCOL*iters)),HEADER=as.character(rep("NULLNULL",NCOL)),
 QFAIA=QFA.IA,QFAy=QFA.yA,QFAxA=QFA.xA,QFANoORFA=QFA.NoORFA,QFANoTIMEA=QFA.NoTIMEA,
 QFAIB=QFA.IB,QFAy=QFA.yB,QFAxB=QFA.xB,QFANoORFB=QFA.NoORFB,QFANoTIMEB=QFA.NoTIMEB,
 PRIORS=PRIORS
 )
-#mat=matrix(c(tmp$OUT),nrow=b,byrow=T)
+#mat=matrix(c(tmp$OUT),nrow=iters,byrow=T)
 #mat=data.frame(mat)
 #names(mat)=tmp$HEADER
 #mat

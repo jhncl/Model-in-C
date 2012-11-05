@@ -261,12 +261,12 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
 	    mm=D->NoSUM[l]+m;
 	    SUM += D->y[mm];
 	  }
-	  /*  if ((SUM/D->NoORF[l])<1){
+	   if ((SUM/D->NoORF[l])<1){
 	    D_para->Z_l[l]=0;
 	  }
-	  else{*/
+	  else{
 	    D_para->Z_l[l]=log(SUM/D->NoORF[l]);
-	    /* }*/
+	    }
 	    SUMa+=SUM/D->NoORF[l];
 	  SUM=0;
 	}

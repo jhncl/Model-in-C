@@ -3,7 +3,7 @@
 #include "functions.h"
 #include "print.h"
      int
-     main (int argc,char *argv[])
+     main (int *arga,int *argb,int *argc,int *argd,double *OUT, char **HEADER,int *QFAI,double *QFADy,double *QFADx,int *QFADNoORF,int *QFADNoTIME,double *PRIORS)
      {
 	struct_data *data= malloc(sizeof(struct_data));
 	struct_para *para= malloc(sizeof(struct_para));
@@ -11,33 +11,19 @@
 	struct_MH *MH = malloc(sizeof(struct_MH));
 
 	int burn,iters,thin, CAPL;
-	long seed;
-	const gsl_rng_type * T;
-	gsl_rng * RNG;
 
-	testargc(argc);
+	burn=*arga;    /*Burn in*/
+	iters=*argb;    /*iterations*/
+	thin=*argc;         /*thining*/
 
-	gsl_rng_env_setup ();
-	T = gsl_rng_default;
-	RNG = gsl_rng_alloc (T);
-	seed = time (NULL) * getpid();    
-  	gsl_rng_set (RNG, seed); /*seed*/
+	CAPL=*argd;              /*CAP D->L*/
 
-	burn=atoi(argv[1]);   /*Burn in*/
-	iters=atoi(argv[2]);    /*iterations*/
-	thin=atoi(argv[3]);        /*thining*/
-
-	CAPL=atoi(argv[4]);        /*CAP D->L*/
-
-        inzstruct_data(data);
-	inzstruct_priors(priors);
+        inzstruct_data(data,QFAI,QFADy,QFADx,QFADNoORF,QFADNoTIME);
+	inzstruct_priors(priors,PRIORS);
 	inzstruct_para(para,data,priors);
-
 	inzstruct_MH(MH);
+	gibbsandMHloop(burn,1,data,para,priors,MH,CAPL,0,OUT,HEADER);
+	gibbsandMHloop(iters,thin,data,para,priors,MH,CAPL,1,OUT,HEADER);
 
-	gibbsandMHloop(burn,1,RNG,data,para,priors,MH,CAPL,0);
-	gibbsandMHloop(iters,thin,RNG,data,para,priors,MH,CAPL,1);
-
-       	gsl_rng_free(RNG);
 	return 0;
 }
