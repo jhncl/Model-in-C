@@ -5,6 +5,7 @@
 int
      main_JHM (int *arga,int *argb,int *argc,double *OUT, char **HEADER,int *QFAIA,double *QFADyA,double *QFADxA,int *QFADNoORFA,int *QFANoTIMEA,int *QFAIB,double *QFADyB,double *QFADxB,int *QFADNoORFB,int *QFANoTIMEB,double *PRIORS)/****/
 {
+  GetRNGstate();
 	struct_data_JHM *data= malloc(sizeof(struct_data_JHM));
 	struct_para_JHM *para= malloc(sizeof(struct_para_JHM));
 	struct_priors_JHM *priors= malloc(sizeof(struct_priors_JHM));
@@ -23,6 +24,6 @@ int
 
 	gibbsandMHloop_JHM(burn,1,data,para,priors,MH,0,OUT,HEADER);
 	gibbsandMHloop_JHM(iters,thin,data,para,priors,MH,1,OUT,HEADER);
-
+  PutRNGstate();
 	return 0;
 }
