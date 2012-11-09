@@ -169,7 +169,7 @@ double MCMC_K_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
       F=D_para->K_lm[mm]-log(para);
-      SUM+=F*F*exp(D_para->tau_K_l[l])/**/+2*log(gsl_cdf_gaussian_P(0-log(para),1/pow(exp(D_para->tau_K_l[l]),0.5)));
+      SUM+=F*F*exp(D_para->tau_K_l[l])/**/+2*log(pnorm(0,log(para),1/pow(exp(D_para->tau_K_l[l]),0.5),1,0));
     }
     F=para-exp(D_para->K_p);
     density=(1+D_priors->df)*log(1+pow(F,2)*exp(D_para->sigma_K_o)/D_priors->df)+SUM;
@@ -193,7 +193,7 @@ double MCMC_r_o_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,dou
     for (m=0;m<D->NoORF[l];m++){
       mm=D->NoSUM[l]+m;
       F=D_para->r_lm[mm]-log(para);
-      SUM+=F*F*exp(D_para->tau_r_l[l])/**/+2*log(gsl_cdf_gaussian_P(3.5-log(para),1/pow(exp(D_para->tau_r_l[l]),0.5)));
+      SUM+=F*F*exp(D_para->tau_r_l[l])/**/+2*log(pnorm(3.5,log(para),1/pow(exp(D_para->tau_r_l[l]),0.5),1,0));
     }
     F=(para)-exp(D_para->r_p);
   density=(1+D_priors->df)*log(1+pow(F,2)*exp(D_para->sigma_r_o)/D_priors->df)+SUM;
@@ -227,7 +227,7 @@ double MCMC_tau_K_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,d
   for (m=0;m<D->NoORF[l];m++){
     mm=D->NoSUM[l]+m;
     F=D_para->K_lm[mm]-D_para->K_o_l[l];
-    SUM+=-para+F*F*exp(para)/**/+2*log(gsl_cdf_gaussian_P(0-D_para->K_o_l[l],1/pow(exp(para),0.5)));
+    SUM+=-para+F*F*exp(para)/**/+2*log(pnorm(0,D_para->K_o_l[l],1/pow(exp(para),0.5),1,0));
   }
   F=para-(D_para->tau_K_p);
   density=F*F*exp(D_para->sigma_tau_K)+SUM;
@@ -241,7 +241,7 @@ double MCMC_tau_r_l(struct_data *D,struct_para *D_para,struct_priors *D_priors,d
   for (m=0;m<D->NoORF[l];m++){
     mm=D->NoSUM[l]+m;
     F=D_para->r_lm[mm]-D_para->r_o_l[l];
-    SUM+=-para+F*F*exp(para)/**/+2*log(gsl_cdf_gaussian_P(3.5-D_para->r_o_l[l],1/pow(exp(para),0.5)));
+    SUM+=-para+F*F*exp(para)/**/+2*log(pnorm(3.5,D_para->r_o_l[l],1/pow(exp(para),0.5),1,0));
   }
   F=para-(D_para->tau_r_p);
   density=F*F*exp(D_para->sigma_tau_r)+SUM;
@@ -253,7 +253,7 @@ double MCMC_tau_K_p(struct_data *D,struct_para *D_para,struct_priors *D_priors,d
   double density,F,SUM=0;
   for (l=0;l<D->L;l++){
     F=D_para->tau_K_l[l]-(para);
-    SUM+=F*F*exp(D_para->sigma_tau_K)/**/+2*log(1-gsl_cdf_gaussian_P(0-(para),1/pow(exp(D_para->sigma_tau_K),0.5)));
+    SUM+=F*F*exp(D_para->sigma_tau_K)/**/+2*log(1-pnorm(0,(para),1/pow(exp(D_para->sigma_tau_K),0.5),1,0));
   }
   F=D_priors->tau_K_mu-para;
   density=F*F*D_priors->eta_tau_K_p+SUM;
@@ -264,7 +264,7 @@ double MCMC_sigma_tau_K(struct_data *D,struct_para *D_para,struct_priors *D_prio
   double density,SUM=0,F;
   for (l=0;l<D->L;l++){
     F=D_para->tau_K_l[l]-D_para->tau_K_p;
-    SUM+=-para+F*F*exp(para)/**/+2*log(1-gsl_cdf_gaussian_P(0-(D_para->tau_K_p),1/pow(exp(para),0.5)));
+    SUM+=-para+F*F*exp(para)/**/+2*log(1-pnorm(0,(D_para->tau_K_p),1/pow(exp(para),0.5),1,0));
   }
   F=para-D_priors->eta_tau_K;
   density=F*F*D_priors->psi_tau_K+SUM;
@@ -303,7 +303,7 @@ int gibbsandMHloop(int iter,int thin,struct_data *D,struct_para *D_para,struct_p
 int i,j,l,m,mm,*T,t;
 T=&t;
 *T=0;
-D->L=gsl_min(D->L,CAPL);
+D->L=fmin(D->L,CAPL);
 	if (print==0){printheader(D,HEADER);}	
 	for (i=0;i<iter;i++){
 for (j=0;j<thin;j++){

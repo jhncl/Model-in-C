@@ -21,6 +21,8 @@ void printheader_JHM(struct struct_data_JHM *D,char **HEADER){
 		sprintf(HEADER[t],"K_o_l[%i]",l);t+=1;
 	}
 
+sprintf(HEADER[t],"sigma_K_o");t+=1;
+
 sprintf(HEADER[t],"K_p");t+=1;
 
 sprintf(HEADER[t],"P");t+=1;
@@ -158,10 +160,10 @@ OUT[*T]=D_para->delta_l[l];*T+=1;
 OUT[*T]=D_para->gamma_cl[l];*T+=1;
 	}
 
-	printf ("%g ",D_para->sigma_gamma);
+OUT[*T]=D_para->sigma_gamma;*T+=1;
 
 	for (l=0;l<D->L;l++){
-		printf ("%g ",D_para->omega_cl[l]);
+		OUT[*T]=D_para->omega_cl[l];*T+=1;
 	}
 
 OUT[*T]=D_para->sigma_gamma;*T+=1;

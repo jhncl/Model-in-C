@@ -3,7 +3,7 @@
 
 /*TEST*/
 
-int testargc(int argc)
+int testargc_JHM(int argc)
 {
  	if (argc!=4) {
     		perror("argc failed");
@@ -12,7 +12,7 @@ int testargc(int argc)
 return 0;
 }
 
-int testsame(int a,int b)
+int testsame_JHM(int a,int b)
 {
  	if (a!=b) {
     		perror("data int failed");
@@ -110,16 +110,16 @@ int inzstruct_data_JHM(struct_data_JHM *data,int *QFAIA,double *QFADyA,double *Q
 
 		data->M=QFAIA[1];
 		data->N=QFAIA[2];
-		data->maxy=QFAIA[3];
 		data->maxTIMEa=QFAIA[4];
 		data->L=QFAIB[0];
 		data->M=QFAIB[1];
 		data->N=QFAIB[2];
-		data->maxy=QFAIB[3];
+	testsame_JHM(QFAIA[3],QFAIB[3]);
+		data->maxy=QFAIA[3]+QFAIB[3];
 		data->maxTIMEb=QFAIB[4];
 
-	data->SHIFTlmn=data->maxy;
-	size=data->maxy*2;
+	data->SHIFTlmn=QFAIA[3];
+	size=data->maxy;
   	data->y=malloc(size*sizeof(double));  
         data->x=malloc(size*sizeof(double));  
 	size=data->L*2;
@@ -133,11 +133,11 @@ int inzstruct_data_JHM(struct_data_JHM *data,int *QFAIA,double *QFADyA,double *Q
     		exit(EXIT_FAILURE);
   	}
 /**/
- for (i=0;i<(data->maxy);i++){
+ for (i=0;i<(data->maxy-data->SHIFTlmn);i++){
 data->y[i]=QFADyA[i];
 data->x[i]=QFADxA[i];
-data->y[i+data->maxy]=QFADyB[i];
-data->x[i+data->maxy]=QFADxB[i];
+data->y[i+data->SHIFTlmn]=QFADyB[i];
+data->x[i+data->SHIFTlmn]=QFADxB[i];
 }
 
  for (i=0;i<(data->L);i++){
@@ -148,7 +148,7 @@ data->NoORF[i+data->L]=QFADNoORFB[i];
 data->NoTIME[i]=QFADNoTIMEA[i];
 }
  for (i=0;i<(data->maxTIMEb);i++){
-data->NoTIME[i+data->maxTIMEa]=QFADNoTIMEA[i];
+data->NoTIME[i+data->maxTIMEa]=QFADNoTIMEB[i];
 }
 /**/
 	filldata_JHM(data);
@@ -228,7 +228,7 @@ for (c=0;c<2;c++){
 	mm=D->NoSUM[ll]+m;
 	if (D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]<=0){D_para->K_clm[mm]=D_priors->P_mu;}
 	else{     
-		D_para->K_clm[mm]=gsl_sf_log(D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
+		D_para->K_clm[mm]=log(D->y[c*D->SHIFTlmn+l*D->M*D->N + m*D->N + D->NoTIME[mm]-1]);
 		}
 	if (c==0){SUMa+=exp(D_para->K_clm[mm]);SUM+=D_para->K_clm[mm];}
 	  else{ SUMb+=exp(D_para->K_clm[mm]);}
@@ -237,7 +237,7 @@ for (c=0;c<2;c++){
       SUM=0;
       }
   }
- D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->maxy-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
+ D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->NoORF[2*D->L]-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
  D_para->beta_c[1]=D_para->alpha_c[1];
  SUM=0;
  for (l=0;l<(D->L);l++){SUM+=D_para->K_o_l[l];}
@@ -251,7 +251,7 @@ for (c=0;c<2;c++){
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){
+			for (m=0;m<D->NoORF[ll];m++){
 				mm=D->NoSUM[ll]+m;
 				D_para->r_clm[mm]=D_priors->r_mu;   
 			} 

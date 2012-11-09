@@ -268,7 +268,7 @@ for (c=0;c<2;c++){
       SUM=0;
       }
   }
- D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->maxy-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
+ D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->NoORF[2*D->L]-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
  D_para->beta_c[1]=D_para->alpha_c[1];
  SUM=0;
  for (l=0;l<(D->L);l++){SUM+=D_para->K_o_l[l];}
@@ -282,7 +282,7 @@ for (c=0;c<2;c++){
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){
+			for (m=0;m<D->NoORF[ll];m++){
 				mm=D->NoSUM[ll]+m;
 				D_para->r_clm[mm]=D_priors->r_mu;   
 			} 
