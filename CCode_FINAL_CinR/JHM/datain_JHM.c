@@ -237,7 +237,7 @@ for (c=0;c<2;c++){
       SUM=0;
       }
   }
- D_para->alpha_c[1]=gsl_sf_log((SUMb/(2*D->NoORF[2*D->L]-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
+ D_para->alpha_c[1]=log((SUMb/(2*D->NoORF[2*D->L]-D->SHIFTlmn))/(SUMa/D->SHIFTlmn));
  D_para->beta_c[1]=D_para->alpha_c[1];
  SUM=0;
  for (l=0;l<(D->L);l++){SUM+=D_para->K_o_l[l];}
