@@ -234,7 +234,7 @@ plot(QFA.D$x[,,l],QFA.D$y[,,l])
 for (m in 1:NoORF_a[l]){
 tt=NoSum_a[l]+m
 K=exp(mean(aa[500:1000,tt]))
-r=exp(mean(aa[500:1000,tt+L+M]))
+r=exp(mean(aa[500:1000,tt+2*L+M+3]))
 P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
 curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),add=T)
 }
@@ -246,7 +246,7 @@ plot(QFA.D$x[,,l],QFA.D$y[,,l])
 for (m in 1:NoORF_a[l]){
 tt=NoSum_a[l]+m
 K=exp(mean(aa[500:1000,tt]))
-r=exp(mean(aa[500:1000,tt+L+M]))
+r=exp(mean(aa[500:1000,tt+2*L+M+3]))
 P=exp(mean(aa[500:1000,colnames(aa)=="P"]))
 curve((K*P*exp(r*x))/(K+P*(exp(r*x)-1)),add=T)
 }
