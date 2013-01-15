@@ -6,7 +6,7 @@ void printheader(struct struct_data *D){
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				printf ("K_clm[%i] ",mm);
 			}
@@ -30,7 +30,7 @@ void printheader(struct struct_data *D){
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				printf ("r_clm[%i] ",mm);
 			}
@@ -103,7 +103,7 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				printf ("%g ",D_para->K_clm[mm]);
 			}
@@ -128,7 +128,7 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				printf ("%g ",D_para->r_clm[mm]);
 			}

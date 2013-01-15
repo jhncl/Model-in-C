@@ -533,7 +533,7 @@ int i,j,l,m,mm,c,ll;
 			    D_MH->hK=0.1;
 			    D_para->tau_r_cl[ll]=MCMC_base(RNG,D,D_para,D_priors,&D_MH->accept_nu,&D_MH->hnu,D_para->tau_r_cl[ll],MCMC_tau_r_cl,c,l,-999);
 
-			    for (m=0;m<D->NoORF[l];m++){ 
+			    for (m=0;m<D->NoORF[ll];m++){ 
 			      mm=D->NoSUM[ll]+m;
 			      D_MH->hK=0.05;				
 			      D_para->K_clm[mm]=MCMC_base_truncate_high(0,RNG,D,D_para,D_priors,&D_MH->accept_K,&D_MH->hK,D_para->K_clm[mm],MCMC_K_clm,c,l,m);

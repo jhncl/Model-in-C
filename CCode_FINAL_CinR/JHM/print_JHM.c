@@ -6,7 +6,7 @@ void printheader_JHM(struct struct_data_JHM *D,char **HEADER){
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				sprintf(HEADER[t],"K_lm[%i]",mm);t+=1;
 			}
@@ -30,7 +30,7 @@ sprintf(HEADER[t],"P");t+=1;
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 				sprintf(HEADER[t],"r_clm[%i]",mm);t+=1;
 			}
@@ -95,7 +95,7 @@ void printdata_JHM(struct struct_data_JHM *D,struct struct_para_JHM *D_para,stru
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 OUT[*T]=D_para->K_clm[mm];*T+=1;
 			}
@@ -120,7 +120,7 @@ OUT[*T]=D_para->P;*T+=1;
 	for (c=0;c<2;c++){
 		for (l=0;l<D->L;l++){
 			ll=c*D->L+l;
-			for (m=0;m<D->NoORF[l];m++){ 
+			for (m=0;m<D->NoORF[ll];m++){ 
 				mm=D->NoSUM[ll]+m;
 OUT[*T]=D_para->r_clm[mm];*T+=1;
 			}
