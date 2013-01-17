@@ -33,18 +33,18 @@ int inzstruct_MH(struct_MH *MH)
 int inzstruct_priors(struct_priors *D_priors,double *PRIORS)
 {
    /*K*/
-    D_priors->sigma_K=D_priors->tau_K_mu=PRIORS[0];
+    D_priors->tau_K_mu=PRIORS[0];
    
-    D_priors->phi_K=D_priors->eta_tau_K_p=PRIORS[1];          
+    D_priors->eta_tau_K_p=PRIORS[1];          
 
     D_priors->eta_K_o=PRIORS[2]; 
 
     D_priors->psi_K_o=PRIORS[3];            
     /*r*/
 
-    D_priors->sigma_r=D_priors->tau_r_mu=PRIORS[4];              
+    D_priors->tau_r_mu=PRIORS[4];              
 
-    D_priors->phi_r=D_priors->eta_tau_r_p=PRIORS[5];          
+    D_priors->eta_tau_r_p=PRIORS[5];          
 
     D_priors->eta_r_o=PRIORS[6];              
 
@@ -180,7 +180,7 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
   }
  D_para->K_p=SUMa/D->L;       /*LMean*/
 
-  for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=D_priors->sigma_K;}                  /*Precision*/
+  for (l=0;l<D->L;l++)          {D_para->tau_K_l[l]=D_priors->tau_K_mu;}                  /*Precision*/
   
   D_para->sigma_K_o=D_para->sigma_K_o_b=D_priors->eta_K_o;               /*Precision*/
   /*r*/
@@ -191,7 +191,7 @@ int fillpara(struct_para *D_para, struct_data *D,struct_priors *D_priors)
     }
   }                          /*LMean*/
 
-  for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=D_priors->sigma_r;}                  /*Precision*/
+  for (l=0;l<D->L;l++)          {D_para->tau_r_l[l]=D_priors->tau_r_mu;}                  /*Precision*/
 
   for (l=0;l<D->L;l++)          {D_para->r_o_l[l]=D_priors->r_mu;}        /*LMean*/
   D_para->sigma_r_o=D_priors->eta_r_o;               /*Precision*/

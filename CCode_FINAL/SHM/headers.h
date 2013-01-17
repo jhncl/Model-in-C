@@ -38,9 +38,6 @@ typedef struct struct_para {
 
 typedef struct struct_priors {
   double
-    sigma_K,                phi_K,
-    sigma_r,                phi_r,
-
     eta_K_o,                psi_K_o,
     eta_r_o,                psi_r_o,
     eta_nu,                 psi_nu,
@@ -52,7 +49,6 @@ typedef struct struct_priors {
     df,
     tau_K_mu,tau_r_mu,
     eta_tau_K,eta_tau_r,
-    psi_tau_r_p,psi_tau_K_p,
     eta_tau_K_p,eta_tau_r_p,
     psi_tau_K,psi_tau_r;
 
