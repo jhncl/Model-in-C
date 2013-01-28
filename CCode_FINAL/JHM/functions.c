@@ -393,7 +393,7 @@ double MCMC_sigma_gamma(struct_data *D,struct_para *D_para,struct_priors *D_prio
   double density,F,SUM=0;
   for (l=0;l<D->L;l++){
     F=exp(D_para->gamma_cl[l])-1;
-    SUM+=(1+D_priors->df)*gsl_sf_log(1+pow(F,2)*exp(para)/D_priors->df)-(para);
+    SUM+=(1+D_priors->df)*gsl_sf_log(1+pow(F,2)*exp(para)/D_priors->df)-(para)/**/+2*log(trun_const_low(0,1,exp(para))) 
   }
   F=para-D_priors->eta_gamma;
   density=F*F*D_priors->psi_gamma+SUM;
@@ -404,7 +404,7 @@ double MCMC_sigma_omega(struct_data *D,struct_para *D_para,struct_priors *D_prio
   double density,F,SUM=0;
   for (l=0;l<D->L;l++){
     F=exp(D_para->omega_cl[l])-1;
-    SUM+=(1+D_priors->df)*gsl_sf_log(1+pow(F,2)*exp(para)/D_priors->df)-(para);
+    SUM+=(1+D_priors->df)*gsl_sf_log(1+pow(F,2)*exp(para)/D_priors->df)-(para)/**/+2*log(trun_const_low(0,1,exp(para))) 
   }
   F=para-D_priors->eta_omega;
   density=F*F*D_priors->psi_omega+SUM;
