@@ -10,8 +10,8 @@ void printheader_IHM(struct struct_data_IHM *D,char **HEADER){
 	sprintf(HEADER[t],"sigma_Z");t+=1;
 	sprintf(HEADER[t],"Z_p");t+=1;
 
-	for (l=0;l<D->L;l++){
-		sprintf(HEADER[t],"nu_l[%i]",l);t+=1;
+	for (l=0;l<(2*D->L);l++){
+		sprintf(HEADER[t],"nu_cl[%i]",l);t+=1;
 	}
 
 	sprintf(HEADER[t],"sigma_nu");t+=1;
@@ -40,7 +40,7 @@ void printdata_IHM(struct struct_data_IHM *D,struct struct_para_IHM *D_para,stru
 	OUT[*T]=D_para->sigma_Z;*T+=1;
 	OUT[*T]=D_para->Z_p;*T+=1;
 
-	for (l=0;l<D->L;l++){
+	for (l=0;l<(2*D->L);l++){
 	OUT[*T]=D_para->nu_l[l];*T+=1;
 	}
 

@@ -50,8 +50,8 @@ sprintf(HEADER[t],"sigma_r_o");t+=1;
 sprintf(HEADER[t],"r_p");t+=1;
 
 
-	for (l=0;l<D->L;l++){
-sprintf(HEADER[t],"nu_l[%i]",l);t+=1;
+	for (l=0;l<2*(D->L);l++){
+sprintf(HEADER[t],"nu_cl[%i]",l);t+=1;
 	}
 
 sprintf(HEADER[t],"sigma_nu");t+=1;
@@ -139,7 +139,7 @@ OUT[*T]=D_para->sigma_r_o;*T+=1;
 
 OUT[*T]=D_para->r_p;*T+=1;
 
-	for (l=0;l<D->L;l++){
+	for (l=0;l<(2*D->L);l++){
 OUT[*T]=D_para->nu_l[l];*T+=1;
 	}
 

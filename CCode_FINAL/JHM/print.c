@@ -50,8 +50,8 @@ void printheader(struct struct_data *D){
 	printf ("r_p ");
 
 
-	for (l=0;l<D->L;l++){
-		printf ("nu_l[%i] ",l);
+	for (l=0;l<(2*D->L);l++){
+		printf ("nu_cl[%i] ",l);
 	}
 
 	printf ("sigma_nu ");
@@ -147,7 +147,7 @@ void printdata(struct struct_data *D,struct struct_para *D_para,struct struct_MH
 
 	printf ("%g ",D_para->r_p);
 
-	for (l=0;l<D->L;l++){
+	for (l=0;l<(2*D->L);l++){
 		printf ("%g ",D_para->nu_l[l]);
 	}
 
