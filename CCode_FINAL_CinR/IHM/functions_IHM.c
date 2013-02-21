@@ -5,7 +5,7 @@
 /*trun*/
 double trun_const_low_IHM(double x,double m, double l)
 {
-  return(1-0.5-(  (pow(3*l,0.5))*(x-m)/(((l*pow(m-x,2))+3))         -atan((pow(l/3,0.5))*(m-x)))/M_PI);
+  return(1-0.5-(  (pow(3*l,0.5))*(x-m)/(((l*pow(x-m,2))+3))         -atan((pow(l/3,0.5))*(x-m)))/M_PI);
 }
 
 /*Gibbs*/
