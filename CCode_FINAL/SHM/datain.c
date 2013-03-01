@@ -109,6 +109,7 @@ int inzstruct_priors(struct_priors *priors)
 int inzstruct_data(struct_data *data)
 {
   long size;
+int i;
   dataLMN("LMNmaxdata.txt",&data->L,&data->M,&data->N,&data->maxy,&data->maxNoTIME);  
   testsame(data->L*data->M*data->N,data->maxy);
 
@@ -126,6 +127,12 @@ int inzstruct_data(struct_data *data)
 
   datadouble("ydata.txt",data->y,data->L*data->M*data->N);
   datadouble("xdata.txt",data->x,data->L*data->M*data->N);
+
+	for (i=0;i<(data->L*data->M*data->N);i++){
+          if(data->y[i]<0){ data->y[i]=0;}
+	  if(data->x[i]<0){ data->x[i]=0;}
+        }
+
   dataint("NoORFdata.txt",data->NoORF,data->L);
 
   filldata(data);

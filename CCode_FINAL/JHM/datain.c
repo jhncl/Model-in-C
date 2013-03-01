@@ -159,6 +159,7 @@ return 0;
 int inzstruct_data(struct_data *data)
 {
 	long size;
+int i;
 		dataLMN("LMNmaxdataA1.txt","LMNmaxdataB1.txt",
 		&data->L,&data->M,&data->N,&data->maxy,&data->maxTIMEa,&data->maxTIMEb);     
 		
@@ -179,6 +180,12 @@ int inzstruct_data(struct_data *data)
 
 	datadouble("ydataA1.txt","ydataB1.txt",data->y,data->maxy);
         datadouble("xdataA1.txt","xdataB1.txt",data->x,data->maxy);
+
+	for (i=0;i<(2*data->maxy);i++){
+          if(data->y[i]<0){ data->y[i]=0;}
+	  if(data->x[i]<0){ data->x[i]=0;}
+        }
+
         dataint("NoORFdataA1.txt","NoORFdataB1.txt",data->NoORF,data->L,data->L);
         dataint("NoTIMEdataA1.txt","NoTIMEdataB1.txt",data->NoTIME,data->maxTIMEa,data->maxTIMEb);
 

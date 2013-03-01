@@ -100,6 +100,11 @@ int inzstruct_data(struct_data *data,int *QFAI,double *QFADy,double *QFADx,int *
 data->y[i]=QFADy[i];
 data->x[i]=QFADx[i];
 }
+	for (i=0;i<(data->L*data->M*data->N);i++){
+          if(data->y[i]<0){ data->y[i]=0;}
+	  if(data->x[i]<0){ data->x[i]=0;}
+        }
+
  for (i=0;i<(data->L);i++){
 data->NoORF[i]=QFADNoORF[i];
 }
