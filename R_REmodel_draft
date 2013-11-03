@@ -1,0 +1,58 @@
+#CAPL=2000
+setwd("~/QFADatasets/IHM-tt21")
+#load("M_SHM_FULL_27.RData")
+
+load("~/oldQFA/Logistic/AddLogistic.RData")
+M=sum(NoORF_a)
+L=N=length(NoORF_a)
+K_lm=aaa$Trimmed.K
+P_a=43
+r_lm=aaa$Trimmed.r
+
+a=b=numeric(0)
+for (i in 1:length(r_lm)){
+          if(K_lm[i]<=2*P_a){K_lm[i]=2*P_a+0.01;r_lm[i]=0;}
+a[i]=(r_lm[i]/log(2*max(0,K_lm[i]-P_a)/max(0,K_lm[i]-2*P_a)))*(log(K_lm[i]/P_a)/log(2));
+}
+
+M=sum(NoORF_b)
+K_lmb=bbb$Trimmed.K
+P_b=43
+r_lmb=bbb$Trimmed.r
+for (i in 1:length(r_lmb)){
+          if(K_lmb[i]<=2*P_b){K_lmb[i]=2*P_b+0.01;r_lmb[i]=0;}
+b[i]=(r_lmb[i]/log(2*max(0,K_lmb[i]-P_b)/max(0,K_lmb[i]-2*P_b)))*(log(K_lmb[i]/P_b)/log(2));
+}
+
+#L=N=CAPL
+#a<-a[1:sum(NoORF_a[1:N])]
+#b<-b[1:sum(NoORF_a[1:N])]
+
+condition<-factor(c(rep("a",length(a)),rep("b",length(b))))
+subject=numeric()
+for (i in 1:N){
+subject=c(subject,rep(i,NoORF_a[i]))
+}
+for (i in 1:N){
+subject=c(subject,rep(i,NoORF_b[i]))
+}
+subcon=subject
+subcon[1:length(a)]=0
+subcon<-factor(subcon)
+subject<-factor(subject)
+f=c(a,b)
+data=data.frame(f,subject,condition,subcon)
+data$lf=log(data$f+1)
+
+data$subcon<-C(data$subcon,sum)
+library(lme4)
+
+
+bk<-contrasts(data$subcon)
+contrasts(data$subcon)=bk[c(nrow(contrasts(data$subcon)),1:(nrow(contrasts(data$subcon))-1)),]
+ptm <- proc.time()
+ll<-(lmer(lf~subcon+(1|subject),data=(data),REML=F))
+time=proc.time() - ptm
+#print(ll,corr=F)
+time
+save.image("~/OLDFINAL2.RData")
