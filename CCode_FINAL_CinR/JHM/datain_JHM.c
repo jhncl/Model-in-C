@@ -94,8 +94,8 @@ int inzstruct_priors_JHM(struct_priors_JHM *D_priors,double *PRIORS)
 D_priors->psi_omega=PRIORS[27];
    
 	D_priors->df=3;
-	D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors->eta_tau_K_p;
-	D_priors->eta_tau_r=D_priors->eta_tau_r_p;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
+	D_priors->eta_tau_K=D_priors->tau_K_mu;  D_priors->psi_tau_K=D_priors->eta_tau_K_p;
+	D_priors->eta_tau_r=D_priors->tau_r_mu;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
 	/*fillpriors(priors);*/
 
 return 0;
