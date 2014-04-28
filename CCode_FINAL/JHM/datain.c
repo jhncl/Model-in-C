@@ -429,8 +429,8 @@ fscanf(file, "%s %lf",number,&data);
 D_priors->upsilon_mu=data;	*/
 	D_priors->df=3;
 	D_priors->df2=5;
-	D_priors->eta_tau_K=D_priors->eta_tau_K_p;  D_priors->psi_tau_K=D_priors->eta_tau_K_p;
-	D_priors->eta_tau_r=D_priors->eta_tau_r_p;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
+	D_priors->eta_tau_K=D_priors->tau_K_mu;  D_priors->psi_tau_K=D_priors->eta_tau_K_p;
+	D_priors->eta_tau_r=D_priors->tau_r_mu;  D_priors->psi_tau_r=D_priors->eta_tau_r_p;
   }
   else{perror("Priors");}  
   fclose(file);
