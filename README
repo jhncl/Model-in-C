@@ -1,3 +1,14 @@
+Code is mostly out of date, for up-to-date qfaBayes code see R package QFABayes:
+
+https://r-forge.r-project.org/scm/viewvc.php/pkg/qfaBayes/?root=qfa
+
+C code within the R package is found in the src directory.
+
+
+
+
+#################################################################################
+
 SHM
 IHM
 JHM
